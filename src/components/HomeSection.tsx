@@ -549,18 +549,36 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
       )}
 
       {/* ========================================================================= */}
-      {/* 1. HERO SECTION */}
+      {/* 1. HERO SECTION (Cinematic Video Background + Bottom Blur Overlay) */}
       {/* ========================================================================= */}
-      <section className="relative mx-auto max-w-6xl px-4 pt-16 pb-16 sm:pt-20 sm:pb-24 text-center">
+      <section className="relative w-full overflow-hidden min-h-[85vh] sm:min-h-[90vh] flex flex-col justify-center items-center px-4 pt-20 pb-20 sm:pt-28 sm:pb-28 text-center bg-black">
         
-        {/* Subtle Constellation / Particle Glow Area */}
-        <div className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center opacity-40">
-          <div className="h-[450px] w-[800px] rounded-full bg-gradient-to-b from-[#22c55e]/15 via-[#10b981]/5 to-transparent blur-[100px]" />
+        {/* Full-width / Viewport Background Video */}
+        <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            className="w-full h-full object-cover"
+          >
+            <source src="https://zxdefgavgwfxastwmmjm.supabase.co/storage/v1/object/public/assets/cinematic.mp4" type="video/mp4" />
+          </video>
         </div>
 
-        {/* Top Eyebrow Heading: "A Solução Definitiva" */}
-        <ScrollReveal yOffset={-12} duration={0.5} once={true}>
-          <div className="relative inline-block mb-3 sm:mb-4 group">
+        {/* Bottom Blur Overlay (no gradient darkening, only backdrop-blur-xl with mask) */}
+        <div 
+          className="absolute inset-0 pointer-events-none z-[1] bottom-blur-mask backdrop-blur-xl"
+          style={{
+            WebkitMaskImage: 'linear-gradient(to top, black 0%, transparent 45%)',
+            maskImage: 'linear-gradient(to top, black 0%, transparent 45%)',
+          }}
+        />
+
+        <div className="relative z-10 max-w-5xl mx-auto flex flex-col items-center">
+          {/* Top Eyebrow Heading: "A Solução Definitiva" */}
+          <div className="animate-blur-fade-up relative inline-block mb-3 sm:mb-4 group" style={{ animationDelay: '150ms' }}>
             <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white font-['Bricolage_Grotesque','Plus_Jakarta_Sans',sans-serif]">
               {content.hero.eyebrow}
             </h2>
@@ -581,11 +599,9 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
               </button>
             )}
           </div>
-        </ScrollReveal>
 
-        {/* Main Punch Headline */}
-        <ScrollReveal yOffset={15} delay={0.1} duration={0.6} once={true}>
-          <div className="relative inline-block max-w-5xl mx-auto group">
+          {/* Main Punch Headline */}
+          <div className="animate-blur-fade-up relative inline-block max-w-5xl mx-auto group" style={{ animationDelay: '300ms' }}>
             <h1 className="font-['Bricolage_Grotesque','Syne',sans-serif] text-4xl sm:text-6xl lg:text-7xl xl:text-[80px] font-black uppercase tracking-tight text-[#4ade80] sm:leading-[1.08] drop-shadow-[0_0_35px_rgba(74,222,128,0.35)]">
               {content.hero.headline1} <br />
               {content.hero.headline2} <br />
@@ -608,11 +624,9 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
               </button>
             )}
           </div>
-        </ScrollReveal>
 
-        {/* Hero Subtitle */}
-        <ScrollReveal yOffset={15} delay={0.2} duration={0.6} once={true}>
-          <div className="relative inline-block max-w-3xl mx-auto group mt-7">
+          {/* Hero Subtitle */}
+          <div className="animate-blur-fade-up relative inline-block max-w-3xl mx-auto group mt-7" style={{ animationDelay: '450ms' }}>
             <p className="text-sm sm:text-base lg:text-lg text-neutral-300 leading-relaxed font-normal">
               {content.hero.description}
             </p>
@@ -633,12 +647,10 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
               </button>
             )}
           </div>
-        </ScrollReveal>
 
-        {/* Hero Action Buttons */}
-        <ScrollReveal yOffset={15} delay={0.3} duration={0.6} once={true}>
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-5 max-w-lg mx-auto">
-            {/* Secondary Action */}
+          {/* Hero Action Buttons */}
+          <div className="animate-blur-fade-up mt-10 flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-5 max-w-lg mx-auto w-full" style={{ animationDelay: '600ms' }}>
+            {/* Secondary Action with Liquid Glass */}
             <button 
               id="hero-portfolio-btn"
               onClick={() => {
@@ -649,7 +661,7 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
                   el?.scrollIntoView({ behavior: 'smooth' });
                 }
               }}
-              className="w-full sm:w-auto inline-flex items-center justify-center rounded-full border border-neutral-700/80 bg-neutral-900/90 hover:bg-neutral-800 hover:border-neutral-600 text-white font-black text-xs uppercase tracking-wider px-8 py-4 transition-all cursor-pointer select-none active:scale-[0.98] shadow-lg"
+              className="w-full sm:w-auto inline-flex items-center justify-center rounded-full liquid-glass hover:bg-white/10 text-white font-black text-xs uppercase tracking-wider px-8 py-4 transition-all cursor-pointer select-none active:scale-[0.98] shadow-lg"
             >
               <span>{content.hero.ctaSecondary}</span>
             </button>
@@ -666,19 +678,17 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
               </span>
             </button>
           </div>
-        </ScrollReveal>
 
-        {/* Trust Badges */}
-        <ScrollReveal delay={0.4} duration={0.6} once={true}>
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs sm:text-sm font-medium text-neutral-400">
+          {/* Trust Badges */}
+          <div className="animate-blur-fade-up mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2.5 text-xs sm:text-sm font-medium text-neutral-300" style={{ animationDelay: '750ms' }}>
             {content.hero.trustBadges.map((badge, idx) => (
-              <div key={idx} className="flex items-center gap-1.5">
+              <div key={idx} className="flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-3 py-1 rounded-full border border-white/5">
                 <Check className="h-4 w-4 text-[#22c55e]" />
                 <span>{badge}</span>
               </div>
             ))}
           </div>
-        </ScrollReveal>
+        </div>
       </section>
 
 

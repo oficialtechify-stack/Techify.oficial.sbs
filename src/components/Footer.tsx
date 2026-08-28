@@ -218,25 +218,19 @@ export default function Footer({ onNavigate, onOpenConsultation, onOpenAdminLogi
             {/* Column 3: Redes Sociais */}
             <div className="space-y-4">
               <h4 className="font-display text-xs font-black tracking-widest text-white uppercase">
-                CONECTE-SE
+                CONTATO
               </h4>
               <ul className="space-y-2.5 text-sm">
                 <li>
                   <a href="https://www.instagram.com/techify.oficial" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 hover:text-white transition-colors">
                     <Instagram className="h-3.5 w-3.5 text-[#22c55e]" />
-                    <span>Instagram</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="https://wa.me/5581995498590" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 hover:text-white transition-colors">
-                    <MessageCircle className="h-3.5 w-3.5 text-[#22c55e]" />
-                    <span>WhatsApp</span>
+                    <span>@techify.oficial</span>
                   </a>
                 </li>
                 <li>
                   <a href="mailto:oficialtechify@gmail.com" className="flex items-center gap-1.5 hover:text-white transition-colors">
                     <Mail className="h-3.5 w-3.5 text-[#22c55e]" />
-                    <span>Email</span>
+                    <span>oficialtechify@gmail.com</span>
                   </a>
                 </li>
               </ul>

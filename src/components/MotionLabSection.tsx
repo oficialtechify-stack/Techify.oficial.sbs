@@ -13,10 +13,8 @@ export const MotionLabSection: React.FC<MotionLabSectionProps> = ({
   onOpenConsultation
 }) => {
   const [iframeKey, setIframeKey] = useState(1);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
 
   // Parent-child postMessage communication bridge
   useEffect(() => {
@@ -35,15 +33,6 @@ export const MotionLabSection: React.FC<MotionLabSectionProps> = ({
     return () => window.removeEventListener('message', handleMessage);
   }, [onNavigate, onOpenConsultation]);
 
-  // Subtle pupil tracking
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 6;
-    const y = ((e.clientY - rect.top) / rect.height - 0.5) * 6;
-    setMousePos({ x, y });
-  };
-
   const handleToggleMenu = () => {
     soundFX.playClick();
     setIsMenuOpen(prev => !prev);
@@ -55,13 +44,11 @@ export const MotionLabSection: React.FC<MotionLabSectionProps> = ({
   return (
     <div
       id="techify-motion-lab-container"
-      ref={containerRef}
-      onMouseMove={handleMouseMove}
       className="relative w-full h-[calc(100vh-61px)] sm:h-[calc(100vh-65px)] bg-[#0c0b0b] text-white flex flex-col overflow-hidden select-none"
     >
-      {/* Top Header with Back Arrow, Animated Eyes, Techify Badge and Menu Button */}
+      {/* Top Header with Back Arrow, Techify Badge and Menu Button */}
       <header className="shrink-0 z-40 w-full bg-[#0c0b0b] border-b border-white/10 px-3 sm:px-6 py-2.5 flex items-center justify-between transition-all">
-        {/* Left Side: Back Arrow + Animated Eyes + Techify Badge */}
+        {/* Left Side: Back Arrow + Techify Badge */}
         <div className="flex items-center gap-2.5 sm:gap-4">
           {/* Back Arrow Button */}
           <button
@@ -75,30 +62,6 @@ export const MotionLabSection: React.FC<MotionLabSectionProps> = ({
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
-
-          {/* Interactive Animated Eyes */}
-          <div className="flex items-center -space-x-0.5">
-            {/* Left Eye */}
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-white/90 bg-[#0c0b0b] flex items-center justify-center relative overflow-hidden shadow-sm">
-              <div
-                className="w-3.5 h-3.5 sm:w-4 sm:h-4 bg-white rounded-full transition-transform duration-100 ease-out"
-                style={{
-                  transform: `translate(${mousePos.x}px, ${mousePos.y}px)`,
-                  clipPath: 'polygon(100% 50%, 45% 0%, 0% 0%, 0% 100%, 45% 100%)'
-                }}
-              />
-            </div>
-            {/* Right Eye */}
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-white/90 bg-[#0c0b0b] flex items-center justify-center relative overflow-hidden shadow-sm">
-              <div
-                className="w-3.5 h-3.5 sm:w-4 sm:h-4 bg-white rounded-full transition-transform duration-100 ease-out"
-                style={{
-                  transform: `translate(${mousePos.x}px, ${mousePos.y}px)`,
-                  clipPath: 'polygon(100% 50%, 45% 0%, 0% 0%, 0% 100%, 45% 100%)'
-                }}
-              />
-            </div>
-          </div>
 
           {/* Techify Pill Badge */}
           <div className="px-3.5 sm:px-4 py-1 rounded-full border border-white/90 bg-[#0c0b0b] text-white text-xs sm:text-sm font-normal tracking-tight flex items-center justify-center shadow-sm">

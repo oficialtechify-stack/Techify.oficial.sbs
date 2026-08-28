@@ -10,6 +10,7 @@ export interface HomeHeroData {
   ctaPrimary: string;
   ctaSecondary: string;
   trustBadges: string[];
+  videoUrl?: string;
 }
 
 export interface HomeCompetitorData {
@@ -117,7 +118,8 @@ export const DEFAULT_HOME_PAGE_CONTENT: HomePageContent = {
       "Design de Alto Impacto",
       "Marketing & Performance",
       "Inteligência Artificial"
-    ]
+    ],
+    videoUrl: "https://zxdefgavgwfxastwmmjm.supabase.co/storage/v1/object/public/assets/cinematic.mp4"
   },
   clientTicker: [
     "ASME AI",
@@ -523,4 +525,126 @@ export async function saveHomePageContentToFirestore(content: HomePageContent): 
   } catch (err) {
     console.warn('Sync to general skipped:', err);
   }
+}
+
+export interface PackageOffer {
+  id: string;
+  badge?: string;
+  popular?: boolean;
+  title: string;
+  subtitle: string;
+  originalPrice?: string;
+  currentPrice: string;
+  periodText?: string;
+  description: string;
+  features: string[];
+  designStyleHighlight?: string;
+  ctaText: string;
+  whatsappMessage: string;
+}
+
+export const DEFAULT_PACKAGES: PackageOffer[] = [
+  {
+    id: 'pacote-completo-360',
+    popular: true,
+    badge: 'OFERTA COMPLETA • MAIS VENDIDO',
+    title: 'Pacote Full Growth 360°',
+    subtitle: 'Site + Qualquer Estilo de Design + Marketing + Redes Sociais',
+    originalPrice: 'R$ 2.300',
+    currentPrice: 'R$ 580',
+    periodText: 'pagamento único / condição especial',
+    description: 'A solução digital definitiva para posicionar sua marca com autoridade imediata, design personalizado e fluxo contínuo de clientes.',
+    features: [
+      'Site Profissional ou Landing Page de Ultra Performance',
+      'Design Exclusivo em qualquer estilo visual desejado (Dark Luxury, Minimalista, Cyber, B2B Corporativo, etc.)',
+      'Estratégia & Configuração de Marketing Digital para Captação',
+      'Gestão & Criação de Conteúdo para Redes Sociais',
+      'Otimização SEO para destaque nos mecanismos de busca',
+      'Botões inteligentes de conversão direta para o WhatsApp',
+      'Painel intuitivo para controle e atualização de conteúdo',
+      'Garantia de Teste Gratuito de Design antes da entrega final'
+    ],
+    designStyleHighlight: 'Design 100% customizado no estilo da sua preferência',
+    ctaText: 'GARANTIR PACOTE COMPLETO',
+    whatsappMessage: 'Olá Techify! Quero aproveitar o Pacote Full Growth 360° (Site + Design + Marketing + Redes Sociais) de R$ 2.300 por apenas R$ 580.'
+  },
+  {
+    id: 'pacote-site-marketing',
+    popular: false,
+    badge: 'ALTA CONVERSÃO',
+    title: 'Pacote Tração & Vendas',
+    subtitle: 'Site Profissional + Estratégia de Marketing',
+    originalPrice: 'R$ 890',
+    currentPrice: 'R$ 350',
+    periodText: 'pagamento único',
+    description: 'Estrutura ágil e focada em resultados para quem deseja uma presença online elegante com geração ativa de oportunidades comerciais.',
+    features: [
+      'Site Institucional de Alta Velocidade e Responsivo (Mobile & Desktop)',
+      'Configuração Estratégica de Marketing & Tráfego de Entrada',
+      'Layout moderno com identidade visual profissional',
+      'Integração direta com WhatsApp e canais de atendimento',
+      'Carregamento instantâneo com infraestrutura moderna',
+      'Amostra Gratuita inicial para validação de estilo'
+    ],
+    designStyleHighlight: 'Estrutura otimizada para geração imediata de contatos',
+    ctaText: 'QUERO SITE + MARKETING',
+    whatsappMessage: 'Olá Techify! Gostaria de contratar o Pacote Tração & Vendas (Site + Marketing) por R$ 350.'
+  }
+];
+
+const PACKAGES_CACHE_KEY = 'techify_packages_cache';
+
+export function getCachedPackages(): PackageOffer[] {
+  try {
+    const raw = localStorage.getItem(PACKAGES_CACHE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (err) {
+    console.warn('Error reading packages cache:', err);
+  }
+  return DEFAULT_PACKAGES;
+}
+
+export function initPackagesListener(callback: (packages: PackageOffer[]) => void): () => void {
+  const unsub = onSnapshot(doc(db, "site_content", "packages"), (snap) => {
+    if (snap.exists()) {
+      const data = snap.data();
+      if (Array.isArray(data.packages) && data.packages.length > 0) {
+        localStorage.setItem(PACKAGES_CACHE_KEY, JSON.stringify(data.packages));
+        callback(data.packages);
+      }
+    }
+  }, (err) => {
+    console.warn('Packages listener offline:', err.message);
+  });
+
+  const handleCustomEvent = (e: Event) => {
+    try {
+      const customEvt = e as CustomEvent<PackageOffer[]>;
+      if (customEvt.detail) {
+        callback(customEvt.detail);
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
+
+  window.addEventListener('techify-packages-updated', handleCustomEvent);
+
+  return () => {
+    unsub();
+    window.removeEventListener('techify-packages-updated', handleCustomEvent);
+  };
+}
+
+export async function savePackagesToFirestore(packages: PackageOffer[]): Promise<void> {
+  localStorage.setItem(PACKAGES_CACHE_KEY, JSON.stringify(packages));
+  window.dispatchEvent(new CustomEvent('techify-packages-updated', { detail: packages }));
+
+  await setDoc(doc(db, "site_content", "packages"), {
+    packages,
+    updatedAt: new Date().toISOString()
+  }, { merge: true });
 }
