@@ -1,0 +1,120 @@
+{
+  "entities": {
+    "consultas": {
+      "title": "Consultas Agendadas",
+      "description": "Agendamentos de consultas digitais realizados pelos usuários",
+      "properties": {
+        "nome": { "type": "string" },
+        "email": { "type": "string" },
+        "whatsapp": { "type": "string" },
+        "servico": { "type": "string" },
+        "data": { "type": "string" },
+        "horario": { "type": "string" },
+        "resumo": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["nome", "email", "whatsapp", "servico", "data", "horario"]
+    },
+    "candidaturas": {
+      "title": "Candidaturas",
+      "description": "Candidaturas a vagas enviadas por profissionais",
+      "properties": {
+        "nome": { "type": "string" },
+        "email": { "type": "string" },
+        "telefone": { "type": "string" },
+        "vaga": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["nome", "email", "vaga"]
+    },
+    "leads": {
+      "title": "Leads",
+      "description": "Leads capturados e gerenciados no painel",
+      "properties": {
+        "nome": { "type": "string" },
+        "segmento": { "type": "string" },
+        "email": { "type": "string" },
+        "telefone": { "type": "string" },
+        "instagram": { "type": "string" },
+        "interesses": { "type": "string" },
+        "status": { "type": "string" },
+        "emailsEnviados": { "type": "number" },
+        "dataEnvio": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["nome", "email"]
+    },
+    "parceiros": {
+      "title": "Parceiros",
+      "description": "Lista de parceiros cadastrados",
+      "properties": {
+        "nome": { "type": "string" },
+        "empresa": { "type": "string" },
+        "email": { "type": "string" },
+        "telefone": { "type": "string" },
+        "categoria": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["nome", "email"]
+    },
+    "vagas": {
+      "title": "Vagas de Emprego",
+      "description": "Vagas abertas publicadas pela equipe Techify",
+      "properties": {
+        "title": { "type": "string" },
+        "category": { "type": "string" },
+        "type": { "type": "string" },
+        "location": { "type": "string" },
+        "description": { "type": "string" },
+        "requirements": { "type": "array" },
+        "benefits": { "type": "array" },
+        "salary": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["title", "category", "type", "location", "description"]
+    },
+    "portfolio": {
+      "title": "Portfólio de Sites",
+      "description": "Projetos de sites publicados no portfólio Techify",
+      "properties": {
+        "title": { "type": "string" },
+        "category": { "type": "string" },
+        "description": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "liveUrl": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["title", "category", "description"]
+    },
+    "newsletter": {
+      "title": "Assinantes da Newsletter",
+      "description": "Lista de e-mails de leads e visitantes que assinaram a newsletter da Techify",
+      "properties": {
+        "email": { "type": "string" },
+        "origem": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["email", "createdAt"]
+    },
+    "apps": {
+      "title": "Aplicativos Techify",
+      "description": "Aplicativos, links, imagens e legendas publicados no ecossistema Techify",
+      "properties": {
+        "title": { "type": "string" },
+        "subtitle": { "type": "string" },
+        "description": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "linkUrl": { "type": "string" },
+        "category": { "type": "string" },
+        "status": { "type": "string" },
+        "tags": { "type": "array" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["title", "subtitle", "linkUrl"]
+    }
+  }
+}

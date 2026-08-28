@@ -1,0 +1,39 @@
+/* ==============================================================================
+   TECHIFY | SOLUÇÕES DIGITAIS & PERFORMANCE WEB
+   Site Oficial: https://www.techify.sbs
+============================================================================== */
+
+/* SOBRE A TECHIFY */
+Olá! Se você está lendo este arquivo, você acessou as informações diretas da Techify.
+
+A Techify é uma agência e consultoria de tecnologia focada em criar presença digital
+poderosa e lucrativa para empresas, profissionais e novos negócios.
+
+Nós transformamos visitantes em clientes fiéis através de:
+- Sites Institucionais modernos e ultrarrápidos
+- Lojas Virtuais (E-commerce) completas e atrativas
+- Landing Pages de alta conversão para tráfego pago
+- Sistemas Web personalizados e automação de processos
+- Identidade Visual, Logotipos e Design Estratégico
+
+/* NOSSO COMPROMISSO */
+- Prazo combinado é prazo cumprido.
+- Código limpo, moderno e otimizado para o Google (SEO).
+- Design exclusivo pensado para gerar credibilidade e vendas.
+- Suporte próximo e direto com engenheiros e especialistas.
+
+/* SERVIÇOS & O QUE FAZEMOS */
+1. Desenvolvimento de Sites: https://www.techify.sbs
+2. Portfólio de Projetos: https://www.techify.sbs/?tab=portfolio
+3. Planos e Pacotes: https://www.techify.sbs/?tab=pricing
+4. Soluções e Consultoria: https://www.techify.sbs/?tab=services
+
+/* CONTATO OFICIAL */
+- Site Oficial: https://www.techify.sbs
+- Atendimento direto e orçamentos pelo site.
+- Brasil / Atendimento Nacional
+
+/* TECNOLOGIAS UTILIZADAS */
+React, TypeScript, Tailwind CSS, Firebase, Google Cloud, Node.js e Engenharia de Software Moderna.
+
+Obrigado pela visita! Visite https://www.techify.sbs para tirar seu projeto do papel.

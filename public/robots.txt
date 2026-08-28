@@ -1,0 +1,61 @@
+# ==============================================================================
+# ROBOTS.TXT - TECHIFY DIGITAL SOLUTIONS
+# Domínio Oficial: https://www.techify.sbs
+# ==============================================================================
+
+# Instruções Globais para Motores de Busca e Rastreadores
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+
+# Motores de Busca Principais
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+User-agent: Yandex
+Allow: /
+
+# Rastreadores de Inteligência Artificial & LLMs (Indexação Autorizada)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Cohere-ai
+Allow: /
+
+# Arquivos de Informações para IAs e Humanos
+# Documentação Completa para IA: https://www.techify.sbs/llms.txt
+# Informações para Humanos: https://www.techify.sbs/humans.txt
+# Mapa do Site: https://www.techify.sbs/sitemap.xml
+
+Sitemap: https://www.techify.sbs/sitemap.xml
