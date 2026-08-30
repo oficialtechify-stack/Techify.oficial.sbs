@@ -165,17 +165,19 @@ const ToastCard: React.FC<ToastCardProps> = ({
   useEffect(() => {
     if (!isAutoDismiss || isPaused) return;
 
-    const interval = 50;
+    const startTime = Date.now();
+    const startRemaining = remainingTime;
+
     const timer = setInterval(() => {
-      setRemainingTime((prev) => {
-        if (prev <= interval) {
-          clearInterval(timer);
-          onDismiss(item.id);
-          return 0;
-        }
-        return prev - interval;
-      });
-    }, interval);
+      const elapsed = Date.now() - startTime;
+      const nextRemaining = Math.max(0, startRemaining - elapsed);
+      setRemainingTime(nextRemaining);
+
+      if (nextRemaining <= 0) {
+        clearInterval(timer);
+        onDismiss(item.id);
+      }
+    }, 50);
 
     return () => clearInterval(timer);
   }, [isAutoDismiss, isPaused, item.id, onDismiss]);

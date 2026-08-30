@@ -126,11 +126,12 @@ export function getCachedFeedbacks(): FeedbackImage[] {
 }
 
 export async function saveFeedbacksToFirestore(feedbacks: FeedbackImage[]): Promise<void> {
-  localStorage.setItem(FEEDBACK_CACHE_KEY, JSON.stringify(feedbacks));
-  window.dispatchEvent(new CustomEvent('techify-feedbacks-updated', { detail: feedbacks }));
+  const sanitized = JSON.parse(JSON.stringify(feedbacks));
+  localStorage.setItem(FEEDBACK_CACHE_KEY, JSON.stringify(sanitized));
+  window.dispatchEvent(new CustomEvent('techify-feedbacks-updated', { detail: sanitized }));
   
   await setDoc(doc(db, "site_content", "feedbacks"), {
-    feedbacks,
+    feedbacks: sanitized,
     updatedAt: new Date().toISOString()
   }, { merge: true });
 }
@@ -162,11 +163,12 @@ export function getCachedGeneralContent(): SiteGeneralContent {
 }
 
 export async function saveTeamMembersToFirestore(members: TeamMember[]): Promise<void> {
-  localStorage.setItem(TEAM_CACHE_KEY, JSON.stringify(members));
-  window.dispatchEvent(new CustomEvent('techify-team-updated', { detail: members }));
+  const sanitized = JSON.parse(JSON.stringify(members));
+  localStorage.setItem(TEAM_CACHE_KEY, JSON.stringify(sanitized));
+  window.dispatchEvent(new CustomEvent('techify-team-updated', { detail: sanitized }));
   
   await setDoc(doc(db, "site_content", "team"), {
-    members,
+    members: sanitized,
     updatedAt: new Date().toISOString()
   }, { merge: true });
 }
@@ -174,12 +176,13 @@ export async function saveTeamMembersToFirestore(members: TeamMember[]): Promise
 export async function saveGeneralContentToFirestore(content: Partial<SiteGeneralContent>): Promise<void> {
   const current = getCachedGeneralContent();
   const updated = { ...current, ...content };
-  localStorage.setItem(CONTENT_CACHE_KEY, JSON.stringify(updated));
-  window.dispatchEvent(new CustomEvent('techify-content-updated', { detail: updated }));
+  const sanitized = JSON.parse(JSON.stringify(updated));
+  localStorage.setItem(CONTENT_CACHE_KEY, JSON.stringify(sanitized));
+  window.dispatchEvent(new CustomEvent('techify-content-updated', { detail: sanitized }));
 
   // Save to general document
   await setDoc(doc(db, "site_content", "general"), {
-    ...updated,
+    ...sanitized,
     updatedAt: new Date().toISOString()
   }, { merge: true });
 

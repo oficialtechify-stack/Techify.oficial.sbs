@@ -89,7 +89,7 @@ twq('config','ocd0n');
 
 
 <style id="techify-centered-projects-style">
-  /* COMPACT 3-COLUMN HORIZONTAL GRID FOR ALL PROJECT IMPLEMENTATIONS */
+  /* EXACT JSON SPECIFICATION: 3-COLUMN CARDS (380px, 30-32%), 16:9 MEDIA, 14px LEFT-ALIGNED TEXT (#e0e0e0), 26px 700 TITLE (#1a1a1a) */
   .lesson-item.is-implementation,
   .lesson-item.is-implementation.is-last {
     height: auto !important;
@@ -103,7 +103,7 @@ twq('config','ocd0n');
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
-    padding: 2rem 1.5rem 4rem 1.5rem !important;
+    padding: 3.5rem 1.5rem 4.5rem 1.5rem !important;
     width: 100% !important;
     margin: 0 auto !important;
     overflow: visible !important;
@@ -123,17 +123,19 @@ twq('config','ocd0n');
     overflow: visible !important;
     transform: none !important;
     width: 100% !important;
-    max-width: 960px !important;
+    max-width: 1240px !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
+    box-sizing: border-box !important;
   }
 
+  /* Título Principal ("EXEMPLOS DE IMPLEMENTAÇÃO"): 26px, font-weight 700, letter-spacing 1.2px, color #1a1a1a, text-align center */
   .title-wrap.is-implementation {
     width: 100% !important;
     text-align: center !important;
-    padding: 1.75rem 1rem 1.75rem 1rem !important;
+    padding: 0 1rem 2.25rem 1rem !important;
     margin: 0 auto !important;
     display: flex !important;
     justify-content: center !important;
@@ -143,48 +145,60 @@ twq('config','ocd0n');
   .title-wrap.is-implementation .h3 {
     text-align: center !important;
     margin: 0 auto !important;
-    font-size: 1.35rem !important;
-    font-weight: 800 !important;
-    letter-spacing: -0.01em !important;
+    font-size: 26px !important;
+    font-weight: 700 !important;
+    letter-spacing: 1.2px !important;
     text-transform: uppercase !important;
-    color: #111111 !important;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    color: #1a1a1a !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
   }
 
+  /* Container dos 3 Cards: 3 cards dispostos em linha (Grid / Flexbox) */
   .list-wrap.is-implementation {
     display: grid !important;
-    grid-template-columns: repeat(3, 1fr) !important;
-    align-items: stretch !important;
-    justify-content: center !important;
-    gap: 1.1rem !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 1.5rem !important;
     margin: 0 auto !important;
     width: 100% !important;
-    max-width: 940px !important;
+    max-width: 1200px !important;
     padding: 0 !important;
     transform: none !important;
     position: relative !important;
     box-sizing: border-box !important;
+    align-items: stretch !important;
+    justify-items: center !important;
   }
 
-  @media (max-width: 860px) {
+  @media (max-width: 1024px) {
     .list-wrap.is-implementation {
-      grid-template-columns: 1fr !important;
-      max-width: 380px !important;
-      gap: 1.25rem !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      max-width: 780px !important;
+      gap: 1.35rem !important;
     }
   }
 
+  @media (max-width: 640px) {
+    .list-wrap.is-implementation {
+      grid-template-columns: minmax(0, 1fr) !important;
+      max-width: 380px !important;
+      gap: 1.35rem !important;
+    }
+  }
+
+  /* Cards (Container Externo Escuro): width 380px (30% a 32%), border_radius 20px, background_color #141416 */
   .project-card-item,
   .list-wrap.is-implementation > div,
   .list-wrap.is-implementation .card-link {
     width: 100% !important;
-    min-height: 310px !important;
+    max-width: 380px !important;
+    min-height: auto !important;
     position: relative !important;
     top: 0 !important;
     left: 0 !important;
     right: 0 !important;
     bottom: 0 !important;
     transform: none !important;
+    transform-origin: center center !important;
     margin: 0 auto !important;
     opacity: 1 !important;
     display: flex !important;
@@ -193,30 +207,33 @@ twq('config','ocd0n');
     justify-content: flex-start !important;
     box-sizing: border-box !important;
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    background-color: #141416 !important;
     background: #141416 !important;
-    border-radius: 18px !important;
-    padding: 0.9rem 0.9rem 1.2rem 0.9rem !important;
-    box-shadow: 0 10px 25px -6px rgba(0, 0, 0, 0.3) !important;
-    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    border-radius: 20px !important;
+    padding: 1.25rem 1.25rem 1.5rem 1.25rem !important;
+    box-shadow: 0 14px 32px -6px rgba(0, 0, 0, 0.48) !important;
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease, border-color 0.22s ease !important;
   }
 
   .project-card-item:hover,
   .list-wrap.is-implementation > div:hover {
-    transform: translateY(-3px) !important;
-    box-shadow: 0 16px 32px -6px rgba(0, 0, 0, 0.4) !important;
+    transform: translateY(-4px) !important;
+    border-color: rgba(59, 130, 246, 0.45) !important;
+    box-shadow: 0 18px 36px -6px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(59, 130, 246, 0.25) !important;
   }
 
+  /* Imagens / Vídeos Internos dos Cards: aspect_ratio 16:9 (~320px x 180px) */
   .card-video-item {
     width: 100% !important;
     height: auto !important;
-    aspect-ratio: 16 / 10.5 !important;
+    aspect-ratio: 16 / 9 !important;
     border: none !important;
-    border-radius: 12px !important;
+    border-radius: 14px !important;
     position: relative !important;
     overflow: hidden !important;
-    margin: 0 0 0.85rem 0 !important;
-    box-shadow: none !important;
-    background-color: #000 !important;
+    margin: 0 0 1.2rem 0 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+    background-color: #070709 !important;
     flex-shrink: 0 !important;
   }
 
@@ -227,7 +244,7 @@ twq('config','ocd0n');
     top: 0 !important;
     left: 0 !important;
     margin: 0 !important;
-    border-radius: 12px !important;
+    border-radius: 14px !important;
     overflow: hidden !important;
   }
 
@@ -236,18 +253,20 @@ twq('config','ocd0n');
     height: 100% !important;
     object-fit: cover !important;
     display: block !important;
-    border-radius: 12px !important;
+    border-radius: 14px !important;
   }
 
   .card-video-img,
-  .a-lesson-img {
+  .card-video-item .a-lesson-img,
+  .card-video-item img {
     width: 100% !important;
     height: 100% !important;
     object-fit: cover !important;
     position: absolute !important;
     top: 0 !important;
     left: 0 !important;
-    border-radius: 12px !important;
+    border-radius: 14px !important;
+    display: block !important;
   }
 
   .flex-display.is-implementation {
@@ -265,20 +284,115 @@ twq('config','ocd0n');
   .text-wrap.is-implementation {
     width: 100% !important;
     height: auto !important;
+    display: block !important;
     text-align: left !important;
     margin: 0 !important;
     padding: 0 !important;
   }
 
-  .text-wrap.is-implementation .p3 {
+  /* Textos Descritivos (Rodapé dos Cards): font_size 14px, line_height 1.5, color #e0e0e0, text_align left */
+  .text-wrap.is-implementation .p3,
+  .project-card-item .p3,
+  .list-wrap.is-implementation .p3,
+  .project-card-item p {
     text-align: left !important;
-    font-size: 0.78rem !important;
-    line-height: 1.45 !important;
-    color: #ffffff !important;
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    color: #e0e0e0 !important;
     font-weight: 400 !important;
     margin: 0 !important;
-    opacity: 0.95 !important;
+    padding: 0 !important;
+    opacity: 1 !important;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+    letter-spacing: normal !important;
+    text-transform: none !important;
+    transform: none !important;
+    max-width: 100% !important;
+    word-break: normal !important;
+    white-space: normal !important;
+  }
+
+  /* Neutralize Webflow overlay in implementation sections */
+  .lesson-item.is-implementation .overlay-bg,
+  .overlay-bg.is-implementation {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  @media (max-width: 640px) {
+    .project-card-item,
+    .list-wrap.is-implementation > div,
+    .list-wrap.is-implementation .card-link {
+      max-width: 380px !important;
+      padding: 1.1rem 1.1rem 1.35rem 1.1rem !important;
+      border-radius: 18px !important;
+    }
+    .card-video-item,
+    .card-video.is-implementation,
+    .card-video.is-implementation video,
+    .card-video-img,
+    .card-video-item .a-lesson-img {
+      border-radius: 12px !important;
+    }
+    .text-wrap.is-implementation .p3,
+    .project-card-item .p3 {
+      font-size: 14px !important;
+      line-height: 1.5 !important;
+    }
+  }
+
+  /* Center alignment override for main implementation lessons */
+  .lesson.is-easing,
+  .lesson.is-delay,
+  .lesson.is-fade,
+  .lesson.is-morph,
+  .lesson.is-masking,
+  .lesson.is-dimension,
+  .lesson.is-parallax {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+  }
+
+  /* Techniques pills styling */
+  .list-item.is-techniques {
+    white-space: nowrap !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  .list-item.is-techniques > div {
+    white-space: nowrap !important;
+    font-size: clamp(0.7rem, 2.2vw, 1.1rem) !important;
+    text-transform: uppercase !important;
+    font-weight: 700 !important;
+  }
+
+  /* Example scrolling banner styling to fit completely */
+  .scrolling-text.is-lessons,
+  .scrolling-text.is-lessons .flex-shrink-none,
+  .scrolling-text {
+    font-size: clamp(1.4rem, 4.2vw, 2.8rem) !important;
+    white-space: nowrap !important;
+    text-align: center !important;
+    width: auto !important;
+    max-width: 100% !important;
+    letter-spacing: -0.01em !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+  .lesson-item.is-examples,
+  .sticky-container.is-examples {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    overflow: hidden !important;
   }
 
   /* Footer social links styling */
@@ -663,7 +777,7 @@ twq('config','ocd0n');
     <source src="https://cdn.zajno.com/dev/motion/videos/slider/optimise/5_Music_og_H.264.mp4" type="video/mp4">
 </video></div></div><div class="section-slide-text"><div class="p3">A animação orienta o olhar de um elemento visual estratégico para o próximo.</div></div></div></div><div class="section-slide ui-slide"><div class="section-slide-wrap"><div class="section-slide-img-wrap"><div class="section-slide-video w-embed"><video widht="100%" height="100%" preload="none" loop="true" muted playsinline>
     <source src="https://cdn.zajno.com/dev/motion/videos/slider/optimise/6_Eyeloader_og_H.264.mp4" type="video/mp4">
-</video></div></div><div class="section-slide-text"><div class="p3">A animação revela as informações visuais da tela com cadência e elegância.</div></div></div></div></div></div></div></div></div></section></div><div class="nav nav-light"><section id="interactive" class="section is-interactive"><div class="content-wrap is-interactive"><h2 class="h2">Interatividade</h2></div><div class="height-section is-interactive"><div class="track-flex is-interactive"><div class="track-padding is-interactive"><div class="horizontal-item"><div class="h-item-content"><div class="p3-bold">Existem dois tipos de <br/>interfaces interativas:</div><div class="p3"><span class="p3-bold">Em tempo real:</span> respondem no instante em que o usuário interage <br/>com elas.</div><div class="p3"><span class="p3-bold">Posteriormente:</span> respondem com fluidez após a conclusão da ação.</div></div></div><div class="horizontal-item"><div class="h-item-content"><div class="p3">Em tempo real</div></div><div id="canvas" class="item-canvas"></div></div><div class="horizontal-item"><div class="h-item-content"><div class="p3">Posteriormente</div></div><div data-is-ix2-target="1" class="h-item-lottie" data-w-id="7a61b557-4dcd-92ad-1f18-47267d831637" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/64187ee0d634cb715e836e02_not_real_time.json" data-loop="0" data-direction="1" data-autoplay="0" data-renderer="svg" data-default-duration="3.433333333333333" data-duration="0" data-loading="eager" data-ix2-initial-state="0"></div><div id="notrealtime" data-w-id="7a61b557-4dcd-92ad-1f18-47267d831638" class="h-lottie-hover"></div></div></div></div></div></section></div><div class="nav nav-dark"><section id="techniques" data-w-id="7a61b557-4dcd-92ad-1f18-47267d83163a" class="section is-techniques"><div class="list-wrap is-techniques"><div data-w-id="7a61b557-4dcd-92ad-1f18-47267d83163c" class="list-item is-techniques first"><div>Técnicas</div></div><div data-w-id="7a61b557-4dcd-92ad-1f18-47267d83163f" class="list-item is-techniques second"><div>de animação</div></div><div data-w-id="7a61b557-4dcd-92ad-1f18-47267d831642" class="list-item is-techniques third"><div>de interface</div></div></div><div class="bg-divider is-techniques"></div><div data-w-id="7a61b557-4dcd-92ad-1f18-47267d831646" class="bg-image is-star first"></div><div data-w-id="7a61b557-4dcd-92ad-1f18-47267d831647" class="bg-image is-star second"></div><div class="content-wrap is-techniques"><div data-w-id="7a61b557-4dcd-92ad-1f18-47267d831649" class="text-wrap is-techniques"><div class="p1 white">Cada técnica de animação utiliza princípios consolidados para tornar produtos digitais mais envolventes e intuitivos. Na Techify, adaptamos essas regras com precisão cirúrgica para a era moderna.</div></div></div></section></div><section id="lessons" class="section is-lessons"><section id="easing" class="nav nav-color"><div class="lesson is-easing"><div class="lesson-list is-easing"><div class="lesson-item"><div class="hero-animation"><div class="bg-image is-star-xs is-left"></div><div class="hero-visual" data-w-id="56eef1fd-0a76-3b43-6a63-35191eed5901" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/6437f51664f926cef5e65c8a_1_easing_visual.json" data-loop="1" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-default-duration="3.3333333333333335" data-duration="0" data-loading="eager"></div><div class="bg-image is-star-xs is-right"></div></div><div class="hero-content"><div class="flex-display is-hero"><div class="label-1 is-lesson">1</div><div class="hero-title"><h4 class="h4">FUNDAMENTOS DE EASING</h4></div></div><div class="text-wrap is-hero-desc"><div class="p2">Na natureza, a velocidade nunca é linear: os objetos aceleram ao iniciar o movimento e desaceleram ao parar. O easing é a técnica que reproduz essa física no motion design.</div></div></div><div class="splide-container"><div class="hero_right"><div class="splide splide2"><div class="splide__track"><div class="splide__list"><div class="splide__slide"><div class="slide-inner-label">Linear</div><div class="slide-lottie active" data-w-id="3919e4fd-38c2-4bc6-9904-10e4b58a8ce2" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/63dbc8b62b483f54221ad660_linear.json" data-loop="1" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-duration="0" data-loading="eager"></div><div class="slide-lottie not-active" data-w-id="3919e4fd-38c2-4bc6-9904-10e4b58a8ce3" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/63dbc8b62b483f54221ad660_linear.json" data-loop="0" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-duration="0" data-loading="eager"></div><div class="text1">No easing linear, o objeto se move em velocidade constante, sem aceleração ou desaceleração.</div></div><div class="splide__slide"><div class="slide-inner-label">Ease Suave</div><div class="slide-lottie active" data-w-id="3919e4fd-38c2-4bc6-9904-10e4b58a8ce9" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/63c5b8b2cd7afa60ac078553_ease.json" data-loop="1" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-duration="0" data-loading="eager"></div><div class="slide-lottie not-active" data-w-id="3919e4fd-38c2-4bc6-9904-10e4b58a8cea" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/63c5b8b2cd7afa60ac078553_ease.json" data-loop="0" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-duration="0" data-loading="eager"></div><div class="text1">Aqui o objeto acelera suavemente no início e desacelera de forma sutil no final.</div></div><div class="splide__slide"><div class="slide-inner-label">Ease-in (Aceleração)</div><div class="slide-lottie active" data-w-id="3919e4fd-38c2-4bc6-9904-10e4b58a8cf0" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/63dd090b6103039af6cce1b8_ease_in.json" data-loop="1" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-duration="0" data-loading="eager"></div><div class="slide-lottie not-active" data-w-id="3919e4fd-38c2-4bc6-9904-10e4b58a8cf1" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/63dd090b6103039af6cce1b8_ease_in.json" data-loop="0" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-duration="0" data-loading="eager"></div><div class="text1">Inicia o movimento lentamente e ganha velocidade progressivamente.</div></div><div class="splide__slide"><div class="slide-inner-label">Ease-out (Desaceleração)</div><div class="slide-lottie active" data-w-id="3919e4fd-38c2-4bc6-9904-10e4b58a8cf7" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/63dd0b66b2f0831f5163e696_ease_out.json" data-loop="1" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-duration="0" data-loading="eager"></div><div class="slide-lottie not-active" data-w-id="3919e4fd-38c2-4bc6-9904-10e4b58a8cf8" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/63dd0b66b2f0831f5163e696_ease_out.json" data-loop="0" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-duration="0" data-loading="eager"></div><div class="text1">O oposto do ease-in: inicia rapidamente e desacelera com suavidade ao final.</div></div><div class="splide__slide"><div class="slide-inner-label">Cúbico (Bézier)</div><div class="slide-lottie active" data-w-id="3919e4fd-38c2-4bc6-9904-10e4b58a8cfe" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/63dd0b9fdcb85a2de10cbabf_cubic.json" data-loop="1" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-duration="0" data-loading="eager"></div><div class="slide-lottie not-active" data-w-id="3919e4fd-38c2-4bc6-9904-10e4b58a8cff" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/63dd0b9fdcb85a2de10cbabf_cubic.json" data-loop="0" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-duration="0" data-loading="eager"></div><div class="text1">Similar ao ease, porém com períodos estendidos de aceleração e desaceleração, fazendo o centro da trajetória fluir com maior dinamismo.</div></div></div></div><div class="splide__arrows"><div class="embed w-embed"><button class="splide__arrow splide__arrow--prev">
+</video></div></div><div class="section-slide-text"><div class="p3">A animação revela as informações visuais da tela com cadência e elegância.</div></div></div></div></div></div></div></div></div></section></div><div class="nav nav-light"><section id="interactive" class="section is-interactive"><div class="content-wrap is-interactive"><h2 class="h2">Interatividade</h2></div><div class="height-section is-interactive"><div class="track-flex is-interactive"><div class="track-padding is-interactive"><div class="horizontal-item"><div class="h-item-content"><div class="p3-bold">Existem dois tipos de <br/>interfaces interativas:</div><div class="p3"><span class="p3-bold">Em tempo real:</span> respondem no instante em que o usuário interage <br/>com elas.</div><div class="p3"><span class="p3-bold">Posteriormente:</span> respondem com fluidez após a conclusão da ação.</div></div></div><div class="horizontal-item"><div class="h-item-content"><div class="p3">Em tempo real</div></div><div id="canvas" class="item-canvas"></div></div><div class="horizontal-item"><div class="h-item-content"><div class="p3">Posteriormente</div></div><div data-is-ix2-target="1" class="h-item-lottie" data-w-id="7a61b557-4dcd-92ad-1f18-47267d831637" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/64187ee0d634cb715e836e02_not_real_time.json" data-loop="0" data-direction="1" data-autoplay="0" data-renderer="svg" data-default-duration="3.433333333333333" data-duration="0" data-loading="eager" data-ix2-initial-state="0"></div><div id="notrealtime" data-w-id="7a61b557-4dcd-92ad-1f18-47267d831638" class="h-lottie-hover"></div></div></div></div></div></section></div><div class="nav nav-dark"><section id="techniques" data-w-id="7a61b557-4dcd-92ad-1f18-47267d83163a" class="section is-techniques"><div class="list-wrap is-techniques"><div data-w-id="7a61b557-4dcd-92ad-1f18-47267d83163c" class="list-item is-techniques first"><div>Técnicas</div></div><div data-w-id="7a61b557-4dcd-92ad-1f18-47267d83163f" class="list-item is-techniques second"><div>de animação</div></div><div data-w-id="7a61b557-4dcd-92ad-1f18-47267d831642" class="list-item is-techniques third"><div>interface</div></div></div><div class="bg-divider is-techniques"></div><div data-w-id="7a61b557-4dcd-92ad-1f18-47267d831646" class="bg-image is-star first"></div><div data-w-id="7a61b557-4dcd-92ad-1f18-47267d831647" class="bg-image is-star second"></div><div class="content-wrap is-techniques"><div data-w-id="7a61b557-4dcd-92ad-1f18-47267d831649" class="text-wrap is-techniques"><div class="p1 white">Cada técnica de animação utiliza princípios consolidados para tornar produtos digitais mais envolventes e intuitivos. Na Techify, adaptamos essas regras com precisão cirúrgica para a era moderna.</div></div></div></section></div><section id="lessons" class="section is-lessons"><section id="easing" class="nav nav-color"><div class="lesson is-easing"><div class="lesson-list is-easing"><div class="lesson-item"><div class="hero-animation"><div class="bg-image is-star-xs is-left"></div><div class="hero-visual" data-w-id="56eef1fd-0a76-3b43-6a63-35191eed5901" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/6437f51664f926cef5e65c8a_1_easing_visual.json" data-loop="1" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-default-duration="3.3333333333333335" data-duration="0" data-loading="eager"></div><div class="bg-image is-star-xs is-right"></div></div><div class="hero-content"><div class="flex-display is-hero"><div class="label-1 is-lesson">1</div><div class="hero-title"><h4 class="h4">FUNDAMENTOS DE EASING</h4></div></div><div class="text-wrap is-hero-desc"><div class="p2">Na natureza, a velocidade nunca é linear: os objetos aceleram ao iniciar o movimento e desaceleram ao parar. O easing é a técnica que reproduz essa física no motion design.</div></div></div><div class="splide-container"><div class="hero_right"><div class="splide splide2"><div class="splide__track"><div class="splide__list"><div class="splide__slide"><div class="slide-inner-label">Linear</div><div class="slide-lottie active" data-w-id="3919e4fd-38c2-4bc6-9904-10e4b58a8ce2" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/63dbc8b62b483f54221ad660_linear.json" data-loop="1" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-duration="0" data-loading="eager"></div><div class="slide-lottie not-active" data-w-id="3919e4fd-38c2-4bc6-9904-10e4b58a8ce3" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/63dbc8b62b483f54221ad660_linear.json" data-loop="0" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-duration="0" data-loading="eager"></div><div class="text1">No easing linear, o objeto se move em velocidade constante, sem aceleração ou desaceleração.</div></div><div class="splide__slide"><div class="slide-inner-label">Ease Suave</div><div class="slide-lottie active" data-w-id="3919e4fd-38c2-4bc6-9904-10e4b58a8ce9" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/63c5b8b2cd7afa60ac078553_ease.json" data-loop="1" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-duration="0" data-loading="eager"></div><div class="slide-lottie not-active" data-w-id="3919e4fd-38c2-4bc6-9904-10e4b58a8cea" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/63c5b8b2cd7afa60ac078553_ease.json" data-loop="0" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-duration="0" data-loading="eager"></div><div class="text1">Aqui o objeto acelera suavemente no início e desacelera de forma sutil no final.</div></div><div class="splide__slide"><div class="slide-inner-label">Ease-in (Aceleração)</div><div class="slide-lottie active" data-w-id="3919e4fd-38c2-4bc6-9904-10e4b58a8cf0" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/63dd090b6103039af6cce1b8_ease_in.json" data-loop="1" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-duration="0" data-loading="eager"></div><div class="slide-lottie not-active" data-w-id="3919e4fd-38c2-4bc6-9904-10e4b58a8cf1" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/63dd090b6103039af6cce1b8_ease_in.json" data-loop="0" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-duration="0" data-loading="eager"></div><div class="text1">Inicia o movimento lentamente e ganha velocidade progressivamente.</div></div><div class="splide__slide"><div class="slide-inner-label">Ease-out (Desaceleração)</div><div class="slide-lottie active" data-w-id="3919e4fd-38c2-4bc6-9904-10e4b58a8cf7" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/63dd0b66b2f0831f5163e696_ease_out.json" data-loop="1" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-duration="0" data-loading="eager"></div><div class="slide-lottie not-active" data-w-id="3919e4fd-38c2-4bc6-9904-10e4b58a8cf8" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/63dd0b66b2f0831f5163e696_ease_out.json" data-loop="0" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-duration="0" data-loading="eager"></div><div class="text1">O oposto do ease-in: inicia rapidamente e desacelera com suavidade ao final.</div></div><div class="splide__slide"><div class="slide-inner-label">Cúbico (Bézier)</div><div class="slide-lottie active" data-w-id="3919e4fd-38c2-4bc6-9904-10e4b58a8cfe" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/63dd0b9fdcb85a2de10cbabf_cubic.json" data-loop="1" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-duration="0" data-loading="eager"></div><div class="slide-lottie not-active" data-w-id="3919e4fd-38c2-4bc6-9904-10e4b58a8cff" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/63dd0b9fdcb85a2de10cbabf_cubic.json" data-loop="0" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-duration="0" data-loading="eager"></div><div class="text1">Similar ao ease, porém com períodos estendidos de aceleração e desaceleração, fazendo o centro da trajetória fluir com maior dinamismo.</div></div></div></div><div class="splide__arrows"><div class="embed w-embed"><button class="splide__arrow splide__arrow--prev">
 	<svg width="100%" height="100%" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
   <g clip-path="url(#clip0_2062_28771)">
   <path fill-rule="evenodd" clip-rule="evenodd" d="M14.8812 0L0 16L14.8812 32L17.0745 29.9594L5.48433 17.498H32V14.502H5.48433L17.0745 2.04055L14.8812 0Z" fill="currentColor"/>
@@ -757,52 +871,52 @@ twq('config','ocd0n');
     <source src="https://cdn.zajno.com/dev/motion/videos/Lessons/lesson-1/1_CAR_EASING_COMPARISON_2х_H.264.mp4" type="video/mp4">
 </video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/64410b27a34d276b64caae3c_1_CAR_EASING_COMPARISON_00000.webp" loading="eager" alt="" class="a-lesson-img"/></div><div class="a-lesson-text-wrap"><div class="p3">Na animação, esse efeito é alcançado inserindo mais quadros no início e no fim da ação, conferindo peso e naturalidade aos elementos.</div></div></div></div></div></div><div class="classic-anim_sideimg is-right is-easing"></div></div></div></div></section><section id="delay" class="nav nav-color"><div class="lesson is-delay"><div class="lesson-list"><div class="lesson-item"><div class="hero-animation"><div class="bg-image is-star-xs is-left"></div><div class="hero-visual" data-w-id="5a428c62-b65e-b2da-6ab0-f82b6471c740" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/6437e56d2465d377269a6362_delay.json" data-loop="1" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-default-duration="1.8333333333333333" data-duration="0" data-loading="eager"></div><div class="bg-image is-star-xs is-right"></div></div><div class="hero-content"><div class="flex-display is-hero"><div class="label-1 is-lesson">2</div><div class="hero-title"><h4 class="h4">OFFSET <br/>E DELAY</h4></div></div><div class="text-wrap is-hero-desc"><div class="p2">Um pequeno intervalo entre elementos cria uma sensação tátil de camadas e fluidez, direcionando a atenção do usuário e estabelecendo uma hierarquia visual intuitiva.</div></div></div></div><div class="lesson-item is-implementation"><div class="title-wrap is-implementation"><h3 class="h3">EXEMPLOS DE IMPLEMENTAÇÃO</h3></div><div class="sticky-container is-implementation"><div class="list-wrap is-implementation"><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
     <source src="https://cdn.zajno.com/dev/motion/videos/Lessons/lesson-2/Flower+Delivery_desktop_H.264.mp4" type="video/mp4">
-</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0a552563701d949b511a_Flower%20Delivery_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">Aqui, os elementos aparecem em cascata progressiva, adicionando fluidez e sensação tátil ao movimento.</div></div></div></div><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
+</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0a552563701d949b511a_Flower%20Delivery_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">Na Techify, os elementos surgem em cascata progressiva, adicionando fluidez e sensação tátil ao movimento.</div></div></div></div><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
     <source src="https://cdn.zajno.com/dev/motion/videos/Lessons/lesson-2/PlayStation 5 Promo_desktop_H.264.mp4" type="video/mp4">
 </video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0a5437053f78159b41d8_PlayStation%205%20Promo_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">A revelação sequencial concede a cada bloco de informação o tempo necessário para ser apreciado e assimilado.</div></div></div></div><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
     <source src="https://cdn.zajno.com/dev/motion/videos/Lessons/lesson-2/IMA-HOME Early_desktop_H.264.mp4" type="video/mp4">
-</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0a569c36d05db87e20f1_IMA-HOME%20Early_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">O surgimento escalonado dos cards cria um ritmo harmonioso que convida à leitura contínua até o rodapé.</div></div></div></div></div></div><div data-w-id="db80f9df-3c30-7adf-3291-cb4913ebc532" class="overlay-bg"></div></div></div><div data-w-id="9b1fac58-a74a-80b5-b413-5783af876a94" class="classic-anim_wrap"><div class="classic-anim_musk"><div class="classic-anim_sideimg is-left is-delay"></div><div class="classic-anim_container is-delay"><div class="classic-anim_content"><h2 class="h2-secondary">Exemplo da animação clássica</h2><div class="a-lesson-list"><div class="a-lesson-item"><div class="a-lesson-item_overflow-hidden"><div class="a-lesson-video w-embed"><video loop="true" preload="none" muted playsinline>
+</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0a569c36d05db87e20f1_IMA-HOME%20Early_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">O surgimento escalonado dos cards cria um ritmo harmonioso que convida à navegação pela interface da Techify.</div></div></div></div></div></div><div data-w-id="db80f9df-3c30-7adf-3291-cb4913ebc532" class="overlay-bg"></div></div></div><div data-w-id="9b1fac58-a74a-80b5-b413-5783af876a94" class="classic-anim_wrap"><div class="classic-anim_musk"><div class="classic-anim_sideimg is-left is-delay"></div><div class="classic-anim_container is-delay"><div class="classic-anim_content"><h2 class="h2-secondary">Exemplo da animação clássica</h2><div class="a-lesson-list"><div class="a-lesson-item"><div class="a-lesson-item_overflow-hidden"><div class="a-lesson-video w-embed"><video loop="true" preload="none" muted playsinline>
     <source type="video/mp4" src="https://cdn.zajno.com/dev/motion/videos/Lessons/lesson-2/1_FLOWER_FULL_DEMO_H.264.mp4">
 </video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/64493ebe42f72a6d727db488_1_FLOWER_FULL_DEMO_00000%20(1).webp" loading="eager" alt="" class="a-lesson-img"/></div></div></div></div><div class="a-lesson-item_heigh is-delay"><div class="a-lesson-item_sticky"><div class="a-lesson-item margin-40"><div class="a-lesson-text-wrap"><div class="p3-bold">Ação sobreposta e continuidade (Follow Through)</div><div class="p3">Ao cessar o movimento, diferentes partes de um corpo param em tempos distintos. Esta é a essência do princípio clássico de sobreposição e continuidade.<br/><br/>Em movimento, membros e acessórios se movem em tempos diferentes do tronco. Ao frear, roupas e cabelos continuam por inércia antes do repouso. Compreender isso é vital para criar interfaces orgânicas e imersivas.</div></div></div></div></div></div><div class="classic-anim_sideimg is-right is-delay"></div></div></div></div></section><section id="fade" class="nav nav-color"><div class="lesson is-fade"><div class="lesson-list"><div class="lesson-item"><div class="hero-animation"><div class="bg-image is-star-xs is-left"></div><div class="hero-visual" data-w-id="441ee4d7-3c41-bd38-7637-927f9cbc9363" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/6437f579f6d8befce71c0821_Fade_in_out.json" data-loop="1" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-default-duration="2.5" data-duration="0" data-loading="eager"></div><div class="bg-image is-star-xs is-right"></div></div><div class="hero-content"><div class="flex-display is-hero"><div class="label-1 is-lesson">3</div><div class="hero-title"><h4 class="h4">FADE-IN &amp; FADE-OUT</h4></div></div><div class="text-wrap is-hero-desc"><div class="p2">Fade-in e fade-out representam a aparição e o desaparecimento gradual por meio da transição de opacidade. É a técnica mais versátil para revelar estados de tela, funcionando perfeitamente combinada com deslocamento e escala.</div></div></div></div><div class="lesson-item is-implementation"><div class="title-wrap is-implementation"><h3 class="h3">EXEMPLOS DE IMPLEMENTAÇÃO</h3></div><div class="sticky-container is-implementation"><div class="list-wrap is-implementation"><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
     <source src="https://cdn.zajno.com/dev/motion/videos/Lessons/lesson-3/Royal Caribbean_s Icon_desktop_H.264.mp4" type="video/mp4">
-</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0a9527427fbc6eec5f56_Royal%20Caribbean%27s%20Icon_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">Aqui vemos o texto surgindo sob uma máscara antes de desvanecer suavemente.</div></div></div></div><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
+</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0a9527427fbc6eec5f56_Royal%20Caribbean%27s%20Icon_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">Aqui observamos o texto surgindo sob uma máscara antes de desvanecer suavemente na troca de cena.</div></div></div></div><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
     <source src="https://cdn.zajno.com/dev/motion/videos/Lessons/lesson-3/OpenColony Website_desktop_H.264.mp4" type="video/mp4">
-</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0a94a803e38292be822c_OpenColony%20Website_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">A combinação de opacidade com deslocamento vertical dá dinamismo e vida ao bloco de texto.</div></div></div></div><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
+</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0a94a803e38292be822c_OpenColony%20Website_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">Animações conjugadas de opacidade e eixo Y criam uma entrada fluida para os blocos de conteúdo textual.</div></div></div></div><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
     <source src="https://cdn.zajno.com/dev/motion/videos/Lessons/lesson-3/Siren Website Design_desktop_H.264.mp4" type="video/mp4">
-</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0a94858d282b25c4da81_Siren%20Website%20Design_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">Para diferenciar blocos vizinhos, animamos um com posição e opacidade e o outro exclusivamente com opacidade.</div></div></div></div></div></div></div></div></div></section><section id="morph" class="nav nav-color"><div class="lesson is-morph"><div class="lesson-list"><div class="lesson-item"><div class="hero-animation"><div class="bg-image is-star-xs is-left"></div><div class="hero-visual" data-w-id="2c6469a4-b366-785e-9656-c58057bea6cd" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/6437f60c402bcd9822422ade_Morph.json" data-loop="1" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-default-duration="3.5" data-duration="0" data-loading="eager"></div><div class="bg-image is-star-xs is-right"></div></div><div class="hero-content"><div class="flex-display is-hero"><div class="label-1 is-lesson">4</div><div class="hero-title"><h4 class="h4">TRANSFORM &amp; MORPH</h4></div></div><div class="text-wrap is-hero-desc"><div class="p2">Técnica de transformação contínua de uma forma em outra (como um ícone que se expande em um card fotográfico), preservando o contexto e a narrativa visual do usuário.</div></div></div></div><div class="lesson-item is-implementation"><div class="title-wrap is-implementation"><h3 class="h3">EXEMPLOS DE IMPLEMENTAÇÃO</h3></div><div class="sticky-container is-implementation"><div class="list-wrap is-implementation"><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
+</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0a94858d282b25c4da81_Siren%20Website%20Design_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">Para diferenciar elementos adjacentes, animamos um com opacidade e posição simultâneas, e o outro apenas com opacidade pura.</div></div></div></div></div></div></div></div></div></section><section id="morph" class="nav nav-color"><div class="lesson is-morph"><div class="lesson-list"><div class="lesson-item"><div class="hero-animation"><div class="bg-image is-star-xs is-left"></div><div class="hero-visual" data-w-id="2c6469a4-b366-785e-9656-c58057bea6cd" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/6437f60c402bcd9822422ade_Morph.json" data-loop="1" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-default-duration="3.5" data-duration="0" data-loading="eager"></div><div class="bg-image is-star-xs is-right"></div></div><div class="hero-content"><div class="flex-display is-hero"><div class="label-1 is-lesson">4</div><div class="hero-title"><h4 class="h4">TRANSFORM &amp; MORPH</h4></div></div><div class="text-wrap is-hero-desc"><div class="p2">Técnica de transformação contínua de uma forma em outra (como um ícone que se expande em um card fotográfico), preservando o contexto e a narrativa visual do usuário.</div></div></div></div><div class="lesson-item is-implementation"><div class="title-wrap is-implementation"><h3 class="h3">EXEMPLOS DE IMPLEMENTAÇÃO</h3></div><div class="sticky-container is-implementation"><div class="list-wrap is-implementation"><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
     <source src="https://cdn.zajno.com/dev/motion/videos/Lessons/lesson-4/Mobile House_desktop_H.264.mp4" type="video/mp4">
-</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0ad44c81327e2fdada9b_Mobile%20House_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">Aqui, o container da imagem altera suavemente sua geometria e proporção.</div></div></div></div><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
+</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0ad44c81327e2fdada9b_Mobile%20House_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">Aqui, o container da mídia altera suavemente sua geometria e proporção sem quebra no fluxo visual.</div></div></div></div><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
     <source src="https://cdn.zajno.com/dev/motion/videos/Lessons/lesson-4/Online Museum of Old_desktop_H.264.mp4" type="video/mp4">
-</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0ad4d9f5fbcc7deddb24_Online%20Museum%20of%20Old_desktop_00011.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">Duas combinações de metamorfose e máscara enquanto o elemento compacto se expande no layout principal.</div></div></div></div><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
+</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0ad4d9f5fbcc7deddb24_Online%20Museum%20of%20Old_desktop_00011.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">Combinação harmoniosa de metamorfose e máscara enquanto o elemento se expande no layout da Techify.</div></div></div></div><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
     <source src="https://cdn.zajno.com/dev/motion/videos/Lessons/lesson-4/The Heritage Museum_desktop_H.264.mp4" type="video/mp4">
-</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0ad3c6872ccd4ba156fd_The%20Heritage%20Museum_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">Aqui, cartões fotográficos realizam morph de silhuetas orgânicas para formas geométricas precisas.</div></div></div></div></div></div></div></div></div></section><section id="masking" class="nav nav-color"><div class="lesson is-masking"><div class="lesson-list"><div class="lesson-item"><div class="hero-animation"><div class="bg-image is-star-xs is-left"></div><div class="hero-visual" data-w-id="3fb9431e-0e28-d721-a93b-6dedb97b8389" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/6437f633b6fe4837689c3665_Masking.json" data-loop="1" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-default-duration="4.533333333333333" data-duration="0" data-loading="eager"></div><div class="bg-image is-star-xs is-right"></div></div><div class="hero-content"><div class="flex-display is-hero"><div class="label-1 is-lesson">5</div><div class="hero-title"><h4 class="h4">MÁSCARAS &amp; RECORTES</h4></div></div><div class="text-wrap is-hero-desc"><div class="p2">O mascaramento utiliza formas dinâmicas como molduras para vídeos e fotos. O conteúdo interno pode escalonar ou rotacionar, transmitindo sofisticação espacial.</div></div></div></div><div class="lesson-item is-implementation"><div class="title-wrap is-implementation"><h3 class="h3">EXEMPLOS DE IMPLEMENTAÇÃO</h3></div><div class="sticky-container is-implementation"><div class="list-wrap is-implementation"><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
+</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0ad3c6872ccd4ba156fd_The%20Heritage%20Museum_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">Aqui, cartões fotográficos realizam morph de silhuetas fluidas para formas geométricas de alta precisão.</div></div></div></div></div></div></div></div></div></section><section id="masking" class="nav nav-color"><div class="lesson is-masking"><div class="lesson-list"><div class="lesson-item"><div class="hero-animation"><div class="bg-image is-star-xs is-left"></div><div class="hero-visual" data-w-id="3fb9431e-0e28-d721-a93b-6dedb97b8389" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/6437f633b6fe4837689c3665_Masking.json" data-loop="1" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-default-duration="4.533333333333333" data-duration="0" data-loading="eager"></div><div class="bg-image is-star-xs is-right"></div></div><div class="hero-content"><div class="flex-display is-hero"><div class="label-1 is-lesson">5</div><div class="hero-title"><h4 class="h4">MÁSCARAS &amp; RECORTES</h4></div></div><div class="text-wrap is-hero-desc"><div class="p2">O mascaramento utiliza formas dinâmicas como molduras para vídeos e fotos. O conteúdo interno pode escalonar ou rotacionar, transmitindo sofisticação espacial.</div></div></div></div><div class="lesson-item is-implementation"><div class="title-wrap is-implementation"><h3 class="h3">EXEMPLOS DE IMPLEMENTAÇÃO</h3></div><div class="sticky-container is-implementation"><div class="list-wrap is-implementation"><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
     <source src="https://cdn.zajno.com/dev/motion/videos/Lessons/lesson-5/Design Conference Promo_desktop_H.264.mp4" type="video/mp4">
-</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0b0b4c8132d5cedadccc_Design%20Conference%20Promo_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">A máscara faz a fotografia se deslocar suavemente dentro do container, harmonizando perfeitamente com transições de tela.</div></div></div></div><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
+</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0b0b4c8132d5cedadccc_Design%20Conference%20Promo_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">A máscara faz a composição se deslocar suavemente dentro do container da Techify com naturalidade.</div></div></div></div><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
     <source src="https://cdn.zajno.com/dev/motion/videos/Lessons/lesson-5/Homepage Animation_desktop_H.264.mp4" type="video/mp4">
-</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0b0a13c4d70936d0da82_Homepage%20Animation_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">Novamente, a imagem ganha profundidade com o sutil deslocamento dentro de sua máscara de recorte.</div></div></div></div><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
+</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0b0a13c4d70936d0da82_Homepage%20Animation_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">O elemento visual ganha profundidade com o sutil deslocamento dentro de sua máscara de recorte.</div></div></div></div><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
     <source src="https://cdn.zajno.com/dev/motion/videos/Lessons/lesson-5/Website animation_desktop_H.264.mp4" type="video/mp4">
-</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0b0c27663958092cc3d3_Website%20animation_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">Aqui as fotografias realizam um micro-scroll elegante no interior do enquadramento.</div></div></div></div></div></div></div></div></div></section><section id="dimension" class="nav nav-color"><div class="lesson is-dimension"><div class="lesson-list"><div class="lesson-item"><div class="hero-animation"><div class="bg-image is-star-xs is-left"></div><div class="hero-visual w-embed"><video width="100%" height="100%" loop="true" autoplay="true" muted playsinline>
+</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0b0c27663958092cc3d3_Website%20animation_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">Aqui os elementos realizam um micro-scroll elegante e contido no interior do enquadramento interativo.</div></div></div></div></div></div></div></div></div></section><section id="dimension" class="nav nav-color"><div class="lesson is-dimension"><div class="lesson-list"><div class="lesson-item"><div class="hero-animation"><div class="bg-image is-star-xs is-left"></div><div class="hero-visual w-embed"><video width="100%" height="100%" loop="true" autoplay="true" muted playsinline>
     <source type='video/mp4; codecs="hvc1"' src="https://cdn.zajno.com/dev/motion/videos/Lessons/lesson-6/dimension_hevc.mov"/>
     <source type="video/webm" src="https://cdn.zajno.com/dev/motion/videos/Lessons/lesson-6/dimension_VP9.webm"/>
 </video></div><div class="bg-image is-star-xs is-right"></div></div><div class="hero-content"><div class="flex-display is-hero"><div class="label-1 is-lesson">6</div><div class="hero-title"><h4 class="h4">DIMENSÃO &amp; PROFUNDIDADE</h4></div></div><div class="text-wrap is-hero-desc"><div class="p2">Entre as formas de expressar volume, a dimensionalidade flutuante no eixo Z torna o contato com a interface intuitivo, criando uma experiência imersiva e moderna.</div></div></div></div><div class="lesson-item is-implementation"><div class="title-wrap is-implementation"><h3 class="h3">EXEMPLOS DE IMPLEMENTAÇÃO</h3></div><div class="sticky-container is-implementation"><div class="list-wrap is-implementation"><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
     <source src="https://cdn.zajno.com/dev/motion/videos/Lessons/lesson-6/Royal Caribbean_s Icon_desktop_H.264.mp4" type="video/mp4">
-</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0a9527427fbc6eec5f56_Royal%20Caribbean%27s%20Icon_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">Aqui, a navegação em perspectiva cria ilusão espacial com a tipografia acompanhando o rastro do movimento.</div></div></div></div><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
+</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0a9527427fbc6eec5f56_Royal%20Caribbean%27s%20Icon_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">Na Techify, a navegação em perspectiva cria ilusão espacial com a tipografia acompanhando o rastro dinâmico.</div></div></div></div><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
     <source src="https://cdn.zajno.com/dev/motion/videos/Lessons/lesson-6/Crappy Explanation_desktop_H.264.mp4" type="video/mp4">
-</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0b54c9e2e8ca6c8fd6f9_Crappy%20Explanation_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">A simulação tátil de folhear itens em 3D gera uma sensação física de profundidade e catálogo.</div></div></div></div><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
+</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0b54c9e2e8ca6c8fd6f9_Crappy%20Explanation_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">A simulação tátil de folhear itens em 3D gera uma sensação física de profundidade e catálogo interativo.</div></div></div></div><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
     <source src="https://cdn.zajno.com/dev/motion/videos/Lessons/lesson-6/Social Network Feed_desktop_H.264.mp4" type="video/mp4">
-</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0b5213c4d72d64d0dcc1_Social%20Network%20Feed_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">O carrossel com inclinação tridimensional confere profundidade realista ao navegar pelos cartões.</div></div></div></div></div></div></div></div></div></section><section id="parallax" class="nav nav-color"><div class="lesson is-parallax"><div class="lesson-list"><div class="lesson-item"><div class="hero-animation"><div class="bg-image is-star-xs is-left"></div><div class="hero-visual" data-w-id="67c99810-44f8-fd99-09ae-679447c7a534" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/6437f673402bcd3d37422ddc_Parallax.json" data-loop="1" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-default-duration="3.3333333333333335" data-duration="0" data-loading="eager"></div><div class="bg-image is-star-xs is-right"></div></div><div class="hero-content"><div class="flex-display is-hero"><div class="label-1 is-lesson">7</div><div class="hero-title"><h4 class="h4">PARALLAX &amp; CAMADAS</h4></div></div><div class="text-wrap is-hero-desc"><div class="p2">Dispostos em camadas, múltiplos planos se movem em velocidades distintas: quanto mais distante o objeto, menor seu deslocamento, gerando amplitude e imersão óptica.</div></div></div></div><div class="lesson-item is-implementation"><div class="title-wrap is-implementation"><h3 class="h3">EXEMPLOS DE IMPLEMENTAÇÃO</h3></div><div class="sticky-container is-implementation"><div class="list-wrap is-implementation"><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
+</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0b5213c4d72d64d0dcc1_Social%20Network%20Feed_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">O carrossel com inclinação tridimensional confere relevo realista ao explorar os componentes da Techify.</div></div></div></div></div></div></div></div></div></section><section id="parallax" class="nav nav-color"><div class="lesson is-parallax"><div class="lesson-list"><div class="lesson-item"><div class="hero-animation"><div class="bg-image is-star-xs is-left"></div><div class="hero-visual" data-w-id="67c99810-44f8-fd99-09ae-679447c7a534" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/6437f673402bcd3d37422ddc_Parallax.json" data-loop="1" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-default-duration="3.3333333333333335" data-duration="0" data-loading="eager"></div><div class="bg-image is-star-xs is-right"></div></div><div class="hero-content"><div class="flex-display is-hero"><div class="label-1 is-lesson">7</div><div class="hero-title"><h4 class="h4">PARALLAX &amp; CAMADAS</h4></div></div><div class="text-wrap is-hero-desc"><div class="p2">Dispostos em camadas, múltiplos planos se movem em velocidades distintas: quanto mais distante o objeto, menor seu deslocamento, gerando amplitude e imersão óptica.</div></div></div></div><div class="lesson-item is-implementation"><div class="title-wrap is-implementation"><h3 class="h3">EXEMPLOS DE IMPLEMENTAÇÃO</h3></div><div class="sticky-container is-implementation"><div class="list-wrap is-implementation"><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
     <source src="https://cdn.zajno.com/dev/motion/videos/Lessons/lesson-7/milkinside_desktop_H.264.mp4" type="video/mp4">
-</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0b8b9335c6660d24b571_milkinside_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">Conforme o painel fosco translúcido sobe, os cards de fundo deslocam-se com menor intensidade, intensificando a sensação 3D.</div></div></div></div><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
+</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0b8b9335c6660d24b571_milkinside_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">Conforme o painel translúcido sobe na Techify, os planos de fundo movem-se com menor intensidade, gerando 3D.</div></div></div></div><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
     <source src="https://cdn.zajno.com/dev/motion/videos/Lessons/lesson-7/breathtaking_desktop_H.264.mp4" type="video/mp4">
 </video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0b8cc9e2e8f90b8fd8e9_breathtaking_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">O primeiro plano nítido move-se velozmente em contraste com a paisagem suavemente desfocada ao fundo.</div></div></div></div><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
     <source src="https://cdn.zajno.com/dev/motion/videos/Lessons/lesson-7/The Ways We Work_desktop_H.264.mp4" type="video/mp4">
-</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0b8a13c4d77a29d0ddbb_The%20Ways%20We%20Work_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">No parallax interativo, a posição do mouse dita a inclinação das camadas com elegância e dinamismo.</div></div></div></div></div></div></div></div></div></section><section id="zoom" class="nav nav-color"><div class="lesson is-zoom"><div class="lesson-list"><div class="lesson-item"><div class="hero-animation"><div class="bg-image is-star-xs is-left"></div><div class="hero-visual" data-w-id="d8326c29-3d58-ef71-8320-3b8c8a5c1b1c" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/6437f6ba8c5a77ad18dc8d7c_8_zoom.json" data-loop="1" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-default-duration="3.3333333333333335" data-duration="0" data-loading="eager"></div><div class="bg-image is-star-xs is-right"></div></div><div class="hero-content"><div class="flex-display is-hero"><div class="label-1 is-lesson">8</div><div class="hero-title"><h4 class="h4">ZOOM &amp; ESCALA</h4></div></div><div class="text-wrap is-hero-desc"><div class="p2">Esta técnica estabelece continuidade narrativa e transições perfeitas entre panoramas amplos e detalhes minuciosos, adicionando profundidade à exploração.</div></div></div></div><div class="lesson-item is-implementation is-last"><div class="title-wrap is-implementation"><h3 class="h3">EXEMPLOS DE IMPLEMENTAÇÃO</h3></div><div class="sticky-container is-implementation is-last"><div class="list-wrap is-implementation"><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
+</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0b8a13c4d77a29d0ddbb_The%20Ways%20We%20Work_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">No parallax interativo da Techify, o cursor dita a inclinação das camadas com elegância e dinamismo.</div></div></div></div></div></div></div></div></div></section><section id="zoom" class="nav nav-color"><div class="lesson is-zoom"><div class="lesson-list"><div class="lesson-item"><div class="hero-animation"><div class="bg-image is-star-xs is-left"></div><div class="hero-visual" data-w-id="d8326c29-3d58-ef71-8320-3b8c8a5c1b1c" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/6437f6ba8c5a77ad18dc8d7c_8_zoom.json" data-loop="1" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-default-duration="3.3333333333333335" data-duration="0" data-loading="eager"></div><div class="bg-image is-star-xs is-right"></div></div><div class="hero-content"><div class="flex-display is-hero"><div class="label-1 is-lesson">8</div><div class="hero-title"><h4 class="h4">ZOOM &amp; ESCALA</h4></div></div><div class="text-wrap is-hero-desc"><div class="p2">Esta técnica estabelece continuidade narrativa e transições perfeitas entre panoramas amplos e detalhes minuciosos, adicionando profundidade à exploração.</div></div></div></div><div class="lesson-item is-implementation is-last"><div class="title-wrap is-implementation"><h3 class="h3">EXEMPLOS DE IMPLEMENTAÇÃO</h3></div><div class="sticky-container is-implementation is-last"><div class="list-wrap is-implementation"><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
     <source src="https://cdn.zajno.com/dev/motion/videos/Lessons/lesson-8/Landing page concept_desktop_H.264.mp4" type="video/mp4">
 </video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0bfef0acdd24d5d32339_Landing%20page%20concept_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">O zoom comunica profundidade, unifica o fluxo visual e imerge o usuário na experiência digital da Techify.</div></div></div></div><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
     <source src="https://cdn.zajno.com/dev/motion/videos/Lessons/lesson-8/ Music Podcasts Website_desktop_H.264.mp4" type="video/mp4">
-</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0bfd541e0031c1d5e4bc__Music%20Podcasts%20Website_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">Aqui a sensação não é de trocar de página, mas de vivenciar uma jornada contínua e sem interrupções.</div></div></div></div><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
+</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0bfd541e0031c1d5e4bc__Music%20Podcasts%20Website_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">Na Techify a sensação não é de trocar de página, mas de vivenciar uma jornada contínua e sem interrupções.</div></div></div></div><div class="project-card-item"><div class="card-video-item"><div class="card-video is-implementation w-embed"><video loop="true" preload="none" muted playsinline>
     <source src="https://cdn.zajno.com/dev/motion/videos/Lessons/lesson-8/Bike Shop Interaction_desktop_H.264.mp4" type="video/mp4">
-</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0bfd4c81322174daea9c_Bike%20Shop%20Interaction_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">Aplicamos um movimento contínuo de câmera para exibir o produto em múltiplos ângulos dinâmicos.</div></div></div></div></div></div></div></div></div></section><div class="resources-clouds-list"><div class="resources-cloud-item first"></div><div class="resources-cloud-item second"></div><div class="resources-cloud-item third"></div><div class="resources-cloud-item fourth"></div></div></section><section id="resources" class="nav nav-light"><div data-w-id="7a61b557-4dcd-92ad-1f18-47267d8318e2" class="resources"><div class="resources-track"><div class="resources-main"><div class="resources-titles"><div class="arrow-title-wrap"><div>Recursos</div><div class="resources-arrow"><div class="resources-arrow-icon w-embed"><svg viewBox="0 0 199 190" fill="none" xmlns="http://www.w3.org/2000/svg">
+</video></div><img src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/644a0bfd4c81322174daea9c_Bike%20Shop%20Interaction_desktop_00000.png" loading="eager" alt="" class="a-lesson-img"/></div><div class="flex-display is-implementation"><div class="text-wrap is-implementation"><div class="p3">Aplicamos um movimento contínuo de câmera para exibir o produto em múltiplos ângulos dinâmicos e fluidos.</div></div></div></div></div></div></div></div></div></section><div class="resources-clouds-list"><div class="resources-cloud-item first"></div><div class="resources-cloud-item second"></div><div class="resources-cloud-item third"></div><div class="resources-cloud-item fourth"></div></div></section><section id="resources" class="nav nav-light"><div data-w-id="7a61b557-4dcd-92ad-1f18-47267d8318e2" class="resources"><div class="resources-track"><div class="resources-main"><div class="resources-titles"><div class="arrow-title-wrap"><div>Recursos</div><div class="resources-arrow"><div class="resources-arrow-icon w-embed"><svg viewBox="0 0 199 190" fill="none" xmlns="http://www.w3.org/2000/svg">
 	<path fill-rule="evenodd" clip-rule="evenodd" d="M179.832 83.9968L128.752 134.924L135.81 142L199 79L135.81 16L128.752 23.0764L179.832 74.0032H13V83.9968H179.832Z" fill="#0C0B0B"/>
 </svg></div></div></div><div class="arrow-title-wrap"><div>cursos</div><div class="resources-arrow"><div class="resources-arrow-icon w-embed"><svg viewBox="0 0 199 190" fill="none" xmlns="http://www.w3.org/2000/svg">
 	<path fill-rule="evenodd" clip-rule="evenodd" d="M179.832 83.9968L128.752 134.924L135.81 142L199 79L135.81 16L128.752 23.0764L179.832 74.0032H13V83.9968H179.832Z" fill="#0C0B0B"/>
@@ -1142,6 +1256,92 @@ startCounting(initialValue, targetValue, loaderCounterElement, durationInSeconds
   });
 </script>
 
+
+<script id="techify-clean-card-transforms">
+  // Protect project cards and captions from Webflow IX2 scaling / zoom on scroll
+  (function() {
+    function cleanCards() {
+      const items = document.querySelectorAll(
+        '.lesson-item.is-implementation, ' +
+        '.sticky-container.is-implementation, ' +
+        '.list-wrap.is-implementation, ' +
+        '.project-card-item, ' +
+        '.card-link, ' +
+        '.flex-display.is-implementation, ' +
+        '.text-wrap.is-implementation, ' +
+        '.text-wrap.is-implementation .p3, ' +
+        '.project-card-item .p3, ' +
+        '.project-card-item p'
+      );
+      items.forEach(function(el) {
+        if (el.style.transform && el.style.transform !== 'none' && !el.matches(':hover')) {
+          el.style.transform = 'none';
+        }
+        if (el.style.scale) {
+          el.style.scale = '1';
+        }
+        if (el.style.fontSize) {
+          el.style.fontSize = '';
+        }
+        if (el.style.lineHeight) {
+          el.style.lineHeight = '';
+        }
+      });
+    }
+
+    if (window.MutationObserver) {
+      const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(m) {
+          if (m.type === 'attributes' && m.attributeName === 'style') {
+            const el = m.target;
+            if (el.classList && (
+              el.classList.contains('is-implementation') ||
+              el.classList.contains('project-card-item') ||
+              el.classList.contains('sticky-container') ||
+              el.classList.contains('list-wrap') ||
+              el.classList.contains('text-wrap') ||
+              el.classList.contains('p3')
+            )) {
+              if (el.style.transform && el.style.transform !== 'none' && !el.matches(':hover')) {
+                el.style.transform = 'none';
+              }
+              if (el.style.scale) {
+                el.style.scale = '1';
+              }
+              if (el.style.fontSize) {
+                el.style.fontSize = '';
+              }
+              if (el.style.lineHeight) {
+                el.style.lineHeight = '';
+              }
+            }
+          }
+        });
+      });
+
+      document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll(
+          '.lesson-item.is-implementation, ' +
+          '.sticky-container.is-implementation, ' +
+          '.list-wrap.is-implementation, ' +
+          '.project-card-item, ' +
+          '.text-wrap.is-implementation, ' +
+          '.text-wrap.is-implementation .p3'
+        ).forEach(function(el) {
+          observer.observe(el, { attributes: true, attributeFilter: ['style'] });
+        });
+        cleanCards();
+      });
+    }
+
+    window.addEventListener('scroll', cleanCards, { passive: true });
+    window.addEventListener('resize', cleanCards, { passive: true });
+    document.addEventListener('DOMContentLoaded', cleanCards);
+    setTimeout(cleanCards, 100);
+    setTimeout(cleanCards, 500);
+    setTimeout(cleanCards, 1500);
+  })();
+</script>
 
 <script id="techify-parent-bridge">
   window.addEventListener('message', function(event) {

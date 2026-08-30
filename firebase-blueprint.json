@@ -2,7 +2,8 @@
   "entities": {
     "consultas": {
       "title": "Consultas Agendadas",
-      "description": "Agendamentos de consultas digitais realizados pelos usuários",
+      "description": "Agendamentos de reuniões e consultas digitais realizados pelos usuários",
+      "type": "object",
       "properties": {
         "nome": { "type": "string" },
         "email": { "type": "string" },
@@ -19,6 +20,7 @@
     "candidaturas": {
       "title": "Candidaturas",
       "description": "Candidaturas a vagas enviadas por profissionais",
+      "type": "object",
       "properties": {
         "nome": { "type": "string" },
         "email": { "type": "string" },
@@ -29,9 +31,25 @@
       },
       "required": ["nome", "email", "vaga"]
     },
+    "contratados": {
+      "title": "Contratados e Membros de Equipe",
+      "description": "Candidatos aprovados e contratados para a equipe",
+      "type": "object",
+      "properties": {
+        "nome": { "type": "string" },
+        "cargo": { "type": "string" },
+        "email": { "type": "string" },
+        "telefone": { "type": "string" },
+        "tipoContrato": { "type": "string" },
+        "dataContratacao": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["nome", "cargo", "email"]
+    },
     "leads": {
       "title": "Leads",
       "description": "Leads capturados e gerenciados no painel",
+      "type": "object",
       "properties": {
         "nome": { "type": "string" },
         "segmento": { "type": "string" },
@@ -49,6 +67,7 @@
     "parceiros": {
       "title": "Parceiros",
       "description": "Lista de parceiros cadastrados",
+      "type": "object",
       "properties": {
         "nome": { "type": "string" },
         "empresa": { "type": "string" },
@@ -63,14 +82,13 @@
     "vagas": {
       "title": "Vagas de Emprego",
       "description": "Vagas abertas publicadas pela equipe Techify",
+      "type": "object",
       "properties": {
         "title": { "type": "string" },
         "category": { "type": "string" },
         "type": { "type": "string" },
         "location": { "type": "string" },
         "description": { "type": "string" },
-        "requirements": { "type": "array" },
-        "benefits": { "type": "array" },
         "salary": { "type": "string" },
         "createdAt": { "type": "string" }
       },
@@ -79,6 +97,7 @@
     "portfolio": {
       "title": "Portfólio de Sites",
       "description": "Projetos de sites publicados no portfólio Techify",
+      "type": "object",
       "properties": {
         "title": { "type": "string" },
         "category": { "type": "string" },
@@ -92,6 +111,7 @@
     "newsletter": {
       "title": "Assinantes da Newsletter",
       "description": "Lista de e-mails de leads e visitantes que assinaram a newsletter da Techify",
+      "type": "object",
       "properties": {
         "email": { "type": "string" },
         "origem": { "type": "string" },
@@ -103,6 +123,7 @@
     "apps": {
       "title": "Aplicativos Techify",
       "description": "Aplicativos, links, imagens e legendas publicados no ecossistema Techify",
+      "type": "object",
       "properties": {
         "title": { "type": "string" },
         "subtitle": { "type": "string" },
@@ -111,10 +132,78 @@
         "linkUrl": { "type": "string" },
         "category": { "type": "string" },
         "status": { "type": "string" },
-        "tags": { "type": "array" },
         "createdAt": { "type": "string" }
       },
       "required": ["title", "subtitle", "linkUrl"]
+    },
+    "diagnosticos": {
+      "title": "Diagnósticos Digitais",
+      "description": "Diagnósticos e análises geradas através do formulário interativo de avaliação",
+      "type": "object",
+      "properties": {
+        "nome": { "type": "string" },
+        "email": { "type": "string" },
+        "whatsapp": { "type": "string" },
+        "empresa": { "type": "string" },
+        "score": { "type": "number" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["nome", "email", "score"]
+    },
+    "site_content": {
+      "title": "Conteúdo e Configurações do Site",
+      "description": "Documentos de configuração do site, equipe, feedbacks, planos e página inicial",
+      "type": "object",
+      "properties": {
+        "updatedAt": { "type": "string" }
+      }
+    }
+  },
+  "firestore": {
+    "/consultas/{consultaId}": {
+      "schema": "consultas",
+      "description": "Agendamentos de consultas de clientes"
+    },
+    "/candidaturas/{candidaturaId}": {
+      "schema": "candidaturas",
+      "description": "Candidaturas recebidas para vagas"
+    },
+    "/contratados/{contratadoId}": {
+      "schema": "contratados",
+      "description": "Profissionais aprovados e contratados"
+    },
+    "/leads/{leadId}": {
+      "schema": "leads",
+      "description": "Leads comerciais e prospecções ativas"
+    },
+    "/parceiros/{parceiroId}": {
+      "schema": "parceiros",
+      "description": "Parceiros de negócios e tecnologia"
+    },
+    "/vagas/{vagaId}": {
+      "schema": "vagas",
+      "description": "Vagas abertas na empresa"
+    },
+    "/portfolio/{portfolioId}": {
+      "schema": "portfolio",
+      "description": "Projetos em destaque no portfólio"
+    },
+    "/newsletter/{subscriberId}": {
+      "schema": "newsletter",
+      "description": "Inscrições na newsletter oficial"
+    },
+    "/apps/{appId}": {
+      "schema": "apps",
+      "description": "Aplicativos e SaaS publicados no site"
+    },
+    "/diagnosticos/{diagnosticoId}": {
+      "schema": "diagnosticos",
+      "description": "Resultados de diagnósticos digitais"
+    },
+    "/site_content/{sectionDoc}": {
+      "schema": "site_content",
+      "description": "Configurações institucionais: home_page, packages, team, feedbacks, general, inline_overrides"
     }
   }
 }

@@ -64,7 +64,7 @@ export default function App() {
   return (
     <ToastProvider>
       <InlineEditProvider>
-        <div className="min-h-screen bg-[#060606] text-white flex flex-col selection:bg-[#22c55e]/30 selection:text-white">
+        <div className="min-h-screen bg-[#060606] text-white flex flex-col selection:bg-[#22c55e]/30 selection:text-white w-full max-w-full overflow-x-hidden relative">
           
           {/* Persistent Global Header */}
           <Header 
@@ -75,7 +75,7 @@ export default function App() {
           />
 
           {/* Main Content Area */}
-          <main className="flex-1 w-full">
+          <main className="flex-1 w-full max-w-full overflow-x-hidden relative">
             {activeTab === 'inicio' && (
               <HomeSection 
                 onNavigate={setActiveTab} 

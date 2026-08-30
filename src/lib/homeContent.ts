@@ -504,24 +504,26 @@ export function initHomePageListener(callback: (content: HomePageContent) => voi
 }
 
 export async function saveHomePageContentToFirestore(content: HomePageContent): Promise<void> {
-  localStorage.setItem(HOME_CACHE_KEY, JSON.stringify(content));
-  window.dispatchEvent(new CustomEvent('techify-home-content-updated', { detail: content }));
+  const sanitizedContent = JSON.parse(JSON.stringify(content));
+  localStorage.setItem(HOME_CACHE_KEY, JSON.stringify(sanitizedContent));
+  window.dispatchEvent(new CustomEvent('techify-home-content-updated', { detail: sanitizedContent }));
 
   await setDoc(doc(db, "site_content", "home_page"), {
-    ...content,
+    ...sanitizedContent,
     updatedAt: new Date().toISOString()
   }, { merge: true });
 
   // Also sync hero to general
   try {
-    await setDoc(doc(db, "site_content", "general"), {
-      heroHeadline1: content.hero.headline1,
-      heroHeadline2: `${content.hero.headline2} ${content.hero.headline3}`,
-      heroDescription: content.hero.description,
-      heroCtaPrimary: content.hero.ctaPrimary,
-      heroCtaSecondary: content.hero.ctaSecondary,
+    const generalPayload = JSON.parse(JSON.stringify({
+      heroHeadline1: content.hero?.headline1 || '',
+      heroHeadline2: `${content.hero?.headline2 || ''} ${content.hero?.headline3 || ''}`.trim(),
+      heroDescription: content.hero?.description || '',
+      heroCtaPrimary: content.hero?.ctaPrimary || '',
+      heroCtaSecondary: content.hero?.ctaSecondary || '',
       updatedAt: new Date().toISOString()
-    }, { merge: true });
+    }));
+    await setDoc(doc(db, "site_content", "general"), generalPayload, { merge: true });
   } catch (err) {
     console.warn('Sync to general skipped:', err);
   }
@@ -532,74 +534,138 @@ export interface PackageOffer {
   badge?: string;
   popular?: boolean;
   title: string;
-  subtitle: string;
+  subtitle?: string;
   originalPrice?: string;
-  currentPrice: string;
-  periodText?: string;
+  currentPrice: string; // Preço mensal
+  monthlyPrice?: string;
+  annualPrice?: string; // Preço anual com desconto
+  periodText?: string; // Ex: /mês
+  annualPeriodText?: string; // Ex: /mês (no plano anual)
   description: string;
+  featuresHeader?: string;
   features: string[];
   designStyleHighlight?: string;
   ctaText: string;
   whatsappMessage: string;
+  annualWhatsappMessage?: string;
 }
 
 export const DEFAULT_PACKAGES: PackageOffer[] = [
   {
-    id: 'pacote-completo-360',
-    popular: true,
-    badge: 'OFERTA COMPLETA • MAIS VENDIDO',
-    title: 'Pacote Full Growth 360°',
-    subtitle: 'Site + Qualquer Estilo de Design + Marketing + Redes Sociais',
-    originalPrice: 'R$ 2.300',
-    currentPrice: 'R$ 580',
-    periodText: 'pagamento único / condição especial',
-    description: 'A solução digital definitiva para posicionar sua marca com autoridade imediata, design personalizado e fluxo contínuo de clientes.',
+    id: 'starter-tracao-vendas',
+    popular: false,
+    badge: 'ENTRADA RÁPIDA',
+    title: 'Starter • Tração & Vendas',
+    subtitle: 'Presença digital essencial e conversão direta',
+    currentPrice: 'R$ 197',
+    monthlyPrice: 'R$ 197',
+    annualPrice: 'R$ 157',
+    periodText: '/mês (ou sob medida)',
+    annualPeriodText: '/mês no plano anual (economize 20%)',
+    description: 'Ideal para profissionais liberais, clínicas e pequenos negócios que precisam de presença online de alto impacto e agendamentos diretos.',
+    featuresHeader: 'INCLUSO NO STARTER:',
     features: [
-      'Site Profissional ou Landing Page de Ultra Performance',
-      'Design Exclusivo em qualquer estilo visual desejado (Dark Luxury, Minimalista, Cyber, B2B Corporativo, etc.)',
-      'Estratégia & Configuração de Marketing Digital para Captação',
-      'Gestão & Criação de Conteúdo para Redes Sociais',
-      'Otimização SEO para destaque nos mecanismos de busca',
-      'Botões inteligentes de conversão direta para o WhatsApp',
-      'Painel intuitivo para controle e atualização de conteúdo',
-      'Garantia de Teste Gratuito de Design antes da entrega final'
+      'Landing Page ou Site Institucional de Ultra Velocidade',
+      'Design Responsivo adaptado para Smartphones e Desktops',
+      'Botão Direto para Conversão no WhatsApp & Rastreamento de Leads',
+      'Otimização SEO Básica no Google Maps & Busca',
+      'Hospedagem em Nuvem de Alta Disponibilidade',
+      'Suporte Técnico Dedicado via WhatsApp'
     ],
-    designStyleHighlight: 'Design 100% customizado no estilo da sua preferência',
-    ctaText: 'GARANTIR PACOTE COMPLETO',
-    whatsappMessage: 'Olá Techify! Quero aproveitar o Pacote Full Growth 360° (Site + Design + Marketing + Redes Sociais) de R$ 2.300 por apenas R$ 580.'
+    ctaText: 'COMEÇAR NO STARTER',
+    whatsappMessage: 'Olá Techify! Gostaria de começar com o plano Starter (Tração & Vendas) no plano mensal por R$ 197/mês.',
+    annualWhatsappMessage: 'Olá Techify! Gostaria de contratar o plano Starter (Tração & Vendas) no plano anual por R$ 157/mês com desconto.'
   },
   {
-    id: 'pacote-site-marketing',
-    popular: false,
-    badge: 'ALTA CONVERSÃO',
-    title: 'Pacote Tração & Vendas',
-    subtitle: 'Site Profissional + Estratégia de Marketing',
-    originalPrice: 'R$ 890',
-    currentPrice: 'R$ 350',
-    periodText: 'pagamento único',
-    description: 'Estrutura ágil e focada em resultados para quem deseja uma presença online elegante com geração ativa de oportunidades comerciais.',
+    id: 'pro-full-growth-360',
+    popular: true,
+    badge: 'MAIS POPULAR • RECOMENDADO',
+    title: 'Pro • Full Growth 360°',
+    subtitle: 'Estrutura completa com tráfego e IA',
+    currentPrice: 'R$ 497',
+    monthlyPrice: 'R$ 497',
+    annualPrice: 'R$ 397',
+    periodText: '/mês (ou pacote fechado)',
+    annualPeriodText: '/mês no plano anual (economize 20%)',
+    description: 'A solução digital definitiva: Desenvolvimento completo + Design cinematográfico + Gestão de Tráfego e Redes Sociais.',
+    featuresHeader: 'TUDO DO PLANO STARTER, MAIS:',
     features: [
-      'Site Institucional de Alta Velocidade e Responsivo (Mobile & Desktop)',
-      'Configuração Estratégica de Marketing & Tráfego de Entrada',
-      'Layout moderno com identidade visual profissional',
-      'Integração direta com WhatsApp e canais de atendimento',
-      'Carregamento instantâneo com infraestrutura moderna',
-      'Amostra Gratuita inicial para validação de estilo'
+      'Site Multi-Páginas ou E-Commerce com Catálogo Completo',
+      'Design System Exclusivo & Motion Lab Cinematográfico',
+      'Gestão e Otimização de Tráfego Pago (Meta Ads & Google Ads)',
+      'Painel Administrativo Customizado para Edição de Conteúdo',
+      'Integração de Agente Inteligente / Bot de Atendimento 24/7',
+      'Garantia de Teste Gratuito de Design antes da entrega final'
     ],
-    designStyleHighlight: 'Estrutura otimizada para geração imediata de contatos',
-    ctaText: 'QUERO SITE + MARKETING',
-    whatsappMessage: 'Olá Techify! Gostaria de contratar o Pacote Tração & Vendas (Site + Marketing) por R$ 350.'
+    ctaText: 'GARANTIR PLANO PRO',
+    whatsappMessage: 'Olá Techify! Quero garantir o plano Pro (Full Growth 360°) no plano mensal por R$ 497/mês.',
+    annualWhatsappMessage: 'Olá Techify! Quero garantir o plano Pro (Full Growth 360°) no plano anual por R$ 397/mês com desconto.'
+  },
+  {
+    id: 'scale-enterprise-lab',
+    popular: false,
+    badge: 'ESCALA MÁXIMA',
+    title: 'Scale • Enterprise Lab',
+    subtitle: 'Engenharia de software avançada e apps móveis',
+    currentPrice: 'R$ 997',
+    monthlyPrice: 'R$ 997',
+    annualPrice: 'R$ 797',
+    periodText: '/mês (ou projeto corporativo)',
+    annualPeriodText: '/mês no plano anual (economize 20%)',
+    description: 'Engenharia de software sob medida, web apps complexos, aplicativos mobile para iOS/Android e arquiteturas com múltiplos servidores.',
+    featuresHeader: 'TUDO DO PLANO PRO, MAIS:',
+    features: [
+      'Desenvolvimento de Web App / Plataforma SaaS ou App Mobile Nativo',
+      'Arquitetura Cloud Serverless com Banco de Dados em Tempo Real',
+      'Pipelines de Automação com Modelos de Inteligência Artificial RAG',
+      'Dashboard de Métricas Executivas e Relatórios em Tempo Real',
+      'Squad de Engenharia Dedicado com Reuniões Semanais de Sprint',
+      'SLA Prioritário 24/7 com Resposta em Menos de 1 Hora'
+    ],
+    ctaText: 'FALAR COM ESPECIALISTA',
+    whatsappMessage: 'Olá Techify! Tenho interesse no plano Scale (Enterprise Lab) no plano mensal.',
+    annualWhatsappMessage: 'Olá Techify! Tenho interesse no plano Scale (Enterprise Lab) no plano anual com condições especiais.'
   }
 ];
 
 const PACKAGES_CACHE_KEY = 'techify_packages_cache';
+
+function normalizePackageWithAnnual(pkg: PackageOffer, defaultFallback?: PackageOffer): PackageOffer {
+  const current = pkg.currentPrice || defaultFallback?.currentPrice || 'R$ 197';
+  const monthly = pkg.monthlyPrice || current;
+  let annual = pkg.annualPrice;
+  if (!annual) {
+    if (defaultFallback?.annualPrice) {
+      annual = defaultFallback.annualPrice;
+    } else {
+      // Calculate 20% discount if missing
+      const num = parseFloat(current.replace(/[^\d]/g, ''));
+      if (!isNaN(num) && num > 0) {
+        annual = `R$ ${Math.round(num * 0.8)}`;
+      } else {
+        annual = current;
+      }
+    }
+  }
+  return {
+    ...defaultFallback,
+    ...pkg,
+    currentPrice: current,
+    monthlyPrice: monthly,
+    annualPrice: annual,
+    periodText: pkg.periodText || defaultFallback?.periodText || '/mês (ou sob medida)',
+    annualPeriodText: pkg.annualPeriodText || defaultFallback?.annualPeriodText || '/mês no plano anual (economize 20%)',
+  };
+}
 
 export function getCachedPackages(): PackageOffer[] {
   try {
     const raw = localStorage.getItem(PACKAGES_CACHE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed.map((p, idx) => normalizePackageWithAnnual(p, DEFAULT_PACKAGES[idx]));
+      }
     }
   } catch (err) {
     console.warn('Error reading packages cache:', err);
@@ -612,8 +678,11 @@ export function initPackagesListener(callback: (packages: PackageOffer[]) => voi
     if (snap.exists()) {
       const data = snap.data();
       if (Array.isArray(data.packages) && data.packages.length > 0) {
-        localStorage.setItem(PACKAGES_CACHE_KEY, JSON.stringify(data.packages));
-        callback(data.packages);
+        const normalized = data.packages.map((p: PackageOffer, idx: number) => 
+          normalizePackageWithAnnual(p, DEFAULT_PACKAGES[idx])
+        );
+        localStorage.setItem(PACKAGES_CACHE_KEY, JSON.stringify(normalized));
+        callback(normalized);
       }
     }
   }, (err) => {
@@ -624,7 +693,10 @@ export function initPackagesListener(callback: (packages: PackageOffer[]) => voi
     try {
       const customEvt = e as CustomEvent<PackageOffer[]>;
       if (customEvt.detail) {
-        callback(customEvt.detail);
+        const normalized = customEvt.detail.map((p, idx) => 
+          normalizePackageWithAnnual(p, DEFAULT_PACKAGES[idx])
+        );
+        callback(normalized);
       }
     } catch (err) {
       console.warn(err);
@@ -640,11 +712,12 @@ export function initPackagesListener(callback: (packages: PackageOffer[]) => voi
 }
 
 export async function savePackagesToFirestore(packages: PackageOffer[]): Promise<void> {
-  localStorage.setItem(PACKAGES_CACHE_KEY, JSON.stringify(packages));
-  window.dispatchEvent(new CustomEvent('techify-packages-updated', { detail: packages }));
+  const sanitizedPackages = JSON.parse(JSON.stringify(packages));
+  localStorage.setItem(PACKAGES_CACHE_KEY, JSON.stringify(sanitizedPackages));
+  window.dispatchEvent(new CustomEvent('techify-packages-updated', { detail: sanitizedPackages }));
 
   await setDoc(doc(db, "site_content", "packages"), {
-    packages,
+    packages: sanitizedPackages,
     updatedAt: new Date().toISOString()
   }, { merge: true });
 }

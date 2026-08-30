@@ -5,7 +5,7 @@ import {
   Plus, Trash2, Check, RefreshCw, ExternalLink, KeyRound, LogOut,
   Linkedin, Globe, FileText, Download, Edit, X, MapPin, UserCheck, UserPlus, Award,
   Copy, CheckCheck, FileSpreadsheet, Inbox, AtSign, Search, Sparkles,
-  Image as ImageIcon, Layers
+  Image as ImageIcon, Layers, CreditCard
 } from 'lucide-react';
 import { collection, onSnapshot, doc, updateDoc, deleteDoc, addDoc, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebase';
@@ -14,6 +14,7 @@ import { Job, Project, TechifyApp, DiagnosticoLead } from '../types';
 import AdminPortfolioTab from './AdminPortfolioTab';
 import AdminSiteEditorTab from './AdminSiteEditorTab';
 import AdminAppsTab from './AdminAppsTab';
+import AdminPackagesTab from './AdminPackagesTab';
 import { INITIAL_PORTFOLIO_SITES } from '../data/portfolioData';
 import { toast } from './Toast';
 
@@ -114,7 +115,7 @@ export default function AdminPanel() {
   const [passwordInput, setPasswordInput] = useState('');
   const [passwordError, setPasswordError] = useState('');
 
-  const [activeTab, setActiveTab] = useState<'andamento' | 'historico' | 'candidaturas' | 'contratados' | 'vagas' | 'leads' | 'parceiros' | 'newsletter' | 'apps' | 'site_editor'>('andamento');
+  const [activeTab, setActiveTab] = useState<'andamento' | 'historico' | 'candidaturas' | 'contratados' | 'vagas' | 'leads' | 'parceiros' | 'newsletter' | 'apps' | 'planos' | 'site_editor'>('andamento');
 
   const [consultas, setConsultas] = useState<ConsultaItem[]>([]);
   const [candidaturas, setCandidaturas] = useState<CandidaturaItem[]>([]);
@@ -1191,6 +1192,18 @@ export default function AdminPanel() {
           >
             <Layers className="h-4 w-4 text-[#a3e635]" />
             <span>Apps Techify ({appsList.length})</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('planos')}
+            className={`px-4 py-2.5 rounded-xl flex items-center gap-2 text-xs font-bold transition-all cursor-pointer ${
+              activeTab === 'planos'
+                ? 'bg-[#22c55e] text-black shadow-[0_0_15px_rgba(34,197,94,0.4)]'
+                : 'text-[#4ade80] hover:text-white hover:bg-[#22c55e]/15 border border-[#22c55e]/30'
+            }`}
+          >
+            <CreditCard className="h-4 w-4 text-[#22c55e]" />
+            <span>Planos & Preços</span>
           </button>
 
           <button
@@ -2567,6 +2580,11 @@ export default function AdminPanel() {
         {/* 8. APPS MANAGEMENT TAB */}
         {activeTab === 'apps' && (
           <AdminAppsTab apps={appsList} />
+        )}
+
+        {/* 9. PACKAGES / PLANS MANAGEMENT TAB */}
+        {activeTab === 'planos' && (
+          <AdminPackagesTab />
         )}
 
         {/* 10. SITE CONTENT & TEAM EDITOR TAB */}
