@@ -49,6 +49,11 @@ export interface SiteGeneralContent {
   copyright: string;
 }
 
+import tobyAvatar from '../assets/images/character_toby_1781368530741.jpg';
+import lilyAvatar from '../assets/images/character_lily_1781368515823.jpg';
+import chessAvatar from '../assets/images/chess_techify_1781363479208.jpg';
+import statueAvatar from '../assets/images/statue_techify_1781363466541.jpg';
+
 export const DEFAULT_TEAM_MEMBERS: TeamMember[] = [
   {
     id: 'marcos-henrique',
@@ -56,7 +61,7 @@ export const DEFAULT_TEAM_MEMBERS: TeamMember[] = [
     role: "CEO (Diretor Executivo)",
     description: "Liderança executiva, visão estratégica e expansão de produtos digitais de alto impacto.",
     linkedin: "https://linkedin.com",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80"
+    avatar: tobyAvatar
   },
   {
     id: 'vitoria-ellen',
@@ -64,7 +69,7 @@ export const DEFAULT_TEAM_MEMBERS: TeamMember[] = [
     role: "Designer (Head de UI/UX & Brand)",
     description: "Design de interfaces de alta conversão, identidade visual marcante e experiência fluida.",
     linkedin: "https://linkedin.com",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80"
+    avatar: lilyAvatar
   },
   {
     id: 'gabriel-rocha',
@@ -72,7 +77,7 @@ export const DEFAULT_TEAM_MEMBERS: TeamMember[] = [
     role: "CTO (Diretor de Tecnologia)",
     description: "Arquitetura de sistemas em nuvem, engenharia de software e inteligência computacional.",
     linkedin: "https://linkedin.com",
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80"
+    avatar: chessAvatar
   },
   {
     id: 'lucas-ferreira',
@@ -80,7 +85,7 @@ export const DEFAULT_TEAM_MEMBERS: TeamMember[] = [
     role: "COO (Diretor de Operações)",
     description: "Gestão operacional de processos, qualidade de entrega e sincronização ágil de times.",
     linkedin: "https://linkedin.com",
-    avatar: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=80"
+    avatar: statueAvatar
   }
 ];
 

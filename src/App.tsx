@@ -9,14 +9,17 @@ import AdminPanel from './components/AdminPanel';
 import Footer from './components/Footer';
 import ConsultationModal from './components/ConsultationModal';
 import AdminLoginModal from './components/AdminLoginModal';
+import CardCustomizerModal from './components/CardCustomizerModal';
 import ToastProvider from './components/Toast';
 import { InlineEditProvider } from './components/InlineEditProvider';
+import { Sliders } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('inicio');
   const [isConsultationOpen, setIsConsultationOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<string | undefined>(undefined);
   const [isAdminLoginOpen, setIsAdminLoginOpen] = useState(false);
+  const [isCardCustomizerOpen, setIsCardCustomizerOpen] = useState(false);
 
   const handleOpenConsultation = (serviceName?: string) => {
     setSelectedService(serviceName);
@@ -28,7 +31,7 @@ export default function App() {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   }, [activeTab]);
 
-  // Keyboard shortcut: Ctrl + A (or Cmd + A) opens the Admin login modal
+  // Keyboard shortcut & Custom Events
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'a') {
@@ -51,13 +54,23 @@ export default function App() {
       if (e.data && e.data.type === 'TECHIFY_OPEN_ADMIN') {
         setIsAdminLoginOpen(true);
       }
+      if (e.data && e.data.type === 'TECHIFY_OPEN_CARD_CUSTOMIZER') {
+        setIsCardCustomizerOpen(true);
+      }
+    };
+
+    const handleOpenCustomizerEvent = () => {
+      setIsCardCustomizerOpen(true);
     };
 
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('message', handleMessage);
+    window.addEventListener('techify-open-card-customizer', handleOpenCustomizerEvent);
+
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('message', handleMessage);
+      window.removeEventListener('techify-open-card-customizer', handleOpenCustomizerEvent);
     };
   }, []);
 
@@ -121,6 +134,22 @@ export default function App() {
             />
           )}
 
+          {/* Floating Card Customizer Quick Tool Trigger */}
+          <div className="fixed bottom-6 left-6 z-40">
+            <button
+              onClick={() => setIsCardCustomizerOpen(true)}
+              className="group flex items-center gap-2.5 rounded-full bg-black/90 hover:bg-neutral-900 border border-neutral-700 hover:border-[#22c55e] px-4 py-2.5 shadow-2xl backdrop-blur-xl transition-all duration-300 cursor-pointer hover:scale-105 active:scale-95"
+              title="Ajustar Tamanhos e Estilo dos Cards"
+            >
+              <div className="h-6 w-6 rounded-full bg-[#22c55e]/20 border border-[#22c55e] flex items-center justify-center text-[#22c55e] group-hover:rotate-90 transition-transform duration-500">
+                <Sliders className="h-3.5 w-3.5" />
+              </div>
+              <span className="text-xs font-bold text-neutral-200 group-hover:text-white transition-colors">
+                Personalizar Cards
+              </span>
+            </button>
+          </div>
+
           {/* Modals */}
           <ConsultationModal 
             isOpen={isConsultationOpen} 
@@ -132,6 +161,11 @@ export default function App() {
             isOpen={isAdminLoginOpen} 
             onClose={() => setIsAdminLoginOpen(false)} 
             onSuccess={() => setActiveTab('admin')} 
+          />
+
+          <CardCustomizerModal
+            isOpen={isCardCustomizerOpen}
+            onClose={() => setIsCardCustomizerOpen(false)}
           />
         </div>
       </InlineEditProvider>

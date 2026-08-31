@@ -514,30 +514,30 @@ export default function PortfolioSection({ onLaunchDemo }: PortfolioSectionProps
                 whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)', scale: 1 }}
                 viewport={{ once: false, amount: 0.12 }}
                 transition={{ duration: 0.6, delay: idx * 0.08, ease: [0.16, 1, 0.3, 1] }}
-                className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-neutral-800/90 bg-[#121312] hover:border-[#a3e635]/40 transition-all duration-300 shadow-xl"
+                className="flex w-full flex-col gap-3 overflow-hidden rounded-3xl border border-neutral-800/90 bg-[#121316] p-3 shadow-lg transition-all duration-300 hover:border-neutral-700 hover:shadow-2xl group relative"
               >
-                {/* Image Header matching screenshot 1 */}
-                <div className="relative h-52 w-full overflow-hidden bg-neutral-900">
+                {/* Cover Header */}
+                <div className="relative h-56 w-full overflow-hidden rounded-2xl bg-neutral-950">
                   <img
                     src={proj.imageUrl}
                     alt={proj.title}
                     referrerPolicy="no-referrer"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="h-full w-full rounded-2xl object-cover transition-transform duration-500 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#121312] via-transparent to-black/20" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 pointer-events-none" />
 
                   {/* Quick Actions: Edit & Delete (Admin Only) */}
                   {isAdmin && (
-                    <div className="absolute left-3 top-3 flex items-center gap-1.5 bg-black/80 backdrop-blur-md rounded-lg p-1 border border-neutral-800 opacity-90 group-hover:opacity-100 transition-opacity z-10">
+                    <div className="absolute left-3 top-3 flex items-center gap-1.5 bg-black/80 backdrop-blur-md rounded-xl p-1 border border-neutral-800 opacity-90 group-hover:opacity-100 transition-opacity z-10">
                       <button
-                        onClick={(e) => handleOpenEditModal(proj, e)}
+                        onClick={(e) => { e.stopPropagation(); handleOpenEditModal(proj, e); }}
                         className="text-neutral-300 hover:text-[#a3e635] p-1.5 transition-colors cursor-pointer"
                         title="Editar projeto"
                       >
                         <Edit className="h-4 w-4" />
                       </button>
                       <button
-                        onClick={(e) => handleDeleteProject(proj, e)}
+                        onClick={(e) => { e.stopPropagation(); handleDeleteProject(proj, e); }}
                         className="text-neutral-300 hover:text-red-400 p-1.5 transition-colors cursor-pointer"
                         title="Excluir projeto"
                       >
@@ -546,9 +546,9 @@ export default function PortfolioSection({ onLaunchDemo }: PortfolioSectionProps
                     </div>
                   )}
 
-                  {/* External Link Icon matching screenshot 1 top right */}
+                  {/* External Link Icon top right */}
                   <button
-                    onClick={(e) => handleOpenSite(proj, e)}
+                    onClick={(e) => { e.stopPropagation(); handleOpenSite(proj, e); }}
                     className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-xl bg-black/80 border border-neutral-800 text-neutral-300 hover:text-[#a3e635] hover:border-[#a3e635]/50 transition-all cursor-pointer z-10"
                     title="Abrir site/demo"
                   >
@@ -556,44 +556,44 @@ export default function PortfolioSection({ onLaunchDemo }: PortfolioSectionProps
                   </button>
                 </div>
 
-                {/* Card Content Body matching screenshot 1 */}
+                {/* Card Content Body */}
                 <div 
                   onClick={(e) => handleOpenSite(proj, e)}
-                  className="p-6 flex-1 flex flex-col justify-between cursor-pointer"
+                  className="flex-grow p-3 cursor-pointer flex flex-col justify-between"
                 >
                   <div>
-                    {/* Title & External Icon Row */}
-                    <div className="flex items-center justify-between gap-2 mb-3">
-                      <h3 className="font-extrabold text-xl text-white tracking-tight uppercase group-hover:text-[#a3e635] transition-colors">
-                        {proj.title}
-                      </h3>
-                      <ExternalLink className="h-4 w-4 text-[#a3e635] shrink-0" />
-                    </div>
-
-                    {/* Category Tag Badge matching screenshot 1 (e.g. landing-page, corporativo) */}
-                    <div className="mb-3">
-                      <span className="inline-block bg-[#2a133a]/90 border border-[#a855f7]/40 text-[#d8b4fe] text-[11px] font-semibold px-3 py-1 rounded-full lowercase">
-                        {proj.category.toLowerCase()}
+                    {/* Meta: Tag & Read Time */}
+                    <div className="mb-3 flex items-center text-sm text-neutral-400">
+                      <span className="rounded-full bg-neutral-800/90 border border-neutral-700/80 px-3 py-1 text-xs font-semibold text-neutral-300 hover:text-white transition-colors">
+                        {proj.category}
                       </span>
+                      <span className="mx-2 text-neutral-500">•</span>
+                      <span className="text-xs text-neutral-400">2 min read</span>
                     </div>
 
-                    {/* Description */}
-                    <p className="text-xs text-neutral-400 leading-relaxed line-clamp-3 mb-4">
+                    {/* Headline */}
+                    <h2 className="mb-2 text-2xl font-bold leading-tight text-white tracking-tight group-hover:text-[#a3e635] transition-colors">
+                      {proj.title}
+                    </h2>
+
+                    {/* Excerpt */}
+                    <p className="text-sm text-neutral-400 leading-relaxed overflow-hidden text-ellipsis line-clamp-3 mb-3">
                       {proj.description}
                     </p>
                   </div>
 
-                  {/* Bottom Action Button */}
-                  <div className="pt-4 border-t border-neutral-800/60 mt-4">
-                    <GlassButton
-                      onClick={(e) => handleOpenSite(proj, e)}
-                      variant="dark"
-                      size="sm"
-                      className="w-full rounded-xl py-2.5 text-xs font-bold text-white hover:text-[#a3e635]"
-                    >
-                      <Globe className="h-4 w-4" />
-                      <span>{proj.demoId || proj.liveUrl?.startsWith('demo:') ? 'Abrir Site Interativo' : 'Visitar Website'}</span>
-                    </GlassButton>
+                  {/* Footer */}
+                  <div className="flex items-center justify-between pt-3 border-t border-neutral-800/60 mt-2">
+                    <div>
+                      <p className="text-[11px] text-neutral-500 uppercase tracking-wider">By</p>
+                      <p className="text-xs font-semibold text-neutral-300">Techify Digital</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[11px] text-neutral-500 uppercase tracking-wider">Status</p>
+                      <p className="text-xs font-semibold text-[#a3e635] flex items-center gap-1 justify-end">
+                        <CheckCircle className="h-3 w-3" /> Online
+                      </p>
+                    </div>
                   </div>
 
                 </div>
