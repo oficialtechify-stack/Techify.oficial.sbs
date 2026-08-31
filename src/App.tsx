@@ -12,9 +12,11 @@ import AdminLoginModal from './components/AdminLoginModal';
 import CardCustomizerModal from './components/CardCustomizerModal';
 import ToastProvider from './components/Toast';
 import { InlineEditProvider } from './components/InlineEditProvider';
+import { useAdminAuth } from './lib/adminAuth';
 import { Sliders } from 'lucide-react';
 
 export default function App() {
+  const { isAdmin } = useAdminAuth();
   const [activeTab, setActiveTab] = useState('inicio');
   const [isConsultationOpen, setIsConsultationOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<string | undefined>(undefined);
@@ -133,22 +135,6 @@ export default function App() {
               onOpenConsultation={handleOpenConsultation} 
             />
           )}
-
-          {/* Floating Card Customizer Quick Tool Trigger */}
-          <div className="fixed bottom-6 left-6 z-40">
-            <button
-              onClick={() => setIsCardCustomizerOpen(true)}
-              className="group flex items-center gap-2.5 rounded-full bg-black/90 hover:bg-neutral-900 border border-neutral-700 hover:border-[#22c55e] px-4 py-2.5 shadow-2xl backdrop-blur-xl transition-all duration-300 cursor-pointer hover:scale-105 active:scale-95"
-              title="Ajustar Tamanhos e Estilo dos Cards"
-            >
-              <div className="h-6 w-6 rounded-full bg-[#22c55e]/20 border border-[#22c55e] flex items-center justify-center text-[#22c55e] group-hover:rotate-90 transition-transform duration-500">
-                <Sliders className="h-3.5 w-3.5" />
-              </div>
-              <span className="text-xs font-bold text-neutral-200 group-hover:text-white transition-colors">
-                Personalizar Cards
-              </span>
-            </button>
-          </div>
 
           {/* Modals */}
           <ConsultationModal 

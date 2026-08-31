@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
 import { ArrowLeft } from 'lucide-react';
 import { soundFX } from '../lib/soundFx';
+import { getCachedCardSettings, subscribeToCardSettings } from '../lib/cardStyles';
 
 interface MotionLabSectionProps {
   onNavigate?: (tab: string) => void;
@@ -16,6 +17,28 @@ export const MotionLabSection: React.FC<MotionLabSectionProps> = ({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
+  // Send current settings to iframe
+  const sendSettingsToIframe = (settings = getCachedCardSettings()) => {
+    if (iframeRef.current?.contentWindow) {
+      try {
+        iframeRef.current.contentWindow.postMessage({
+          type: 'TECHIFY_UPDATE_CARD_STYLES',
+          settings
+        }, '*');
+      } catch (e) {
+        console.warn('Could not postMessage to iframe:', e);
+      }
+    }
+  };
+
+  // Subscribe to real-time card customizer settings from Firebase & local state
+  useEffect(() => {
+    const unsub = subscribeToCardSettings((newSettings) => {
+      sendSettingsToIframe(newSettings);
+    });
+    return () => unsub();
+  }, []);
+
   // Parent-child postMessage communication bridge
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -26,6 +49,8 @@ export const MotionLabSection: React.FC<MotionLabSectionProps> = ({
       } else if (event.data.type === 'TECHIFY_NAVIGATE') {
         soundFX.playClick();
         onNavigate?.(event.data.tab || 'inicio');
+      } else if (event.data.type === 'TECHIFY_IFRAME_READY') {
+        sendSettingsToIframe();
       }
     };
 
@@ -90,6 +115,7 @@ export const MotionLabSection: React.FC<MotionLabSectionProps> = ({
           key={iframeKey}
           ref={iframeRef}
           src="/motion-lab.html"
+          onLoad={() => sendSettingsToIframe()}
           title="Techify Motion Lab - Interactive Experience"
           className="w-full h-full border-0 opacity-100 block"
           style={{

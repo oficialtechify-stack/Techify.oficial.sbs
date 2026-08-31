@@ -132,13 +132,21 @@ export function getCachedFeedbacks(): FeedbackImage[] {
 
 export async function saveFeedbacksToFirestore(feedbacks: FeedbackImage[]): Promise<void> {
   const sanitized = JSON.parse(JSON.stringify(feedbacks));
-  localStorage.setItem(FEEDBACK_CACHE_KEY, JSON.stringify(sanitized));
+  try {
+    localStorage.setItem(FEEDBACK_CACHE_KEY, JSON.stringify(sanitized));
+  } catch (e) {
+    console.warn('LocalStorage error:', e);
+  }
   window.dispatchEvent(new CustomEvent('techify-feedbacks-updated', { detail: sanitized }));
   
-  await setDoc(doc(db, "site_content", "feedbacks"), {
-    feedbacks: sanitized,
-    updatedAt: new Date().toISOString()
-  }, { merge: true });
+  try {
+    await setDoc(doc(db, "site_content", "feedbacks"), {
+      feedbacks: sanitized,
+      updatedAt: new Date().toISOString()
+    }, { merge: true });
+  } catch (err) {
+    console.error("Firestore saveFeedbacks error:", err);
+  }
 }
 
 export function getCachedTeamMembers(): TeamMember[] {
@@ -146,7 +154,7 @@ export function getCachedTeamMembers(): TeamMember[] {
     const raw = localStorage.getItem(TEAM_CACHE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      if (Array.isArray(parsed)) return parsed;
     }
   } catch (err) {
     console.warn(err);
@@ -169,44 +177,56 @@ export function getCachedGeneralContent(): SiteGeneralContent {
 
 export async function saveTeamMembersToFirestore(members: TeamMember[]): Promise<void> {
   const sanitized = JSON.parse(JSON.stringify(members));
-  localStorage.setItem(TEAM_CACHE_KEY, JSON.stringify(sanitized));
+  try {
+    localStorage.setItem(TEAM_CACHE_KEY, JSON.stringify(sanitized));
+  } catch (e) {
+    console.warn('LocalStorage error:', e);
+  }
   window.dispatchEvent(new CustomEvent('techify-team-updated', { detail: sanitized }));
   
-  await setDoc(doc(db, "site_content", "team"), {
-    members: sanitized,
-    updatedAt: new Date().toISOString()
-  }, { merge: true });
+  try {
+    await setDoc(doc(db, "site_content", "team"), {
+      members: sanitized,
+      updatedAt: new Date().toISOString()
+    }, { merge: true });
+  } catch (err) {
+    console.error("Firestore saveTeam error:", err);
+  }
 }
 
 export async function saveGeneralContentToFirestore(content: Partial<SiteGeneralContent>): Promise<void> {
   const current = getCachedGeneralContent();
   const updated = { ...current, ...content };
   const sanitized = JSON.parse(JSON.stringify(updated));
-  localStorage.setItem(CONTENT_CACHE_KEY, JSON.stringify(sanitized));
+  try {
+    localStorage.setItem(CONTENT_CACHE_KEY, JSON.stringify(sanitized));
+  } catch (e) {
+    console.warn('LocalStorage error:', e);
+  }
   window.dispatchEvent(new CustomEvent('techify-content-updated', { detail: sanitized }));
 
-  // Save to general document
-  await setDoc(doc(db, "site_content", "general"), {
-    ...sanitized,
-    updatedAt: new Date().toISOString()
-  }, { merge: true });
+  try {
+    // Save to general document
+    await setDoc(doc(db, "site_content", "general"), {
+      ...sanitized,
+      updatedAt: new Date().toISOString()
+    }, { merge: true });
 
-  // Keep inline_overrides texts in sync with general fields
-  const inlineUpdates: Record<string, string> = {};
-  if (content.heroHeadline1 !== undefined) inlineUpdates.hero_title_1 = content.heroHeadline1;
-  if (content.heroHeadline2 !== undefined) inlineUpdates.hero_title_2 = content.heroHeadline2;
-  if (content.heroDescription !== undefined) inlineUpdates.hero_description_main = content.heroDescription;
-  if (content.heroCtaPrimary !== undefined) inlineUpdates.hero_cta_primary = content.heroCtaPrimary;
-  if (content.heroCtaSecondary !== undefined) inlineUpdates.hero_cta_secondary = content.heroCtaSecondary;
+    // Keep inline_overrides texts in sync with general fields
+    const inlineUpdates: Record<string, string> = {};
+    if (content.heroHeadline1 !== undefined) inlineUpdates.hero_title_1 = content.heroHeadline1;
+    if (content.heroHeadline2 !== undefined) inlineUpdates.hero_title_2 = content.heroHeadline2;
+    if (content.heroDescription !== undefined) inlineUpdates.hero_description_main = content.heroDescription;
+    if (content.heroCtaPrimary !== undefined) inlineUpdates.hero_cta_primary = content.heroCtaPrimary;
+    if (content.heroCtaSecondary !== undefined) inlineUpdates.hero_cta_secondary = content.heroCtaSecondary;
 
-  if (Object.keys(inlineUpdates).length > 0) {
-    try {
+    if (Object.keys(inlineUpdates).length > 0) {
       await setDoc(doc(db, "site_content", "inline_overrides"), {
         texts: inlineUpdates,
         updatedAt: new Date().toISOString()
       }, { merge: true });
-    } catch (err) {
-      console.warn("Could not sync inline_overrides:", err);
     }
+  } catch (err) {
+    console.error("Firestore saveGeneral error:", err);
   }
 }

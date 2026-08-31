@@ -580,14 +580,12 @@ export default function AdminPanel() {
   };
 
   const handleDeleteJobAdmin = async (jobId: string) => {
-    if (window.confirm("Tem certeza que deseja excluir esta vaga?")) {
-      try {
-        await deleteDoc(doc(db, "vagas", jobId));
-        toast.info('Vaga Removida', 'A oportunidade de carreira foi excluída do sistema.');
-      } catch (err) {
-        console.error("Error deleting job in AdminPanel:", err);
-        toast.error('Erro ao Excluir', 'Não foi possível remover a vaga.');
-      }
+    try {
+      await deleteDoc(doc(db, "vagas", jobId));
+      toast.info('Vaga Removida', 'A oportunidade de carreira foi excluída do sistema.');
+    } catch (err) {
+      console.error("Error deleting job in AdminPanel:", err);
+      toast.error('Erro ao Excluir', 'Não foi possível remover a vaga.');
     }
   };
 
@@ -811,14 +809,12 @@ export default function AdminPanel() {
   };
 
   const handleDeleteContratado = async (id: string) => {
-    if (window.confirm('Deseja remover este profissional da lista de contratados?')) {
-      try {
-        await deleteDoc(doc(db, 'contratados', id));
-        toast.info('Colaborador Removido', 'O registro foi excluído da lista de contratados.');
-      } catch (err) {
-        console.error('Erro ao remover contratado:', err);
-        toast.error('Erro ao Excluir', 'Não foi possível remover o registro.');
-      }
+    try {
+      await deleteDoc(doc(db, 'contratados', id));
+      toast.info('Colaborador Removido', 'O registro foi excluído da lista de contratados.');
+    } catch (err) {
+      console.error('Erro ao remover contratado:', err);
+      toast.error('Erro ao Excluir', 'Não foi possível remover o registro.');
     }
   };
 

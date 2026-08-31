@@ -66,8 +66,23 @@ export async function saveCardSettings(settings: CardCustomizerSettings): Promis
   const sanitized = JSON.parse(JSON.stringify(settings));
   localStorage.setItem(CARD_SETTINGS_KEY, JSON.stringify(sanitized));
   
-  // Broadcast local update
+  // Broadcast local event in parent window
   window.dispatchEvent(new CustomEvent('techify-card-settings-updated', { detail: sanitized }));
+
+  // Broadcast to all iframes (e.g. Motion Lab)
+  if (typeof document !== 'undefined') {
+    const iframes = document.querySelectorAll('iframe');
+    iframes.forEach(iframe => {
+      try {
+        iframe.contentWindow?.postMessage({
+          type: 'TECHIFY_UPDATE_CARD_STYLES',
+          settings: sanitized
+        }, '*');
+      } catch (e) {
+        console.warn('Could not postMessage to iframe:', e);
+      }
+    });
+  }
   
   // Save to Firebase Firestore
   try {

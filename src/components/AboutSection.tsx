@@ -30,8 +30,6 @@ import {
   Lock,
   Headphones,
   FileCheck,
-  Sliders,
-  Maximize2,
   ExternalLink,
   Eye
 } from 'lucide-react';
@@ -48,17 +46,12 @@ import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { EditableText, EditableImage } from './InlineEditProvider';
 import ScrollReveal from './ScrollReveal';
-import CardCustomizerModal from './CardCustomizerModal';
+import { useAdminAuth } from '../lib/adminAuth';
 
 // Local Assets
 import statueImg from '../assets/images/statue_techify_1781363466541.jpg';
 import chessImg from '../assets/images/chess_techify_1781363479208.jpg';
 import squidGameImg from '../assets/images/squid_game_techify_1781363495119.jpg';
-import nikeBannerImg from '../assets/images/banner_nike_sneaker_1786736687582.jpg';
-import lvBannerImg from '../assets/images/banners_louis_vuitton_1786736697092.jpg';
-import cr7StoreImg from '../assets/images/loja_esportiva_cr7_1786736678642.jpg';
-import camagliImg from '../assets/images/loja_camagli_frete_1786736704977.jpg';
-import geekStoreImg from '../assets/images/loja_mundo_geek_1786736713447.jpg';
 import techifyLogoImg from '../assets/images/techify_logo_original_1786362412096.jpg';
 
 interface AboutSectionProps {
@@ -67,13 +60,11 @@ interface AboutSectionProps {
 }
 
 export default function AboutSection({ onNavigate, onOpenConsultation }: AboutSectionProps) {
+  const { isAdmin } = useAdminAuth();
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>(getCachedTeamMembers);
   const [generalContent, setGeneralContent] = useState<SiteGeneralContent>(getCachedGeneralContent);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
-  const [isCustomizerOpen, setIsCustomizerOpen] = useState(false);
   const [activeHeroArt, setActiveHeroArt] = useState<'statue' | 'chess' | 'squid'>('statue');
-  const [selectedLightboxImage, setSelectedLightboxImage] = useState<{ url: string; title: string; desc: string } | null>(null);
-  const [galleryCategory, setGalleryCategory] = useState<string>('Todos');
 
   const heroArtworks = {
     statue: {
@@ -95,79 +86,11 @@ export default function AboutSection({ onNavigate, onOpenConsultation }: AboutSe
       desc: "Renderização cinemática de personagem conceitual com detalhes texturizados e iluminação dramática."
     }
   };
-
-  const showcaseProductions = [
-    {
-      id: 'cr7-store',
-      title: 'Loja Esportiva Premium CR7',
-      category: 'E-commerce',
-      image: cr7StoreImg,
-      desc: 'Interface de alta conversão para artigos esportivos com banner imersivo, checkout fluido e filtros avançados.',
-      tag: 'E-commerce UI'
-    },
-    {
-      id: 'nike-banner',
-      title: 'Banner Promocional Nike Air Max',
-      category: 'Motion & Design',
-      image: nikeBannerImg,
-      desc: 'Composição visual de alto impacto para calçados esportivos, combinando tipografia brutalista e dinamismo de cor.',
-      tag: 'Publicidade & UI'
-    },
-    {
-      id: 'lv-banners',
-      title: 'Campanha de Banners Louis Vuitton Luxury',
-      category: 'Identidade Visual',
-      image: lvBannerImg,
-      desc: 'Identidade de luxo minimalista com grid editorial de alto padrão e tipografia serifada refinada.',
-      tag: 'Branding & Editorial'
-    },
-    {
-      id: 'camagli-store',
-      title: 'Camagli Moda & Lifestyle',
-      category: 'E-commerce',
-      image: camagliImg,
-      desc: 'E-commerce elegante com visual clean, foco no produto, frete grátis e cálculo instantâneo.',
-      tag: 'Loja Virtual'
-    },
-    {
-      id: 'geek-store',
-      title: 'Mundo Geek Store',
-      category: 'E-commerce',
-      image: geekStoreImg,
-      desc: 'Loja temática de cultura pop, colecionáveis e vestuário com layout escuro futurista.',
-      tag: 'Geek & Gamers'
-    },
-    {
-      id: 'statue-art',
-      title: 'Escultura Cibernética Techify 3D',
-      category: 'Arte 3D',
-      image: statueImg,
-      desc: 'Modelagem tridimensional de escultura futurista combinando anatomia clássica e hardware cibernético.',
-      tag: '3D Concept'
-    },
-    {
-      id: 'chess-3d',
-      title: 'Estratégia de Sistemas Techify',
-      category: 'Arte 3D',
-      image: chessImg,
-      desc: 'Renderização 3D de peças de xadrez futuristas em ambiente espelhado.',
-      tag: 'Arquitetura 3D'
-    },
-    {
-      id: 'squid-3d',
-      title: 'Guardião Tecnológico Techify',
-      category: 'Arte 3D',
-      image: squidGameImg,
-      desc: 'Render volumétrico com iluminação neon cyberpunk e máscara holográfica.',
-      tag: 'Motion Art'
-    }
-  ];
-
   useEffect(() => {
     const unsubTeam = onSnapshot(doc(db, "site_content", "team"), (snap) => {
       if (snap.exists()) {
         const data = snap.data();
-        if (Array.isArray(data.members) && data.members.length > 0) {
+        if (Array.isArray(data.members)) {
           setTeamMembers(data.members);
         }
       }
@@ -506,20 +429,8 @@ export default function AboutSection({ onNavigate, onOpenConsultation }: AboutSe
             </div>
 
             <h2 className="font-display text-3xl sm:text-5xl md:text-6xl font-black text-white leading-[1.15] tracking-tight">
-              A empresa digital dedicada a criar sistemas, sites{' '}
-              <span className="inline-flex items-center align-middle mx-1 text-[#22c55e]">
-                <span className="h-7 w-7 sm:h-9 sm:w-9 rounded-full bg-[#22c55e]/20 border border-[#22c55e] inline-flex items-center justify-center text-xs">
-                  ⚡
-                </span>
-              </span>{' '}
-              e <br />
-              <span className="text-[#22c55e]">marketing</span>{' '}
-              <span className="inline-flex items-center align-middle mx-1">
-                <span className="h-7 w-7 sm:h-9 sm:w-9 rounded-full bg-[#22c55e] inline-flex items-center justify-center text-black font-bold text-xs">
-                  💡
-                </span>
-              </span>{' '}
-              sob medida
+              A empresa digital dedicada a criar sistemas, sites e <br />
+              <span className="text-[#22c55e]">marketing</span> sob medida
             </h2>
 
             <p className="mt-8 max-w-3xl text-sm sm:text-base md:text-lg text-neutral-400 leading-relaxed font-normal mx-auto">
@@ -746,128 +657,6 @@ export default function AboutSection({ onNavigate, onOpenConsultation }: AboutSe
 
 
       {/* ========================================================================= */}
-      {/* 6.5 PRODUÇÕES VISUAIS, BANNERS & ENGENHARIA AUTORAL                       */}
-      {/* ========================================================================= */}
-      <section className="relative w-full py-24 sm:py-32 bg-[#040604] border-t border-neutral-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <ScrollReveal threshold={0.15}>
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-              <div>
-                <div className="inline-flex items-center gap-2 rounded-full border border-neutral-800 bg-neutral-950 px-3.5 py-1 text-xs font-bold text-neutral-300 mb-4">
-                  <Sparkles className="h-3.5 w-3.5 text-[#22c55e]" />
-                  <span>Galeria de Produções Visuais</span>
-                </div>
-                <h2 className="font-display text-3xl sm:text-5xl font-black text-white">
-                  Interfaces, Banners &amp; Criações 3D
-                </h2>
-                <p className="mt-2 text-sm sm:text-base text-neutral-400 max-w-2xl">
-                  Projetos visuais e interfaces desenvolvidas com foco em posicionamento de luxo, dinamismo e conversão.
-                </p>
-              </div>
-
-              {/* Action Buttons: Customizer trigger */}
-              <div className="flex flex-wrap items-center gap-3">
-                <button
-                  onClick={() => setIsCustomizerOpen(true)}
-                  className="inline-flex items-center gap-2 rounded-full bg-neutral-900 hover:bg-neutral-800 border border-[#22c55e]/40 hover:border-[#22c55e] px-5 py-2.5 text-xs font-bold text-[#4ade80] transition-all cursor-pointer shadow-lg hover:shadow-[#22c55e]/20"
-                >
-                  <Sliders className="h-3.5 w-3.5" />
-                  <span>AJUSTAR ESTILO &amp; TAMANHOS DOS CARDS</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Category Filter Pills */}
-            <div className="flex flex-wrap items-center gap-2 mb-10">
-              {['Todos', 'E-commerce', 'Motion & Design', 'Identidade Visual', 'Arte 3D'].map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setGalleryCategory(cat)}
-                  className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                    galleryCategory === cat
-                      ? 'bg-[#22c55e] text-black shadow-[0_0_15px_rgba(34,197,94,0.4)]'
-                      : 'bg-neutral-950 text-neutral-400 hover:text-white border border-neutral-800 hover:border-neutral-700'
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-          </ScrollReveal>
-
-          {/* Grid of Showcase Productions */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {showcaseProductions
-              .filter(item => galleryCategory === 'Todos' || item.category === galleryCategory)
-              .map((item, idx) => (
-                <motion.div
-                  key={item.id}
-                  layout
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.4, delay: idx * 0.05 }}
-                  className="group relative rounded-3xl border border-neutral-850 bg-neutral-950/90 overflow-hidden flex flex-col justify-between hover:border-[#22c55e]/50 hover:shadow-2xl transition-all duration-300"
-                >
-                  {/* Image with zoom and expand button */}
-                  <div className="relative aspect-[4/3] w-full overflow-hidden bg-neutral-900">
-                    <img 
-                      src={item.image} 
-                      alt={item.title}
-                      className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500 brightness-95 group-hover:brightness-100" 
-                    />
-                    
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4">
-                      <button
-                        onClick={() => setSelectedLightboxImage({ url: item.image, title: item.title, desc: item.desc })}
-                        className="inline-flex items-center gap-2 rounded-full bg-black/85 text-white px-4 py-2 text-xs font-bold backdrop-blur-md border border-neutral-700 hover:border-[#22c55e] transition-all cursor-pointer"
-                      >
-                        <Maximize2 className="h-3.5 w-3.5 text-[#22c55e]" />
-                        <span>Ver em Tela Cheia</span>
-                      </button>
-                    </div>
-
-                    <div className="absolute top-3 left-3">
-                      <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-black bg-[#22c55e] px-2.5 py-1 rounded-full shadow-md">
-                        {item.tag}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Info */}
-                  <div className="p-5 flex-1 flex flex-col justify-between">
-                    <div>
-                      <h3 className="font-display text-base font-bold text-white group-hover:text-[#4ade80] transition-colors leading-snug">
-                        {item.title}
-                      </h3>
-                      <p className="mt-2 text-xs text-neutral-400 leading-relaxed font-normal">
-                        {item.desc}
-                      </p>
-                    </div>
-
-                    <div className="mt-4 pt-3 border-t border-neutral-900 flex items-center justify-between">
-                      <span className="text-[11px] font-mono text-neutral-500">
-                        {item.category}
-                      </span>
-                      <button
-                        onClick={() => setSelectedLightboxImage({ url: item.image, title: item.title, desc: item.desc })}
-                        className="text-xs font-bold text-[#4ade80] hover:underline inline-flex items-center gap-1 cursor-pointer"
-                      >
-                        <span>Expandir</span>
-                        <ArrowUpRight className="h-3 w-3" />
-                      </button>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-          </div>
-
-        </div>
-      </section>
-
-
-      {/* ========================================================================= */}
       {/* 7. FAQ INSTITUCIONAL SOBRE A TECHIFY                                      */}
       {/* ========================================================================= */}
       <section className="relative w-full py-20 sm:py-28 bg-[#060806] border-t border-neutral-900">
@@ -983,59 +772,6 @@ export default function AboutSection({ onNavigate, onOpenConsultation }: AboutSe
           </div>
         </div>
       </section>
-
-      {/* Image Lightbox Modal */}
-      <AnimatePresence>
-        {selectedLightboxImage && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 sm:p-6 backdrop-blur-md"
-            onClick={() => setSelectedLightboxImage(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="relative max-w-4xl w-full bg-neutral-950 border border-neutral-800 rounded-3xl overflow-hidden shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="relative aspect-video sm:aspect-[16/10] w-full bg-black">
-                <img
-                  src={selectedLightboxImage.url}
-                  alt={selectedLightboxImage.title}
-                  className="w-full h-full object-contain"
-                />
-              </div>
-
-              <div className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-neutral-800">
-                <div>
-                  <h3 className="font-display text-lg font-bold text-white">
-                    {selectedLightboxImage.title}
-                  </h3>
-                  <p className="text-xs text-neutral-400 mt-1 max-w-xl">
-                    {selectedLightboxImage.desc}
-                  </p>
-                </div>
-
-                <button
-                  onClick={() => setSelectedLightboxImage(null)}
-                  className="px-6 py-2.5 rounded-full bg-neutral-800 hover:bg-neutral-700 text-white font-bold text-xs transition-colors cursor-pointer shrink-0"
-                >
-                  Fechar
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Card Customizer Modal */}
-      <CardCustomizerModal
-        isOpen={isCustomizerOpen}
-        onClose={() => setIsCustomizerOpen(false)}
-      />
 
     </div>
   );

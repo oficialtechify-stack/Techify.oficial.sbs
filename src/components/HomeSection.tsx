@@ -57,6 +57,7 @@ import {
   HomePillarItem
 } from '../lib/homeContent';
 import { toast } from './Toast';
+import heroBgImage from '../assets/images/techify_logo_original_1786362412096.jpg';
 
 // Helper to parse price strings into currency symbol, number amount and suffix for NumberFlow
 function parsePriceData(val: string | number | undefined) {
@@ -298,12 +299,10 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
   };
 
   const handleResetToDefault = async () => {
-    if (window.confirm('Tem certeza que deseja restaurar o conteúdo padrão da página inicial?')) {
-      setContent(DEFAULT_HOME_PAGE_CONTENT);
-      setHasUnsavedChanges(true);
-      await saveHomePageContentToFirestore(DEFAULT_HOME_PAGE_CONTENT);
-      toast.info('Conteúdo Restaurado', 'A página inicial voltou para a configuração padrão.');
-    }
+    setContent(DEFAULT_HOME_PAGE_CONTENT);
+    setHasUnsavedChanges(true);
+    await saveHomePageContentToFirestore(DEFAULT_HOME_PAGE_CONTENT);
+    toast.info('Conteúdo Restaurado', 'A página inicial voltou para a configuração padrão.');
   };
 
   // ==========================================
@@ -365,14 +364,12 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
   };
 
   const handleDeleteService = (serviceId: string, name: string) => {
-    if (window.confirm(`Deseja realmente excluir o serviço "${name}"?`)) {
-      setContent(prev => ({
-        ...prev,
-        services: prev.services.filter(s => s.id !== serviceId)
-      }));
-      setHasUnsavedChanges(true);
-      toast.info('Serviço Removido', `O serviço "${name}" foi excluído da lista.`);
-    }
+    setContent(prev => ({
+      ...prev,
+      services: prev.services.filter(s => s.id !== serviceId)
+    }));
+    setHasUnsavedChanges(true);
+    toast.info('Serviço Removido', `O serviço "${name}" foi excluído da lista.`);
   };
 
   // ==========================================
@@ -423,23 +420,21 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
   };
 
   const handleDeletePlan = async (planId: string, name: string) => {
-    if (window.confirm(`Deseja realmente excluir o plano "${name}"?`)) {
-      const newPlans = content.plans.filter(p => p.id !== planId);
-      setContent(prev => ({
-        ...prev,
-        plans: newPlans
-      }));
-      setHasUnsavedChanges(true);
-      toast.info('Plano Removido', `O plano "${name}" foi excluído.`);
+    const newPlans = content.plans.filter(p => p.id !== planId);
+    setContent(prev => ({
+      ...prev,
+      plans: newPlans
+    }));
+    setHasUnsavedChanges(true);
+    toast.info('Plano Removido', `O plano "${name}" foi excluído.`);
 
-      try {
-        await saveHomePageContentToFirestore({
-          ...content,
-          plans: newPlans
-        });
-      } catch (err) {
-        console.warn(err);
-      }
+    try {
+      await saveHomePageContentToFirestore({
+        ...content,
+        plans: newPlans
+      });
+    } catch (err) {
+      console.warn(err);
     }
   };
 
@@ -477,14 +472,12 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
   };
 
   const handleDeleteFaq = (faqId: string) => {
-    if (window.confirm('Deseja realmente excluir esta dúvida do FAQ?')) {
-      setContent(prev => ({
-        ...prev,
-        faqs: prev.faqs.filter(f => f.id !== faqId)
-      }));
-      setHasUnsavedChanges(true);
-      toast.info('FAQ Removido', 'A pergunta foi removida da lista.');
-    }
+    setContent(prev => ({
+      ...prev,
+      faqs: prev.faqs.filter(f => f.id !== faqId)
+    }));
+    setHasUnsavedChanges(true);
+    toast.info('FAQ Removido', 'A pergunta foi removida da lista.');
   };
 
   return (
@@ -550,30 +543,28 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
       )}
 
       {/* ========================================================================= */}
-      {/* 1. HERO SECTION (Cinematic Video Background + Bottom Blur Overlay) */}
+      {/* 1. HERO SECTION (Techify 3D Metallic Background)                          */}
       {/* ========================================================================= */}
-      <section className="relative w-full overflow-hidden min-h-[85vh] sm:min-h-[90vh] flex flex-col justify-center items-center px-4 pt-20 pb-20 sm:pt-28 sm:pb-28 text-center bg-black">
+      <section className="relative w-full overflow-hidden min-h-[85vh] sm:min-h-[90vh] flex flex-col justify-center items-center px-4 pt-20 pb-20 sm:pt-28 sm:pb-28 text-center bg-[#050905]">
         
-        {/* Full-width / Viewport Background Video */}
+        {/* Full-width Background Image */}
         <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="auto"
-            className="w-full h-full object-cover"
-          >
-            <source src="https://zxdefgavgwfxastwmmjm.supabase.co/storage/v1/object/public/assets/cinematic.mp4" type="video/mp4" />
-          </video>
+          <img
+            src={heroBgImage}
+            alt="Techify Background"
+            className="w-full h-full object-cover object-center scale-105 filter brightness-[0.75] contrast-[1.1]"
+          />
+          {/* Dark Radial & Gradient Overlays for perfect contrast and visual depth */}
+          <div className="absolute inset-0 bg-radial from-black/20 via-black/50 to-black/90" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-transparent to-black" />
         </div>
 
-        {/* Bottom Blur Overlay (no gradient darkening, only backdrop-blur-xl with mask) */}
+        {/* Bottom Blur Overlay for smooth transition */}
         <div 
-          className="absolute inset-0 pointer-events-none z-[1] bottom-blur-mask backdrop-blur-xl"
+          className="absolute inset-0 pointer-events-none z-[1] bottom-blur-mask backdrop-blur-sm"
           style={{
-            WebkitMaskImage: 'linear-gradient(to top, black 0%, transparent 45%)',
-            maskImage: 'linear-gradient(to top, black 0%, transparent 45%)',
+            WebkitMaskImage: 'linear-gradient(to top, black 0%, transparent 40%)',
+            maskImage: 'linear-gradient(to top, black 0%, transparent 40%)',
           }}
         />
 
@@ -996,7 +987,7 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
                   <div className="h-7 w-7 rounded-full bg-[#113819] border border-[#22c55e]/60 flex items-center justify-center">
                     <Check className="h-4 w-4 text-[#22c55e] stroke-[3]" />
                   </div>
-                  <span>Com a Techify Software &amp; Design Lab</span>
+                  <span>Com a Techify</span>
                 </div>
 
                 <div className="space-y-4 text-sm text-neutral-200">

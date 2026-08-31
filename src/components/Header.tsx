@@ -18,8 +18,7 @@ export default function Header({ activeTab, setActiveTab, onOpenConsultation, on
   const baseNavItems = [
     { id: 'inicio', label: 'INÍCIO', icon: Home },
     { id: 'sobre-nos', label: 'SOBRE NÓS', icon: Users },
-    { id: 'apps', label: 'APPS', icon: Layers, isNew: true },
-    { id: 'academia', label: 'TECHIFY MOTION', icon: Sparkles, isNew: true },
+    { id: 'academia', label: 'PORTFÓLIO', icon: Sparkles },
     { id: 'carreiras', label: 'CARREIRAS', icon: Briefcase },
   ];
 
@@ -48,9 +47,6 @@ export default function Header({ activeTab, setActiveTab, onOpenConsultation, on
           <div className="flex flex-col text-left">
             <span className="font-display text-base sm:text-lg font-black tracking-tight text-white leading-none">
               Techify
-            </span>
-            <span className="text-[10px] font-semibold text-[#22c55e] tracking-wide mt-0.5">
-              Software &amp; Design Lab
             </span>
           </div>
         </div>

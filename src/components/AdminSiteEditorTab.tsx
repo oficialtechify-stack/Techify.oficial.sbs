@@ -21,7 +21,8 @@ import {
   RotateCcw,
   CheckCircle2,
   X,
-  Camera
+  Camera,
+  AlertTriangle
 } from 'lucide-react';
 import { 
   TeamMember, 
@@ -60,6 +61,11 @@ export default function AdminSiteEditorTab() {
   const [feedback, setFeedback] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
+  // Confirmation Modals State
+  const [memberToDelete, setMemberToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [feedbackToDelete, setFeedbackToDelete] = useState<string | null>(null);
+  const [isRestoreDefaultTeamModalOpen, setIsRestoreDefaultTeamModalOpen] = useState(false);
+
   // Feedback Modal State
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
   const [editingFeedbackId, setEditingFeedbackId] = useState<string | null>(null);
@@ -93,7 +99,7 @@ export default function AdminSiteEditorTab() {
     const unsubTeam = onSnapshot(doc(db, "site_content", "team"), (snap) => {
       if (snap.exists()) {
         const data = snap.data();
-        if (Array.isArray(data.members) && data.members.length > 0) {
+        if (Array.isArray(data.members)) {
           setTeamMembers(data.members);
         }
       }
@@ -219,17 +225,23 @@ export default function AdminSiteEditorTab() {
     }
   };
 
-  // Delete feedback
-  const handleDeleteFeedback = async (id: string) => {
-    if (!window.confirm("Deseja realmente remover este print de feedback do site?")) return;
+  // Delete feedback trigger & execution
+  const handleDeleteFeedback = (id: string) => {
+    setFeedbackToDelete(id);
+  };
+
+  const confirmDeleteFeedback = async () => {
+    if (!feedbackToDelete) return;
     try {
-      const updated = feedbacks.filter(fb => fb.id !== id);
+      const updated = feedbacks.filter(fb => fb.id !== feedbackToDelete);
       setFeedbacks(updated);
       await saveFeedbacksToFirestore(updated);
       toast.info("Feedback Removido", "O print foi removido com sucesso.");
     } catch (err) {
       console.error(err);
       toast.error("Erro ao Excluir", "Não foi possível remover o print.");
+    } finally {
+      setFeedbackToDelete(null);
     }
   };
 
@@ -338,9 +350,14 @@ export default function AdminSiteEditorTab() {
     }
   };
 
-  // Delete member
-  const handleDeleteMember = async (id: string, name: string) => {
-    if (!window.confirm(`Tem certeza que deseja excluir "${name}" do time?`)) return;
+  // Delete member trigger & execution
+  const handleDeleteMember = (id: string, name: string) => {
+    setMemberToDelete({ id, name });
+  };
+
+  const confirmDeleteMember = async () => {
+    if (!memberToDelete) return;
+    const { id, name } = memberToDelete;
     try {
       const updated = teamMembers.filter(m => m.id !== id);
       setTeamMembers(updated);
@@ -349,12 +366,17 @@ export default function AdminSiteEditorTab() {
     } catch (err) {
       console.error(err);
       toast.error("Erro ao Excluir", "Não foi possível remover o membro.");
+    } finally {
+      setMemberToDelete(null);
     }
   };
 
-  // Restore default team
-  const handleRestoreDefaultTeam = async () => {
-    if (!window.confirm("Deseja restaurar a equipe padrão da Techify (Marcos Henrique, Vitória Ellen, Gabriel Rocha, Lucas Ferreira)?")) return;
+  // Restore default team trigger & execution
+  const handleRestoreDefaultTeam = () => {
+    setIsRestoreDefaultTeamModalOpen(true);
+  };
+
+  const confirmRestoreDefaultTeam = async () => {
     try {
       setTeamMembers(DEFAULT_TEAM_MEMBERS);
       await saveTeamMembersToFirestore(DEFAULT_TEAM_MEMBERS);
@@ -362,6 +384,8 @@ export default function AdminSiteEditorTab() {
     } catch (err) {
       console.error(err);
       toast.error("Erro ao Restaurar", "Não foi possível restaurar a equipe padrão.");
+    } finally {
+      setIsRestoreDefaultTeamModalOpen(false);
     }
   };
 
@@ -1245,6 +1269,120 @@ export default function AdminSiteEditorTab() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* CONFIRM DELETE MEMBER MODAL */}
+      {memberToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="relative w-full max-w-md rounded-2xl border border-neutral-800 bg-[#0d100d] p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="h-10 w-10 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center shrink-0">
+                <Trash2 className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="font-display text-base font-bold text-white">Excluir Membro da Equipe</h3>
+                <p className="text-xs text-neutral-400">Esta ação atualizará o site imediatamente.</p>
+              </div>
+            </div>
+
+            <p className="text-xs text-neutral-300 mb-6 bg-neutral-900/60 p-3 rounded-xl border border-neutral-800/80 leading-relaxed">
+              Tem certeza que deseja remover <strong className="text-white">"{memberToDelete.name}"</strong> da equipe? O card deste membro deixará de aparecer no site.
+            </p>
+
+            <div className="flex items-center justify-end gap-2.5">
+              <button
+                type="button"
+                onClick={() => setMemberToDelete(null)}
+                className="px-4 py-2.5 rounded-xl border border-neutral-800 hover:bg-neutral-800 text-xs font-bold text-neutral-300 transition-colors cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeleteMember}
+                className="px-4 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white font-extrabold text-xs transition-all shadow-[0_0_12px_rgba(239,68,68,0.3)] cursor-pointer"
+              >
+                Sim, Excluir Membro
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* CONFIRM RESTORE TEAM MODAL */}
+      {isRestoreDefaultTeamModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="relative w-full max-w-md rounded-2xl border border-neutral-800 bg-[#0d100d] p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="h-10 w-10 rounded-xl bg-[#a3e635]/10 border border-[#a3e635]/20 text-[#a3e635] flex items-center justify-center shrink-0">
+                <RotateCcw className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="font-display text-base font-bold text-white">Restaurar Equipe Padrão</h3>
+                <p className="text-xs text-neutral-400">Recarregar os 4 membros originais</p>
+              </div>
+            </div>
+
+            <p className="text-xs text-neutral-300 mb-6 bg-neutral-900/60 p-3 rounded-xl border border-neutral-800/80 leading-relaxed">
+              Deseja restaurar a formação padrão da equipe (Marcos Henrique, Vitória Ellen, Gabriel Rocha e Lucas Ferreira)? As fotos e descrições personalizadas serão substituídas.
+            </p>
+
+            <div className="flex items-center justify-end gap-2.5">
+              <button
+                type="button"
+                onClick={() => setIsRestoreDefaultTeamModalOpen(false)}
+                className="px-4 py-2.5 rounded-xl border border-neutral-800 hover:bg-neutral-800 text-xs font-bold text-neutral-300 transition-colors cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={confirmRestoreDefaultTeam}
+                className="px-4 py-2.5 rounded-xl bg-[#a3e635] hover:bg-[#84cc16] text-black font-extrabold text-xs transition-all shadow-[0_0_12px_rgba(163,230,53,0.3)] cursor-pointer"
+              >
+                Confirmar e Restaurar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* CONFIRM DELETE FEEDBACK MODAL */}
+      {feedbackToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="relative w-full max-w-md rounded-2xl border border-neutral-800 bg-[#0d100d] p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="h-10 w-10 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center shrink-0">
+                <Trash2 className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="font-display text-base font-bold text-white">Remover Print de Feedback</h3>
+                <p className="text-xs text-neutral-400">Esta ação removerá o print do site.</p>
+              </div>
+            </div>
+
+            <p className="text-xs text-neutral-300 mb-6 bg-neutral-900/60 p-3 rounded-xl border border-neutral-800/80 leading-relaxed">
+              Tem certeza que deseja excluir este print de feedback do cliente do site?
+            </p>
+
+            <div className="flex items-center justify-end gap-2.5">
+              <button
+                type="button"
+                onClick={() => setFeedbackToDelete(null)}
+                className="px-4 py-2.5 rounded-xl border border-neutral-800 hover:bg-neutral-800 text-xs font-bold text-neutral-300 transition-colors cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeleteFeedback}
+                className="px-4 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white font-extrabold text-xs transition-all shadow-[0_0_12px_rgba(239,68,68,0.3)] cursor-pointer"
+              >
+                Sim, Remover Print
+              </button>
+            </div>
           </div>
         </div>
       )}

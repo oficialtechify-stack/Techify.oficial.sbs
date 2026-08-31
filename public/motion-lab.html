@@ -154,37 +154,51 @@ twq('config','ocd0n');
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
   }
 
+  :root {
+    --techify-card-max-width: 384px;
+    --techify-cover-height: 220px;
+    --techify-card-padding: 12px;
+    --techify-elements-gap: 12px;
+    --techify-card-radius: 24px;
+    --techify-cover-radius: 16px;
+    --techify-font-size: 13.5px;
+    --techify-line-height: 1.45;
+    --techify-text-align: left;
+    --techify-card-bg: #131316;
+    --techify-border-color: rgba(255, 255, 255, 0.08);
+    --techify-text-color: #dedee4;
+  }
+
   /* Container dos 3 Cards: 3 colunas em linha lado a lado */
   .list-wrap.is-implementation {
-    display: grid !important;
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    gap: 1.25rem !important;
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    align-items: stretch !important;
+    flex-wrap: nowrap !important;
+    gap: var(--techify-elements-gap, 12px) !important;
     margin: 0 auto !important;
     width: 100% !important;
-    max-width: 1200px !important;
-    padding: 0 0.5rem !important;
+    max-width: 1240px !important;
+    padding: 0 1rem !important;
     transform: none !important;
     position: relative !important;
     box-sizing: border-box !important;
-    align-items: stretch !important;
-    justify-items: center !important;
   }
 
   /* Notebooks & Telas Médias (992px a 1200px) */
   @media (max-width: 1200px) {
     .list-wrap.is-implementation {
-      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
       max-width: 1060px !important;
-      gap: 1rem !important;
+      padding: 0 0.75rem !important;
     }
   }
 
   /* Tablets (768px a 991px) */
   @media (max-width: 991px) {
     .list-wrap.is-implementation {
-      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-      max-width: 900px !important;
-      gap: 0.85rem !important;
+      max-width: 920px !important;
+      padding: 0 0.5rem !important;
     }
   }
 
@@ -210,12 +224,14 @@ twq('config','ocd0n');
     }
   }
 
-  /* Cards Escuros Estilo ArticleCard: rounded-3xl (24px), p-3 (12px), gap-3, sem esticar para baixo */
+  /* Cards Escuros Estilo ArticleCard */
   .project-card-item,
   .list-wrap.is-implementation > div,
   .list-wrap.is-implementation .card-link {
+    flex: 1 1 var(--techify-card-max-width, 384px) !important;
     width: 100% !important;
-    max-width: 384px !important;
+    max-width: var(--techify-card-max-width, 384px) !important;
+    min-width: 250px !important;
     height: auto !important;
     min-height: 0 !important;
     max-height: none !important;
@@ -230,15 +246,15 @@ twq('config','ocd0n');
     opacity: 1 !important;
     display: flex !important;
     flex-direction: column !important;
-    gap: 0.75rem !important;
+    gap: var(--techify-elements-gap, 12px) !important;
     align-items: stretch !important;
     justify-content: flex-start !important;
     box-sizing: border-box !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    background-color: #131316 !important;
-    background: #131316 !important;
-    border-radius: 24px !important;
-    padding: 0.75rem !important;
+    border: 1px solid var(--techify-border-color, rgba(255, 255, 255, 0.08)) !important;
+    background-color: var(--techify-card-bg, #131316) !important;
+    background: var(--techify-card-bg, #131316) !important;
+    border-radius: var(--techify-card-radius, 24px) !important;
+    padding: var(--techify-card-padding, 12px) !important;
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.45), 0 4px 6px -2px rgba(0, 0, 0, 0.25) !important;
     overflow: hidden !important;
     transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease, border-color 0.22s ease !important;
@@ -247,17 +263,17 @@ twq('config','ocd0n');
   .project-card-item:hover,
   .list-wrap.is-implementation > div:hover {
     transform: translateY(-4px) !important;
-    border-color: rgba(59, 130, 246, 0.45) !important;
-    box-shadow: 0 16px 30px -5px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(59, 130, 246, 0.25) !important;
+    border-color: rgba(34, 197, 94, 0.5) !important;
+    box-shadow: 0 16px 30px -5px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(34, 197, 94, 0.3) !important;
   }
 
-  /* Mídia / Vídeos: rounded-2xl (16px), 16:9 limpo sem altura forçada */
+  /* Mídia / Vídeos */
   .card-video-item {
     width: 100% !important;
-    height: auto !important;
-    aspect-ratio: 16 / 9.5 !important;
+    height: var(--techify-cover-height, 220px) !important;
+    aspect-ratio: auto !important;
     border: none !important;
-    border-radius: 16px !important;
+    border-radius: var(--techify-cover-radius, 16px) !important;
     position: relative !important;
     overflow: hidden !important;
     margin: 0 !important;
@@ -278,7 +294,7 @@ twq('config','ocd0n');
     right: 0 !important;
     bottom: 0 !important;
     margin: 0 !important;
-    border-radius: 16px !important;
+    border-radius: var(--techify-cover-radius, 16px) !important;
     overflow: hidden !important;
     transform: none !important;
   }
@@ -290,7 +306,7 @@ twq('config','ocd0n');
     min-height: 100% !important;
     object-fit: cover !important;
     display: block !important;
-    border-radius: 16px !important;
+    border-radius: var(--techify-cover-radius, 16px) !important;
     transform: none !important;
   }
 
@@ -307,22 +323,22 @@ twq('config','ocd0n');
     left: 0 !important;
     right: 0 !important;
     bottom: 0 !important;
-    border-radius: 16px !important;
+    border-radius: var(--techify-cover-radius, 16px) !important;
     display: block !important;
     transform: none !important;
   }
 
-  /* Card Content / Legenda Alinhada estilo CardContent p-3 */
+  /* Card Content / Legenda Alinhada */
   .flex-display.is-implementation {
     width: 100% !important;
-    min-width: 100% !important;
+    min-width: 0 !important;
     display: flex !important;
     flex-direction: column !important;
-    align-items: flex-start !important;
+    align-items: stretch !important;
     justify-content: flex-start !important;
     text-align: left !important;
     margin: 0 !important;
-    padding: 0.25rem 0.5rem 0.4rem 0.5rem !important;
+    padding: 0.25rem 0.25rem !important;
     border-top: none !important;
     flex: 1 1 auto !important;
     box-sizing: border-box !important;
@@ -330,23 +346,23 @@ twq('config','ocd0n');
 
   .text-wrap.is-implementation {
     width: 100% !important;
-    min-width: 100% !important;
+    min-width: 0 !important;
     height: auto !important;
     display: block !important;
-    text-align: left !important;
     margin: 0 !important;
     padding: 0 !important;
+    box-sizing: border-box !important;
   }
 
-  /* Legenda: Tipografia nítida, sem quebras forçadas, altura compacta e proporcional */
+  /* Legenda: Tipografia nítida, sem quebras forçadas, largura total */
   .text-wrap.is-implementation .p3,
   .project-card-item .p3,
   .list-wrap.is-implementation .p3,
   .project-card-item p {
-    text-align: left !important;
-    font-size: 13.5px !important;
-    line-height: 1.45 !important;
-    color: #dedee4 !important;
+    text-align: var(--techify-text-align, left) !important;
+    font-size: var(--techify-font-size, 13.5px) !important;
+    line-height: var(--techify-line-height, 1.45) !important;
+    color: var(--techify-text-color, #dedee4) !important;
     font-weight: 400 !important;
     margin: 0 !important;
     padding: 0 !important;
@@ -357,8 +373,10 @@ twq('config','ocd0n');
     transform: none !important;
     width: 100% !important;
     max-width: 100% !important;
+    min-width: 0 !important;
     word-break: normal !important;
     white-space: normal !important;
+    display: block !important;
   }
 
   /* Neutralize Webflow overlay in implementation sections */
@@ -1420,11 +1438,43 @@ startCounting(initialValue, targetValue, loaderCounterElement, durationInSeconds
 </script>
 
 <script id="techify-parent-bridge">
+  function applyTechifyCardSettings(settings) {
+    if (!settings) return;
+    const root = document.documentElement;
+    if (settings.cardMaxWidth) root.style.setProperty('--techify-card-max-width', settings.cardMaxWidth + 'px');
+    if (settings.coverHeight) root.style.setProperty('--techify-cover-height', settings.coverHeight + 'px');
+    if (settings.cardPadding !== undefined) root.style.setProperty('--techify-card-padding', settings.cardPadding + 'px');
+    if (settings.elementsGap !== undefined) root.style.setProperty('--techify-elements-gap', settings.elementsGap + 'px');
+    if (settings.cardBorderRadius !== undefined) root.style.setProperty('--techify-card-radius', settings.cardBorderRadius + 'px');
+    if (settings.coverBorderRadius !== undefined) root.style.setProperty('--techify-cover-radius', settings.coverBorderRadius + 'px');
+    if (settings.excerptFontSize) root.style.setProperty('--techify-font-size', settings.excerptFontSize + 'px');
+    if (settings.lineHeight) root.style.setProperty('--techify-line-height', settings.lineHeight);
+    if (settings.textAlign) root.style.setProperty('--techify-text-align', settings.textAlign);
+    if (settings.cardBgColor) root.style.setProperty('--techify-card-bg', settings.cardBgColor);
+    if (settings.borderColor) root.style.setProperty('--techify-border-color', settings.borderColor);
+    if (settings.excerptColor || settings.textColor) root.style.setProperty('--techify-text-color', settings.excerptColor || settings.textColor);
+  }
+
+  // Load immediately from localStorage if available
+  try {
+    const cached = localStorage.getItem('techify_card_customizer_settings');
+    if (cached) {
+      applyTechifyCardSettings(JSON.parse(cached));
+    }
+  } catch (e) {}
+
+  // Inform parent that iframe is ready to receive latest Firebase styles
+  try {
+    window.parent.postMessage({ type: 'TECHIFY_IFRAME_READY' }, '*');
+  } catch (e) {}
+
   window.addEventListener('message', function(event) {
     if (!event.data) return;
     if (event.data.type === 'TECHIFY_TOGGLE_MENU') {
       const toggle = document.getElementById('menu-toggle') || document.querySelector('.nav-toggle');
       if (toggle) toggle.click();
+    } else if (event.data.type === 'TECHIFY_UPDATE_CARD_STYLES' && event.data.settings) {
+      applyTechifyCardSettings(event.data.settings);
     }
   });
 </script>
