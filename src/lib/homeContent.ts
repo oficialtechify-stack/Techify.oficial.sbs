@@ -11,6 +11,12 @@ export interface HomeHeroData {
   ctaSecondary: string;
   trustBadges: string[];
   videoUrl?: string;
+  backgroundImageUrl?: string;
+  backgroundType?: 'image' | 'video' | 'default';
+  backgroundBrightness?: number; // 0 to 150
+  backgroundOpacity?: number; // 0 to 100 overlay darkness
+  backgroundBlur?: number; // 0 to 20
+  showGridEffect?: boolean;
 }
 
 export interface HomeCompetitorData {
@@ -70,6 +76,9 @@ export interface HomePlanItem {
   ctaText: string;
   buttonVariant?: 'default' | 'outline';
   whatsappMessage: string;
+  checkoutUrl?: string;
+  monthlyCheckoutUrl?: string;
+  annualCheckoutUrl?: string;
 }
 
 export interface HomeFaqItem {
@@ -119,7 +128,13 @@ export const DEFAULT_HOME_PAGE_CONTENT: HomePageContent = {
       "Marketing & Performance",
       "Inteligência Artificial"
     ],
-    videoUrl: "https://zxdefgavgwfxastwmmjm.supabase.co/storage/v1/object/public/assets/cinematic.mp4"
+    videoUrl: "https://zxdefgavgwfxastwmmjm.supabase.co/storage/v1/object/public/assets/cinematic.mp4",
+    backgroundImageUrl: "",
+    backgroundType: 'image',
+    backgroundBrightness: 75,
+    backgroundOpacity: 65,
+    backgroundBlur: 0,
+    showGridEffect: false
   },
   clientTicker: [
     "ASME AI",
@@ -346,7 +361,9 @@ export const DEFAULT_HOME_PAGE_CONTENT: HomePageContent = {
         'Suporte Técnico Dedicado via WhatsApp'
       ],
       ctaText: 'COMEÇAR NO STARTER',
-      whatsappMessage: 'Olá Techify! Gostaria de contratar o Plano Starter (Tração & Vendas).'
+      whatsappMessage: 'Olá Techify! Gostaria de contratar o Plano Starter (Tração & Vendas).',
+      checkoutUrl: 'https://pay.cakto.com.br/uumvcze_1077792',
+      monthlyCheckoutUrl: 'https://pay.cakto.com.br/uumvcze_1077792'
     },
     {
       id: 'pro-growth',
@@ -548,6 +565,9 @@ export interface PackageOffer {
   ctaText: string;
   whatsappMessage: string;
   annualWhatsappMessage?: string;
+  checkoutUrl?: string;
+  monthlyCheckoutUrl?: string;
+  annualCheckoutUrl?: string;
 }
 
 export const DEFAULT_PACKAGES: PackageOffer[] = [
@@ -574,7 +594,9 @@ export const DEFAULT_PACKAGES: PackageOffer[] = [
     ],
     ctaText: 'COMEÇAR NO STARTER',
     whatsappMessage: 'Olá Techify! Gostaria de começar com o plano Starter (Tração & Vendas) no plano mensal por R$ 197/mês.',
-    annualWhatsappMessage: 'Olá Techify! Gostaria de contratar o plano Starter (Tração & Vendas) no plano anual por R$ 157/mês com desconto.'
+    annualWhatsappMessage: 'Olá Techify! Gostaria de contratar o plano Starter (Tração & Vendas) no plano anual por R$ 157/mês com desconto.',
+    checkoutUrl: 'https://pay.cakto.com.br/uumvcze_1077792',
+    monthlyCheckoutUrl: 'https://pay.cakto.com.br/uumvcze_1077792'
   },
   {
     id: 'pro-full-growth-360',
@@ -647,6 +669,12 @@ function normalizePackageWithAnnual(pkg: PackageOffer, defaultFallback?: Package
       }
     }
   }
+
+  const isStarter = pkg.id === 'starter-tracao-vendas' || pkg.id === 'starter' || (pkg.title && pkg.title.toLowerCase().includes('starter'));
+  const monthlyCheckout = pkg.monthlyCheckoutUrl || defaultFallback?.monthlyCheckoutUrl || (isStarter ? 'https://pay.cakto.com.br/uumvcze_1077792' : undefined);
+  const checkout = pkg.checkoutUrl || defaultFallback?.checkoutUrl || (isStarter ? 'https://pay.cakto.com.br/uumvcze_1077792' : undefined);
+  const annualCheckout = pkg.annualCheckoutUrl || defaultFallback?.annualCheckoutUrl;
+
   return {
     ...defaultFallback,
     ...pkg,
@@ -655,6 +683,9 @@ function normalizePackageWithAnnual(pkg: PackageOffer, defaultFallback?: Package
     annualPrice: annual,
     periodText: pkg.periodText || defaultFallback?.periodText || '/mês (ou sob medida)',
     annualPeriodText: pkg.annualPeriodText || defaultFallback?.annualPeriodText || '/mês no plano anual (economize 20%)',
+    monthlyCheckoutUrl: monthlyCheckout,
+    checkoutUrl: checkout,
+    annualCheckoutUrl: annualCheckout
   };
 }
 

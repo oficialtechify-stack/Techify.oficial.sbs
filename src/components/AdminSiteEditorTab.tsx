@@ -38,6 +38,15 @@ import {
   saveGeneralContentToFirestore,
   saveFeedbacksToFirestore
 } from '../lib/siteContent';
+import {
+  HomePageContent,
+  getCachedHomePageContent,
+  initHomePageListener,
+  saveHomePageContentToFirestore,
+  HomeHeroData
+} from '../lib/homeContent';
+import HeroBackgroundModal from './HeroBackgroundModal';
+import heroBgOriginalLogo from '../assets/images/techify_logo_original_1786362412096.jpg';
 import { compressImageFile } from '../lib/imageUtils';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../lib/firebase';
@@ -58,6 +67,8 @@ export default function AdminSiteEditorTab() {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>(getCachedTeamMembers);
   const [generalContent, setGeneralContent] = useState<SiteGeneralContent>(getCachedGeneralContent);
   const [feedbacks, setFeedbacks] = useState<FeedbackImage[]>(getCachedFeedbacks);
+  const [homeContent, setHomeContent] = useState<HomePageContent>(getCachedHomePageContent);
+  const [isHeroBgModalOpen, setIsHeroBgModalOpen] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -121,10 +132,15 @@ export default function AdminSiteEditorTab() {
       }
     }, (err) => console.warn('Firestore content offline:', err.message));
 
+    const unsubHome = initHomePageListener((data) => {
+      setHomeContent(data);
+    });
+
     return () => {
       unsubTeam();
       unsubFeedbacks();
       unsubGeneral();
+      unsubHome();
     };
   }, []);
 
@@ -742,73 +758,156 @@ export default function AdminSiteEditorTab() {
 
       {/* 2. HERO TAB */}
       {subTab === 'hero' && (
-        <form onSubmit={handleSaveGeneralContent} className="rounded-2xl border border-neutral-800 bg-[#0d0f0d] p-6 shadow-xl flex flex-col gap-5">
-          <div className="flex items-center justify-between border-b border-neutral-800 pb-4">
-            <h3 className="font-display text-lg font-bold text-white flex items-center gap-2">
-              <Globe className="h-5 w-5 text-[#a3e635]" /> Textos da Seção Hero (Página Inicial)
-            </h3>
-            <button
-              type="submit"
-              disabled={isSaving}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#a3e635] hover:bg-[#84cc16] text-black font-extrabold text-xs transition-all shadow-[0_0_12px_rgba(163,230,53,0.3)] cursor-pointer disabled:opacity-50"
-            >
-              <Save className="h-4 w-4" />
-              <span>{isSaving ? 'Salvando...' : 'Salvar Alterações'}</span>
-            </button>
+        <div className="space-y-6">
+          {/* HERO BACKGROUND MANAGEMENT CARD */}
+          <div className="rounded-2xl border border-neutral-800 bg-[#0d0f0d] p-6 shadow-xl">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-800 pb-4 mb-5">
+              <div>
+                <h3 className="font-display text-lg font-bold text-white flex items-center gap-2">
+                  <ImageIcon className="h-5 w-5 text-[#a3e635]" /> Imagem & Vídeo de Fundo da Seção Hero
+                </h3>
+                <p className="text-xs text-neutral-400 mt-0.5">
+                  Troque a imagem de fundo pelo seu próprio arquivo, cole um link ou escolha um preset oficial
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsHeroBgModalOpen(true)}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#a3e635] to-[#84cc16] hover:brightness-110 text-black font-extrabold text-xs transition-all shadow-[0_0_15px_rgba(163,230,53,0.3)] cursor-pointer"
+              >
+                <ImageIcon className="h-4 w-4" />
+                <span>Trocar Imagem de Fundo</span>
+              </button>
+            </div>
+
+            {/* Current Background Status Box */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center bg-black/60 rounded-xl p-4 border border-neutral-800/80">
+              <div className="relative h-32 w-full rounded-xl overflow-hidden border border-neutral-700 bg-black">
+                {homeContent.hero.backgroundType === 'video' && homeContent.hero.videoUrl ? (
+                  <video
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="w-full h-full object-cover"
+                    style={{
+                      filter: `brightness(${homeContent.hero.backgroundBrightness ?? 75}%) blur(${homeContent.hero.backgroundBlur ?? 0}px)`
+                    }}
+                  >
+                    <source src={homeContent.hero.videoUrl} type="video/mp4" />
+                  </video>
+                ) : (
+                  <img
+                    src={homeContent.hero.backgroundImageUrl || heroBgOriginalLogo}
+                    alt="Fundo Atual"
+                    className="w-full h-full object-cover object-center"
+                    style={{
+                      filter: `brightness(${homeContent.hero.backgroundBrightness ?? 75}%) blur(${homeContent.hero.backgroundBlur ?? 0}px)`
+                    }}
+                  />
+                )}
+                <div 
+                  className="absolute inset-0 bg-black pointer-events-none"
+                  style={{ opacity: (homeContent.hero.backgroundOpacity ?? 65) / 100 }}
+                />
+                <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-black/80 text-[10px] font-bold text-white border border-white/10 backdrop-blur-sm">
+                  {homeContent.hero.backgroundType === 'video' ? 'Vídeo Ativo' : homeContent.hero.backgroundImageUrl ? 'Imagem Personalizada' : 'Logo 3D Oficial'}
+                </span>
+              </div>
+
+              <div className="md:col-span-2 space-y-2">
+                <div className="flex flex-wrap gap-2 text-xs">
+                  <span className="px-2.5 py-1 rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-300">
+                    Brilho: <strong className="text-white">{homeContent.hero.backgroundBrightness ?? 75}%</strong>
+                  </span>
+                  <span className="px-2.5 py-1 rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-300">
+                    Escurecimento: <strong className="text-white">{homeContent.hero.backgroundOpacity ?? 65}%</strong>
+                  </span>
+                  <span className="px-2.5 py-1 rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-300">
+                    Desfoque: <strong className="text-white">{homeContent.hero.backgroundBlur ?? 0}px</strong>
+                  </span>
+                  {homeContent.hero.showGridEffect && (
+                    <span className="px-2.5 py-1 rounded-lg bg-[#22c55e]/20 border border-[#22c55e]/40 text-[#4ade80] font-bold">
+                      Grade Holográfica Ativa
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-neutral-400">
+                  Clique no botão acima para carregar uma imagem direto do seu computador ou celular, ou para colar um link da web.
+                </p>
+              </div>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-bold text-neutral-300 mb-1.5">Selo / Badge Superior</label>
-              <input
-                type="text"
-                value={generalContent.heroBadge}
-                onChange={(e) => setGeneralContent(prev => ({ ...prev, heroBadge: e.target.value }))}
-                className="w-full rounded-xl bg-neutral-900 border border-neutral-800 px-4 py-2.5 text-xs text-white focus:border-[#a3e635] focus:outline-none"
-              />
+          <form onSubmit={handleSaveGeneralContent} className="rounded-2xl border border-neutral-800 bg-[#0d0f0d] p-6 shadow-xl flex flex-col gap-5">
+            <div className="flex items-center justify-between border-b border-neutral-800 pb-4">
+              <h3 className="font-display text-lg font-bold text-white flex items-center gap-2">
+                <Globe className="h-5 w-5 text-[#a3e635]" /> Textos da Seção Hero (Página Inicial)
+              </h3>
+              <button
+                type="submit"
+                disabled={isSaving}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#a3e635] hover:bg-[#84cc16] text-black font-extrabold text-xs transition-all shadow-[0_0_12px_rgba(163,230,53,0.3)] cursor-pointer disabled:opacity-50"
+              >
+                <Save className="h-4 w-4" />
+                <span>{isSaving ? 'Salvando...' : 'Salvar Alterações'}</span>
+              </button>
             </div>
 
-            <div>
-              <label className="block text-xs font-bold text-neutral-300 mb-1.5">Título Linha 1</label>
-              <input
-                type="text"
-                value={generalContent.heroHeadline1}
-                onChange={(e) => setGeneralContent(prev => ({ ...prev, heroHeadline1: e.target.value }))}
-                className="w-full rounded-xl bg-neutral-900 border border-neutral-800 px-4 py-2.5 text-xs text-white focus:border-[#a3e635] focus:outline-none"
-              />
-            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-neutral-300 mb-1.5">Selo / Badge Superior</label>
+                <input
+                  type="text"
+                  value={generalContent.heroBadge}
+                  onChange={(e) => setGeneralContent(prev => ({ ...prev, heroBadge: e.target.value }))}
+                  className="w-full rounded-xl bg-neutral-900 border border-neutral-800 px-4 py-2.5 text-xs text-white focus:border-[#a3e635] focus:outline-none"
+                />
+              </div>
 
-            <div>
-              <label className="block text-xs font-bold text-neutral-300 mb-1.5">Título Linha 2 (Destaque)</label>
-              <input
-                type="text"
-                value={generalContent.heroHeadline2}
-                onChange={(e) => setGeneralContent(prev => ({ ...prev, heroHeadline2: e.target.value }))}
-                className="w-full rounded-xl bg-neutral-900 border border-neutral-800 px-4 py-2.5 text-xs text-white focus:border-[#a3e635] focus:outline-none"
-              />
-            </div>
+              <div>
+                <label className="block text-xs font-bold text-neutral-300 mb-1.5">Título Linha 1</label>
+                <input
+                  type="text"
+                  value={generalContent.heroHeadline1}
+                  onChange={(e) => setGeneralContent(prev => ({ ...prev, heroHeadline1: e.target.value }))}
+                  className="w-full rounded-xl bg-neutral-900 border border-neutral-800 px-4 py-2.5 text-xs text-white focus:border-[#a3e635] focus:outline-none"
+                />
+              </div>
 
-            <div>
-              <label className="block text-xs font-bold text-neutral-300 mb-1.5">Botão Principal (CTA)</label>
-              <input
-                type="text"
-                value={generalContent.heroCtaPrimary}
-                onChange={(e) => setGeneralContent(prev => ({ ...prev, heroCtaPrimary: e.target.value }))}
-                className="w-full rounded-xl bg-neutral-900 border border-neutral-800 px-4 py-2.5 text-xs text-white focus:border-[#a3e635] focus:outline-none"
-              />
-            </div>
+              <div>
+                <label className="block text-xs font-bold text-neutral-300 mb-1.5">Título Linha 2 (Destaque)</label>
+                <input
+                  type="text"
+                  value={generalContent.heroHeadline2}
+                  onChange={(e) => setGeneralContent(prev => ({ ...prev, heroHeadline2: e.target.value }))}
+                  className="w-full rounded-xl bg-neutral-900 border border-neutral-800 px-4 py-2.5 text-xs text-white focus:border-[#a3e635] focus:outline-none"
+                />
+              </div>
 
-            <div className="md:col-span-2">
-              <label className="block text-xs font-bold text-neutral-300 mb-1.5">Descrição Principal</label>
-              <textarea
-                rows={3}
-                value={generalContent.heroDescription}
-                onChange={(e) => setGeneralContent(prev => ({ ...prev, heroDescription: e.target.value }))}
-                className="w-full rounded-xl bg-neutral-900 border border-neutral-800 px-4 py-2.5 text-xs text-white focus:border-[#a3e635] focus:outline-none"
-              />
+              <div>
+                <label className="block text-xs font-bold text-neutral-300 mb-1.5">Botão Principal (CTA)</label>
+                <input
+                  type="text"
+                  value={generalContent.heroCtaPrimary}
+                  onChange={(e) => setGeneralContent(prev => ({ ...prev, heroCtaPrimary: e.target.value }))}
+                  className="w-full rounded-xl bg-neutral-900 border border-neutral-800 px-4 py-2.5 text-xs text-white focus:border-[#a3e635] focus:outline-none"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block text-xs font-bold text-neutral-300 mb-1.5">Descrição Principal</label>
+                <textarea
+                  rows={3}
+                  value={generalContent.heroDescription}
+                  onChange={(e) => setGeneralContent(prev => ({ ...prev, heroDescription: e.target.value }))}
+                  className="w-full rounded-xl bg-neutral-900 border border-neutral-800 px-4 py-2.5 text-xs text-white focus:border-[#a3e635] focus:outline-none"
+                />
+              </div>
             </div>
-          </div>
-        </form>
+          </form>
+        </div>
       )}
 
       {/* 3. ABOUT TAB */}
@@ -1386,6 +1485,25 @@ export default function AdminSiteEditorTab() {
           </div>
         </div>
       )}
+
+      {/* HERO BACKGROUND MODAL */}
+      <HeroBackgroundModal
+        isOpen={isHeroBgModalOpen}
+        onClose={() => setIsHeroBgModalOpen(false)}
+        heroData={homeContent.hero}
+        onSaveBackground={async (updatedBg: Partial<HomeHeroData>) => {
+          const updatedHero = {
+            ...homeContent.hero,
+            ...updatedBg
+          };
+          const newContent = {
+            ...homeContent,
+            hero: updatedHero
+          };
+          setHomeContent(newContent);
+          await saveHomePageContentToFirestore(newContent);
+        }}
+      />
     </div>
   );
 }

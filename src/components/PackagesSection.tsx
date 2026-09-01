@@ -123,6 +123,18 @@ export default function PackagesSection({ onOpenConsultation, onOpenAdminPackage
   }, []);
 
   const handleSelectPackage = (pkg: PackageOffer) => {
+    const isStarter = pkg.id === 'starter-tracao-vendas' || pkg.id === 'starter' || (pkg.title && pkg.title.toLowerCase().includes('starter'));
+
+    // Check for direct payment checkout URL (e.g. Cakto)
+    const directCheckoutUrl = !isYearly 
+      ? (pkg.monthlyCheckoutUrl || (isStarter ? 'https://pay.cakto.com.br/uumvcze_1077792' : pkg.checkoutUrl))
+      : (pkg.annualCheckoutUrl || (isStarter ? undefined : pkg.checkoutUrl));
+
+    if (directCheckoutUrl) {
+      window.open(directCheckoutUrl, '_blank', 'noopener,noreferrer');
+      return;
+    }
+
     const titleWithCycle = `${pkg.title} (${isYearly ? 'Plano Anual' : 'Plano Mensal'})`;
     if (onOpenConsultation) {
       onOpenConsultation(titleWithCycle);
@@ -131,7 +143,7 @@ export default function PackagesSection({ onOpenConsultation, onOpenAdminPackage
         ? (pkg.annualWhatsappMessage || `Olá Techify! Gostaria de contratar o plano ${pkg.title} no plano anual com desconto.`)
         : (pkg.whatsappMessage || `Olá Techify! Gostaria de contratar o plano ${pkg.title}.`);
       const url = `https://wa.me/5581995498590?text=${encodeURIComponent(msg)}`;
-      window.open(url, '_blank');
+      window.open(url, '_blank', 'noopener,noreferrer');
     }
   };
 

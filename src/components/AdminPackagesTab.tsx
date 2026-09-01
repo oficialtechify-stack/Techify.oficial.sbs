@@ -54,6 +54,8 @@ export default function AdminPackagesTab() {
   const [formCtaText, setFormCtaText] = useState('');
   const [formWhatsappMessage, setFormWhatsappMessage] = useState('');
   const [formAnnualWhatsappMessage, setFormAnnualWhatsappMessage] = useState('');
+  const [formMonthlyCheckoutUrl, setFormMonthlyCheckoutUrl] = useState('');
+  const [formAnnualCheckoutUrl, setFormAnnualCheckoutUrl] = useState('');
 
   // Subscribe to real-time packages
   useEffect(() => {
@@ -87,6 +89,8 @@ export default function AdminPackagesTab() {
     setFormCtaText('QUERO ESSE PLANO');
     setFormWhatsappMessage('Olá Techify! Gostaria de contratar este plano no formato mensal.');
     setFormAnnualWhatsappMessage('Olá Techify! Gostaria de contratar este plano no plano anual com desconto.');
+    setFormMonthlyCheckoutUrl('');
+    setFormAnnualCheckoutUrl('');
     setIsModalOpen(true);
   };
 
@@ -109,6 +113,8 @@ export default function AdminPackagesTab() {
     setFormCtaText(pkg.ctaText || 'CONTRATAR AGORA');
     setFormWhatsappMessage(pkg.whatsappMessage || `Olá Techify! Gostaria de contratar o plano ${pkg.title}.`);
     setFormAnnualWhatsappMessage(pkg.annualWhatsappMessage || `Olá Techify! Gostaria de contratar o plano ${pkg.title} no plano anual com desconto.`);
+    setFormMonthlyCheckoutUrl(pkg.monthlyCheckoutUrl || pkg.checkoutUrl || (pkg.id === 'starter-tracao-vendas' || (pkg.title && pkg.title.toLowerCase().includes('starter')) ? 'https://pay.cakto.com.br/uumvcze_1077792' : ''));
+    setFormAnnualCheckoutUrl(pkg.annualCheckoutUrl || '');
     setIsModalOpen(true);
   };
 
@@ -165,7 +171,10 @@ export default function AdminPackagesTab() {
         features: formFeatures.length > 0 ? formFeatures : ['Atendimento prioritário'],
         ctaText: formCtaText.trim() || 'CONTRATAR PLANO',
         whatsappMessage: formWhatsappMessage.trim() || `Olá Techify! Gostaria de contratar o plano ${formTitle.trim()} no mensal.`,
-        annualWhatsappMessage: formAnnualWhatsappMessage.trim() || `Olá Techify! Gostaria de contratar o plano ${formTitle.trim()} no plano anual com desconto.`
+        annualWhatsappMessage: formAnnualWhatsappMessage.trim() || `Olá Techify! Gostaria de contratar o plano ${formTitle.trim()} no plano anual com desconto.`,
+        checkoutUrl: formMonthlyCheckoutUrl.trim() || undefined,
+        monthlyCheckoutUrl: formMonthlyCheckoutUrl.trim() || undefined,
+        annualCheckoutUrl: formAnnualCheckoutUrl.trim() || undefined
       };
 
       let updatedList: PackageOffer[];
@@ -703,6 +712,36 @@ export default function AdminPackagesTab() {
                     placeholder="Ex: GARANTIR PLANO PRO"
                     className="w-full bg-neutral-900/90 border border-neutral-700/80 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#22c55e]"
                   />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-neutral-300 uppercase tracking-wider mb-1.5">
+                      Link de Checkout / Pagamento Direto (Plano Mensal)
+                    </label>
+                    <input
+                      type="url"
+                      value={formMonthlyCheckoutUrl}
+                      onChange={(e) => setFormMonthlyCheckoutUrl(e.target.value)}
+                      placeholder="Ex: https://pay.cakto.com.br/uumvcze_1077792"
+                      className="w-full bg-neutral-900/90 border border-neutral-700/80 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-[#22c55e]"
+                    />
+                    <span className="text-[10px] text-neutral-500 mt-1 block">Se preenchido, o botão abrirá o checkout diretamente (ex: Cakto / Stripe). Se vazio, abre o WhatsApp.</span>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-[#4ade80] uppercase tracking-wider mb-1.5">
+                      Link de Checkout / Pagamento Direto (Plano Anual)
+                    </label>
+                    <input
+                      type="url"
+                      value={formAnnualCheckoutUrl}
+                      onChange={(e) => setFormAnnualCheckoutUrl(e.target.value)}
+                      placeholder="Ex: https://pay.cakto.com.br/anual_xyz"
+                      className="w-full bg-neutral-900/90 border border-[#22c55e]/40 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-[#22c55e]"
+                    />
+                    <span className="text-[10px] text-neutral-500 mt-1 block">Opcional: link do checkout do plano anual com desconto.</span>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

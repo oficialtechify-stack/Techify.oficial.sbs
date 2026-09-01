@@ -38,11 +38,15 @@ import {
   Shield,
   Briefcase,
   Database,
-  Server
+  Server,
+  Image as ImageIcon,
+  Sliders,
+  Sparkles as SparklesIcon
 } from 'lucide-react';
 import ScrollReveal from './ScrollReveal';
 import ClientsSliderSection from './ClientsSliderSection';
 import PackagesSection from './PackagesSection';
+import HeroBackgroundModal from './HeroBackgroundModal';
 import { useAdminAuth } from '../lib/adminAuth';
 import { cn } from '../lib/utils';
 import { 
@@ -54,7 +58,8 @@ import {
   HomeServiceItem,
   HomePlanItem,
   HomeFaqItem,
-  HomePillarItem
+  HomePillarItem,
+  HomeHeroData
 } from '../lib/homeContent';
 import { toast } from './Toast';
 import heroBgImage from '../assets/images/techify_logo_original_1786362412096.jpg';
@@ -265,6 +270,9 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
     }
   });
 
+  // 5. Hero Background Customizer Modal
+  const [isBgModalOpen, setIsBgModalOpen] = useState(false);
+
   // Sync with Firestore real-time
   useEffect(() => {
     const unsub = initHomePageListener((newContent) => {
@@ -303,6 +311,20 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
     setHasUnsavedChanges(true);
     await saveHomePageContentToFirestore(DEFAULT_HOME_PAGE_CONTENT);
     toast.info('Conteúdo Restaurado', 'A página inicial voltou para a configuração padrão.');
+  };
+
+  const handleSaveHeroBackground = async (updatedBg: Partial<HomeHeroData>) => {
+    const updatedHero = {
+      ...content.hero,
+      ...updatedBg
+    };
+    const newContent = {
+      ...content,
+      hero: updatedHero
+    };
+    setContent(newContent);
+    setHasUnsavedChanges(true);
+    await saveHomePageContentToFirestore(newContent);
   };
 
   // ==========================================
@@ -507,6 +529,16 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
             <div className="flex items-center gap-2">
               <button
                 type="button"
+                onClick={() => setIsBgModalOpen(true)}
+                className="inline-flex items-center gap-1.5 rounded-xl border border-[#22c55e]/40 bg-[#22c55e]/15 hover:bg-[#22c55e]/25 px-3 py-1.5 text-xs font-bold text-[#4ade80] hover:text-white transition-all cursor-pointer shadow-[0_0_15px_rgba(34,197,94,0.2)]"
+                title="Personalizar Imagem ou Vídeo de Fundo"
+              >
+                <ImageIcon className="h-3.5 w-3.5" />
+                <span>Trocar Imagem de Fundo</span>
+              </button>
+
+              <button
+                type="button"
                 onClick={() => setIsEditMode(!isEditMode)}
                 className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
                   isEditMode 
@@ -543,21 +575,69 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
       )}
 
       {/* ========================================================================= */}
-      {/* 1. HERO SECTION (Techify 3D Metallic Background)                          */}
+      {/* 1. HERO SECTION (Custom / Metallic Background)                            */}
       {/* ========================================================================= */}
       <section className="relative w-full overflow-hidden min-h-[85vh] sm:min-h-[90vh] flex flex-col justify-center items-center px-4 pt-20 pb-20 sm:pt-28 sm:pb-28 text-center bg-[#050905]">
         
-        {/* Full-width Background Image */}
+        {/* Full-width Background Media (Image or Video) */}
         <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
-          <img
-            src={heroBgImage}
-            alt="Techify Background"
-            className="w-full h-full object-cover object-center scale-105 filter brightness-[0.75] contrast-[1.1]"
+          {content.hero.backgroundType === 'video' && content.hero.videoUrl ? (
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full h-full object-cover object-center scale-105"
+              style={{
+                filter: `brightness(${content.hero.backgroundBrightness ?? 75}%) blur(${content.hero.backgroundBlur ?? 0}px)`,
+              }}
+            >
+              <source src={content.hero.videoUrl} type="video/mp4" />
+            </video>
+          ) : (
+            <img
+              src={content.hero.backgroundImageUrl || heroBgImage}
+              alt="Techify Background"
+              className="w-full h-full object-cover object-center scale-105 transition-all duration-300"
+              style={{
+                filter: `brightness(${content.hero.backgroundBrightness ?? 75}%) blur(${content.hero.backgroundBlur ?? 0}px)`,
+              }}
+            />
+          )}
+
+          {/* Dark Radial & Gradient Overlays with dynamic configurable opacity */}
+          <div 
+            className="absolute inset-0 bg-black transition-opacity duration-300 pointer-events-none"
+            style={{ opacity: (content.hero.backgroundOpacity ?? 65) / 100 }}
           />
-          {/* Dark Radial & Gradient Overlays for perfect contrast and visual depth */}
-          <div className="absolute inset-0 bg-radial from-black/20 via-black/50 to-black/90" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-transparent to-black" />
+          <div className="absolute inset-0 bg-radial from-black/10 via-black/40 to-black/90 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-transparent to-black pointer-events-none" />
+
+          {/* Optional Neon Grid overlay */}
+          {content.hero.showGridEffect && (
+            <div 
+              className="absolute inset-0 pointer-events-none opacity-20"
+              style={{
+                backgroundImage: 'linear-gradient(to right, #22c55e 1px, transparent 1px), linear-gradient(to bottom, #22c55e 1px, transparent 1px)',
+                backgroundSize: '32px 32px'
+              }}
+            />
+          )}
         </div>
+
+        {/* Quick Hero Background Edit Button for Admin or on Hover */}
+        {isAdmin && (
+          <div className="absolute top-4 right-4 z-20">
+            <button
+              type="button"
+              onClick={() => setIsBgModalOpen(true)}
+              className="flex items-center gap-2 rounded-2xl bg-black/85 hover:bg-black text-[#4ade80] border border-[#22c55e]/50 hover:border-[#22c55e] px-3.5 py-2 text-xs font-black shadow-[0_0_25px_rgba(0,0,0,0.9)] backdrop-blur-xl transition-all hover:scale-105 cursor-pointer group"
+            >
+              <ImageIcon className="h-4 w-4 text-[#22c55e] group-hover:rotate-12 transition-transform" />
+              <span>Trocar Imagem de Fundo</span>
+            </button>
+          </div>
+        )}
 
         {/* Bottom Blur Overlay for smooth transition */}
         <div 
@@ -595,9 +675,19 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
           {/* Main Punch Headline */}
           <div className="animate-blur-fade-up relative inline-block max-w-5xl mx-auto group" style={{ animationDelay: '300ms' }}>
             <h1 className="font-['Bricolage_Grotesque','Syne',sans-serif] text-4xl sm:text-6xl lg:text-7xl xl:text-[80px] font-black uppercase tracking-tight text-[#4ade80] sm:leading-[1.08] drop-shadow-[0_0_35px_rgba(74,222,128,0.35)]">
-              {content.hero.headline1} <br />
-              {content.hero.headline2} <br />
-              {content.hero.headline3}
+              {content.hero.headline1}
+              {content.hero.headline2 && content.hero.headline2.trim() !== content.hero.headline1.trim() && (
+                <>
+                  <br />
+                  {content.hero.headline2}
+                </>
+              )}
+              {content.hero.headline3 && content.hero.headline3.trim() !== content.hero.headline2.trim() && content.hero.headline3.trim() !== content.hero.headline1.trim() && (
+                <>
+                  <br />
+                  {content.hero.headline3}
+                </>
+              )}
             </h1>
             {isEditMode && (
               <button
@@ -1506,6 +1596,25 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
               </div>
 
               <div>
+                <label className="block text-xs font-bold text-neutral-300 mb-1">Link de Pagamento / Checkout Direto (ex: Cakto / Stripe)</label>
+                <input
+                  type="url"
+                  value={planModal.plan.monthlyCheckoutUrl || planModal.plan.checkoutUrl || ''}
+                  onChange={(e) => setPlanModal(prev => ({
+                    ...prev,
+                    plan: { 
+                      ...prev.plan, 
+                      checkoutUrl: e.target.value,
+                      monthlyCheckoutUrl: e.target.value
+                    }
+                  }))}
+                  placeholder="Ex: https://pay.cakto.com.br/uumvcze_1077792"
+                  className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-2.5 text-sm text-white focus:border-[#22c55e] focus:outline-none"
+                />
+                <span className="text-[10px] text-neutral-500 mt-1 block">Opcional. Se preenchido, o botão abre o checkout de pagamento diretamente.</span>
+              </div>
+
+              <div>
                 <label className="block text-xs font-bold text-neutral-300 mb-1">Mensagem do WhatsApp (ao clicar no botão)</label>
                 <input
                   type="text"
@@ -1655,6 +1764,14 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
           </div>
         </div>
       )}
+
+      {/* Hero Background Customizer Modal */}
+      <HeroBackgroundModal
+        isOpen={isBgModalOpen}
+        onClose={() => setIsBgModalOpen(false)}
+        heroData={content.hero}
+        onSaveBackground={handleSaveHeroBackground}
+      />
 
     </div>
   );

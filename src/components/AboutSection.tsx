@@ -49,9 +49,6 @@ import ScrollReveal from './ScrollReveal';
 import { useAdminAuth } from '../lib/adminAuth';
 
 // Local Assets
-import statueImg from '../assets/images/statue_techify_1781363466541.jpg';
-import chessImg from '../assets/images/chess_techify_1781363479208.jpg';
-import squidGameImg from '../assets/images/squid_game_techify_1781363495119.jpg';
 import techifyLogoImg from '../assets/images/techify_logo_original_1786362412096.jpg';
 
 interface AboutSectionProps {
@@ -64,28 +61,7 @@ export default function AboutSection({ onNavigate, onOpenConsultation }: AboutSe
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>(getCachedTeamMembers);
   const [generalContent, setGeneralContent] = useState<SiteGeneralContent>(getCachedGeneralContent);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
-  const [activeHeroArt, setActiveHeroArt] = useState<'statue' | 'chess' | 'squid'>('statue');
 
-  const heroArtworks = {
-    statue: {
-      img: statueImg,
-      title: "Cyborg Estátua 3D Techify",
-      tag: "Arte & Engenharia 3D",
-      desc: "Escultura 3D autoral com iluminação neon verde e HUD holográfico de alta resolução."
-    },
-    chess: {
-      img: chessImg,
-      title: "Techify Strategy Chess 3D",
-      tag: "Estratégia & Precisão",
-      desc: "Composição de xadrez futurista simbolizando decisões de produto e arquitetura sólida."
-    },
-    squid: {
-      img: squidGameImg,
-      title: "Guardião Techify Series",
-      tag: "Motion & Identidade Visual",
-      desc: "Renderização cinemática de personagem conceitual com detalhes texturizados e iluminação dramática."
-    }
-  };
   useEffect(() => {
     const unsubTeam = onSnapshot(doc(db, "site_content", "team"), (snap) => {
       if (snap.exists()) {
@@ -224,8 +200,8 @@ export default function AboutSection({ onNavigate, onOpenConsultation }: AboutSe
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch">
           
-          {/* Left Column (6 cols): Copy, Proposta de Valor & CTAs */}
-          <div className="lg:col-span-6 flex flex-col justify-between rounded-3xl bg-gradient-to-b from-[#090d09] to-[#050805] border border-neutral-800/90 p-8 sm:p-12 lg:p-14 relative overflow-hidden shadow-2xl">
+          {/* Left Column (7 cols): Copy, Proposta de Valor & CTAs */}
+          <div className="lg:col-span-7 flex flex-col justify-between rounded-3xl bg-gradient-to-b from-[#090d09] to-[#050805] border border-neutral-800/90 p-8 sm:p-12 lg:p-14 relative overflow-hidden shadow-2xl">
             
             {/* Ambient subtle glow */}
             <div className="absolute -top-12 -left-12 w-64 h-64 bg-[#22c55e]/10 rounded-full blur-3xl pointer-events-none" />
@@ -247,7 +223,7 @@ export default function AboutSection({ onNavigate, onOpenConsultation }: AboutSe
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
-                className="mt-6 text-sm sm:text-base text-neutral-300 leading-relaxed font-normal max-w-lg"
+                className="mt-6 text-sm sm:text-base text-neutral-300 leading-relaxed font-normal max-w-xl"
               >
                 A gente traduz. Você diz o que está travando o seu negócio e a gente resolve com site, sistema ou anúncio, explicando cada passo sem termo técnico e com foco obsessivo em vendas.
               </motion.p>
@@ -301,78 +277,73 @@ export default function AboutSection({ onNavigate, onOpenConsultation }: AboutSe
 
           </div>
 
-          {/* Right Column (6 cols): 3D Art & Holographic UI Showcase with Interactive Switcher */}
-          <div className="lg:col-span-6 relative min-h-[460px] sm:min-h-[520px] rounded-3xl overflow-hidden border border-neutral-800/90 shadow-2xl bg-neutral-950 flex flex-col justify-between p-6">
+          {/* Right Column (5 cols): Techify Corporate Guarantee & Architecture Card */}
+          <div className="lg:col-span-5 relative rounded-3xl overflow-hidden border border-neutral-800/90 shadow-2xl bg-gradient-to-b from-[#0e140e] to-[#070b07] flex flex-col justify-between p-6 sm:p-8">
             
-            {/* Background 3D Artwork */}
-            <motion.img 
-              key={activeHeroArt}
-              src={heroArtworks[activeHeroArt].img} 
-              alt={heroArtworks[activeHeroArt].title} 
-              initial={{ opacity: 0, scale: 1.05 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6 }}
-              className="absolute inset-0 h-full w-full object-cover brightness-[0.88] contrast-[1.08]"
-            />
-            
-            {/* Vignette & Cyber Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-black/50 pointer-events-none" />
-
-            {/* Top Interactive Bar: 3D Artwork Switcher & Badge */}
-            <div className="relative z-10 flex flex-wrap items-center justify-between gap-2">
-              <div className="flex items-center gap-2 rounded-2xl bg-black/80 backdrop-blur-xl border border-neutral-700/80 px-3.5 py-1.5 shadow-xl">
-                <div className="h-2 w-2 rounded-full bg-[#22c55e] animate-pulse" />
-                <span className="text-xs font-bold text-white tracking-wide">
-                  {heroArtworks[activeHeroArt].tag}
-                </span>
+            {/* Top Bar with Badge & Live Status */}
+            <div className="flex items-center justify-between gap-3 border-b border-neutral-800/80 pb-4 mb-6">
+              <div className="flex items-center gap-2.5">
+                <div className="h-9 w-9 rounded-xl bg-[#22c55e]/15 border border-[#22c55e]/30 flex items-center justify-center text-[#22c55e]">
+                  <ShieldCheck className="h-5 w-5" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-black text-white uppercase tracking-wide">Padrão Techify</h4>
+                  <span className="text-[10px] text-neutral-400">Engenharia de Alta Performance</span>
+                </div>
               </div>
 
-              {/* Selector Tabs */}
-              <div className="flex items-center gap-1.5 bg-neutral-950/80 backdrop-blur-md rounded-2xl p-1 border border-neutral-800">
-                {(['statue', 'chess', 'squid'] as const).map((artKey) => (
-                  <button
-                    key={artKey}
-                    onClick={() => setActiveHeroArt(artKey)}
-                    className={`px-3 py-1 text-[11px] font-bold rounded-xl transition-all cursor-pointer ${
-                      activeHeroArt === artKey 
-                        ? 'bg-[#22c55e] text-black shadow-md' 
-                        : 'text-neutral-400 hover:text-white hover:bg-neutral-800'
-                    }`}
-                  >
-                    {artKey === 'statue' ? 'Estátua 3D' : artKey === 'chess' ? 'Xadrez 3D' : 'Guardião'}
-                  </button>
-                ))}
+              <div className="flex items-center gap-1.5 rounded-full bg-black/60 border border-neutral-800 px-3 py-1 text-[11px] font-bold text-[#4ade80]">
+                <div className="h-2 w-2 rounded-full bg-[#22c55e] animate-pulse" />
+                <span>Atendimento Ativo</span>
               </div>
             </div>
 
-            {/* Floating Glassmorphic 3D Card: Bottom Metrics */}
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="relative z-10 rounded-2xl bg-neutral-950/90 text-white backdrop-blur-xl border border-neutral-700/90 p-4 sm:p-5 shadow-[0_20px_50px_rgba(0,0,0,0.8)] max-w-sm select-none"
-            >
-              <div className="flex items-center justify-between text-xs text-neutral-300 mb-1.5">
-                <span className="font-bold text-white">{heroArtworks[activeHeroArt].title}</span>
-                <span className="text-[#22c55e] font-mono text-[11px] font-bold">100% Autoral</span>
-              </div>
-
-              <p className="text-[11px] text-neutral-400 leading-snug mb-3">
-                {heroArtworks[activeHeroArt].desc}
-              </p>
-
-              {/* Mini entries */}
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="p-2 rounded-xl bg-neutral-900/80 border border-neutral-800 font-medium">
-                  <div className="text-[10px] text-neutral-400 uppercase tracking-wider">Engine</div>
-                  <div className="font-bold text-white text-xs">WebGL &amp; 3D Render</div>
+            {/* 4 Pillars List */}
+            <div className="space-y-3.5 my-auto">
+              {[
+                {
+                  title: "Desenvolvimento 100% Sob Medida",
+                  desc: "Zero templates lentos. Aplicações ultra velozes com React, Next.js e Node em Cloud.",
+                  icon: Code
+                },
+                {
+                  title: "Design Focado em Vendas (UI/UX)",
+                  desc: "Interfaces desenhadas estrategicamente para guiar o visitante direto ao fechamento.",
+                  icon: Target
+                },
+                {
+                  title: "SEO Técnico & Tráfego Pago",
+                  desc: "Estruturação para primeiras posições do Google e campanhas no Meta Ads e Google Ads.",
+                  icon: TrendingUp
+                },
+                {
+                  title: "Propriedade Total do Cliente",
+                  desc: "Código, domínio, banco de dados e campanhas registrados 100% em seu nome.",
+                  icon: Lock
+                }
+              ].map((item, idx) => (
+                <div 
+                  key={idx}
+                  className="flex items-start gap-3.5 p-3.5 rounded-2xl bg-black/50 border border-neutral-800/70 hover:border-neutral-700 transition-colors"
+                >
+                  <div className="h-8 w-8 rounded-xl bg-neutral-900 border border-neutral-800 text-[#4ade80] flex items-center justify-center shrink-0 mt-0.5">
+                    <item.icon className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <h5 className="text-xs font-bold text-white">{item.title}</h5>
+                    <p className="text-[11px] text-neutral-400 mt-0.5 leading-snug">{item.desc}</p>
+                  </div>
                 </div>
-                <div className="p-2 rounded-xl bg-neutral-900/80 border border-neutral-800 font-medium">
-                  <div className="text-[10px] text-neutral-400 uppercase tracking-wider">Resolução</div>
-                  <div className="font-mono font-bold text-[#4ade80] text-xs">4K Ultra HDR</div>
-                </div>
-              </div>
-            </motion.div>
+              ))}
+            </div>
+
+            {/* Bottom Card Summary */}
+            <div className="pt-5 mt-5 border-t border-neutral-800/80 flex items-center justify-between text-xs text-neutral-400">
+              <span className="flex items-center gap-1.5">
+                <Check className="h-3.5 w-3.5 text-[#22c55e]" /> Garantia Contratual
+              </span>
+              <span className="font-mono text-[#22c55e] font-bold">100% Autoral</span>
+            </div>
 
           </div>
 
