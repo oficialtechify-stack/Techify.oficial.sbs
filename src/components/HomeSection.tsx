@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import NumberFlow from '@number-flow/react';
 import { 
   Globe, 
@@ -47,6 +49,7 @@ import ScrollReveal from './ScrollReveal';
 import ClientsSliderSection from './ClientsSliderSection';
 import PackagesSection from './PackagesSection';
 import HeroBackgroundModal from './HeroBackgroundModal';
+import { TextEffect } from './ui/text-effect';
 import { useAdminAuth } from '../lib/adminAuth';
 import { cn } from '../lib/utils';
 import { 
@@ -280,6 +283,9 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
     });
     return () => unsub();
   }, []);
+
+  // Parallax Layers - Static fixed backdrop without scroll movement
+  const parallaxRef = useRef<HTMLDivElement>(null);
 
   const handleStartConsultation = (serviceName: string = 'Consultoria Techify') => {
     if (onOpenConsultation) {
@@ -575,203 +581,250 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
       )}
 
       {/* ========================================================================= */}
-      {/* 1. HERO SECTION (Custom / Metallic Background)                            */}
+      {/* 1. HERO SECTION (Osmo Layered Parallax with GSAP + ScrollTrigger + Lenis)  */}
       {/* ========================================================================= */}
-      <section className="relative w-full overflow-hidden min-h-[85vh] sm:min-h-[90vh] flex flex-col justify-center items-center px-4 pt-20 pb-20 sm:pt-28 sm:pb-28 text-center bg-[#050905]">
-        
-        {/* Full-width Background Media (Image or Video) */}
-        <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
-          {content.hero.backgroundType === 'video' && content.hero.videoUrl ? (
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="w-full h-full object-cover object-center scale-105"
-              style={{
-                filter: `brightness(${content.hero.backgroundBrightness ?? 75}%) blur(${content.hero.backgroundBlur ?? 0}px)`,
-              }}
-            >
-              <source src={content.hero.videoUrl} type="video/mp4" />
-            </video>
-          ) : (
-            <img
-              src={content.hero.backgroundImageUrl || heroBgImage}
-              alt="Techify Background"
-              className="w-full h-full object-cover object-center scale-105 transition-all duration-300"
-              style={{
-                filter: `brightness(${content.hero.backgroundBrightness ?? 75}%) blur(${content.hero.backgroundBlur ?? 0}px)`,
-              }}
-            />
-          )}
+      <div className="parallax relative w-full overflow-hidden bg-[#050905]" ref={parallaxRef}>
+        <section className="parallax__header relative w-full min-h-[90vh] sm:min-h-[100vh] overflow-hidden flex items-center justify-center">
+          
+          <div className="parallax__visuals relative w-full h-full">
+            <div className="parallax__black-line-overflow" />
 
-          {/* Dark Radial & Gradient Overlays with dynamic configurable opacity */}
-          <div 
-            className="absolute inset-0 bg-black transition-opacity duration-300 pointer-events-none"
-            style={{ opacity: (content.hero.backgroundOpacity ?? 65) / 100 }}
-          />
-          <div className="absolute inset-0 bg-radial from-black/10 via-black/40 to-black/90 pointer-events-none" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-transparent to-black pointer-events-none" />
-
-          {/* Optional Neon Grid overlay */}
-          {content.hero.showGridEffect && (
-            <div 
-              className="absolute inset-0 pointer-events-none opacity-20"
-              style={{
-                backgroundImage: 'linear-gradient(to right, #22c55e 1px, transparent 1px), linear-gradient(to bottom, #22c55e 1px, transparent 1px)',
-                backgroundSize: '32px 32px'
-              }}
-            />
-          )}
-        </div>
-
-        {/* Quick Hero Background Edit Button for Admin or on Hover */}
-        {isAdmin && (
-          <div className="absolute top-4 right-4 z-20">
-            <button
-              type="button"
-              onClick={() => setIsBgModalOpen(true)}
-              className="flex items-center gap-2 rounded-2xl bg-black/85 hover:bg-black text-[#4ade80] border border-[#22c55e]/50 hover:border-[#22c55e] px-3.5 py-2 text-xs font-black shadow-[0_0_25px_rgba(0,0,0,0.9)] backdrop-blur-xl transition-all hover:scale-105 cursor-pointer group"
-            >
-              <ImageIcon className="h-4 w-4 text-[#22c55e] group-hover:rotate-12 transition-transform" />
-              <span>Trocar Imagem de Fundo</span>
-            </button>
-          </div>
-        )}
-
-        {/* Bottom Blur Overlay for smooth transition */}
-        <div 
-          className="absolute inset-0 pointer-events-none z-[1] bottom-blur-mask backdrop-blur-sm"
-          style={{
-            WebkitMaskImage: 'linear-gradient(to top, black 0%, transparent 40%)',
-            maskImage: 'linear-gradient(to top, black 0%, transparent 40%)',
-          }}
-        />
-
-        <div className="relative z-10 max-w-5xl mx-auto flex flex-col items-center">
-          {/* Top Eyebrow Heading: "A Solução Definitiva" */}
-          <div className="animate-blur-fade-up relative inline-block mb-3 sm:mb-4 group" style={{ animationDelay: '150ms' }}>
-            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white font-['Bricolage_Grotesque','Plus_Jakarta_Sans',sans-serif]">
-              {content.hero.eyebrow}
-            </h2>
-            {isEditMode && (
-              <button
-                onClick={() => setTextModal({
-                  isOpen: true,
-                  title: 'Editar Título Superior do Hero',
-                  fieldKey: 'hero',
-                  subKey: 'eyebrow',
-                  value: content.hero.eyebrow,
-                  isMultiline: false
-                })}
-                className="absolute -top-2 -right-8 p-1.5 rounded-lg bg-[#22c55e] text-black shadow-lg hover:scale-110 transition-transform cursor-pointer"
-                title="Editar Texto"
+            {/* Optional background video if selected */}
+            {content.hero.backgroundType === 'video' && content.hero.videoUrl && (
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none opacity-30 z-0"
               >
-                <Pencil className="h-3 w-3 stroke-[2.5]" />
-              </button>
+                <source src={content.hero.videoUrl} type="video/mp4" />
+              </video>
             )}
-          </div>
 
-          {/* Main Punch Headline */}
-          <div className="animate-blur-fade-up relative inline-block max-w-5xl mx-auto group" style={{ animationDelay: '300ms' }}>
-            <h1 className="font-['Bricolage_Grotesque','Syne',sans-serif] text-4xl sm:text-6xl lg:text-7xl xl:text-[80px] font-black uppercase tracking-tight text-[#4ade80] sm:leading-[1.08] drop-shadow-[0_0_35px_rgba(74,222,128,0.35)]">
-              {content.hero.headline1}
-              {content.hero.headline2 && content.hero.headline2.trim() !== content.hero.headline1.trim() && (
-                <>
-                  <br />
-                  {content.hero.headline2}
-                </>
-              )}
-              {content.hero.headline3 && content.hero.headline3.trim() !== content.hero.headline2.trim() && content.hero.headline3.trim() !== content.hero.headline1.trim() && (
-                <>
-                  <br />
-                  {content.hero.headline3}
-                </>
-              )}
-            </h1>
-            {isEditMode && (
-              <button
-                onClick={() => setTextModal({
-                  isOpen: true,
-                  title: 'Editar Frase Principal (Linha 1)',
-                  fieldKey: 'hero',
-                  subKey: 'headline1',
-                  value: content.hero.headline1,
-                  isMultiline: false
-                })}
-                className="absolute top-2 -right-8 p-1.5 rounded-lg bg-[#22c55e] text-black shadow-lg hover:scale-110 transition-transform cursor-pointer"
-                title="Editar Headline"
-              >
-                <Pencil className="h-3 w-3 stroke-[2.5]" />
-              </button>
-            )}
-          </div>
+            {/* Parallax Layers Container */}
+            <div data-parallax-layers className="parallax__layers relative w-full h-full flex items-center justify-center">
+              
+              {/* Layer 1: Background Stars / Deep Skyline */}
+              <img 
+                src="https://cdn.prod.website-files.com/671752cd4027f01b1b8f1c7f/6717795be09b462b2e8ebf71_osmo-parallax-layer-3.webp" 
+                loading="eager" 
+                data-parallax-layer="1" 
+                alt="Parallax background layer 1" 
+                className="parallax__layer-img" 
+              />
 
-          {/* Hero Subtitle */}
-          <div className="animate-blur-fade-up relative inline-block max-w-3xl mx-auto group mt-7" style={{ animationDelay: '450ms' }}>
-            <p className="text-sm sm:text-base lg:text-lg text-neutral-300 leading-relaxed font-normal">
-              {content.hero.description}
-            </p>
-            {isEditMode && (
-              <button
-                onClick={() => setTextModal({
-                  isOpen: true,
-                  title: 'Editar Descrição do Hero',
-                  fieldKey: 'hero',
-                  subKey: 'description',
-                  value: content.hero.description,
-                  isMultiline: true
-                })}
-                className="absolute -top-2 -right-8 p-1.5 rounded-lg bg-[#22c55e] text-black shadow-lg hover:scale-110 transition-transform cursor-pointer"
-                title="Editar Descrição"
-              >
-                <Pencil className="h-3 w-3 stroke-[2.5]" />
-              </button>
-            )}
-          </div>
+              {/* Layer 2: Mid-ground Mountains / Horizon Ridges */}
+              <img 
+                src="https://cdn.prod.website-files.com/671752cd4027f01b1b8f1c7f/6717795b4d5ac529e7d3a562_osmo-parallax-layer-2.webp" 
+                loading="eager" 
+                data-parallax-layer="2" 
+                alt="Parallax midground layer 2" 
+                className="parallax__layer-img" 
+              />
 
-          {/* Hero Action Buttons */}
-          <div className="animate-blur-fade-up mt-10 flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-5 max-w-lg mx-auto w-full" style={{ animationDelay: '600ms' }}>
-            {/* Secondary Action with Liquid Glass */}
-            <button 
-              id="hero-portfolio-btn"
-              onClick={() => {
-                if (onNavigate) {
-                  onNavigate('apps');
-                } else {
-                  const el = document.getElementById('servicos');
-                  el?.scrollIntoView({ behavior: 'smooth' });
-                }
-              }}
-              className="w-full sm:w-auto inline-flex items-center justify-center rounded-full liquid-glass hover:bg-white/10 text-white font-black text-xs uppercase tracking-wider px-8 py-4 transition-all cursor-pointer select-none active:scale-[0.98] shadow-lg"
-            >
-              <span>{content.hero.ctaSecondary}</span>
-            </button>
+              {/* Layer 3: Main Content, Titles & Interactive CTAs */}
+              <div data-parallax-layer="3" className="parallax__layer-title relative z-10 max-w-5xl mx-auto flex flex-col items-center text-center px-4 py-12 sm:py-20">
+                
+                {/* Visual Backdrop Scrim for Maximum Contrast & Luxury Depth */}
+                <div className="absolute inset-0 max-w-4xl mx-auto -z-10 rounded-full bg-radial from-black/80 via-black/45 to-transparent blur-2xl pointer-events-none" />
 
-            {/* Primary Action */}
-            <button 
-              id="hero-engineer-cta"
-              onClick={() => handleStartConsultation('Falar com Engenheiro Techify')}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-[#a3e635] hover:bg-[#84cc16] text-black font-black text-xs uppercase tracking-wider px-8 py-4 shadow-[0_0_30px_rgba(163,230,53,0.4)] hover:shadow-[0_0_40px_rgba(163,230,53,0.6)] transition-all cursor-pointer select-none active:scale-[0.98]"
-            >
-              <span>{content.hero.ctaPrimary}</span>
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-black/10 font-bold">
-                ↗
-              </span>
-            </button>
-          </div>
+                {/* Top Eyebrow Badge: "A Solução Definitiva" */}
+                <div className="relative inline-flex items-center mb-4 sm:mb-6 group">
+                  <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/75 border border-[#22c55e]/40 shadow-[0_0_20px_rgba(34,197,94,0.25)] backdrop-blur-xl">
+                    <span className="h-2 w-2 rounded-full bg-[#22c55e] animate-pulse" />
+                    <TextEffect
+                      as="span"
+                      per="char"
+                      preset="fade"
+                      delay={0.1}
+                      className="text-xs sm:text-sm font-extrabold uppercase tracking-widest text-[#4ade80]"
+                    >
+                      {content.hero.eyebrow}
+                    </TextEffect>
+                  </div>
+                  {isEditMode && (
+                    <button
+                      onClick={() => setTextModal({
+                        isOpen: true,
+                        title: 'Editar Título Superior do Hero',
+                        fieldKey: 'hero',
+                        subKey: 'eyebrow',
+                        value: content.hero.eyebrow,
+                        isMultiline: false
+                      })}
+                      className="absolute -top-2 -right-8 p-1.5 rounded-lg bg-[#22c55e] text-black shadow-lg hover:scale-110 transition-transform cursor-pointer"
+                      title="Editar Texto"
+                    >
+                      <Pencil className="h-3 w-3 stroke-[2.5]" />
+                    </button>
+                  )}
+                </div>
 
-          {/* Trust Badges */}
-          <div className="animate-blur-fade-up mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2.5 text-xs sm:text-sm font-medium text-neutral-300" style={{ animationDelay: '750ms' }}>
-            {content.hero.trustBadges.map((badge, idx) => (
-              <div key={idx} className="flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-3 py-1 rounded-full border border-white/5">
-                <Check className="h-4 w-4 text-[#22c55e]" />
-                <span>{badge}</span>
+                {/* Main Punch Headline */}
+                <div className="relative w-full max-w-5xl mx-auto group text-center flex flex-col items-center justify-center">
+                  <h1 className="w-full font-['Bricolage_Grotesque','Syne',sans-serif] text-3xl sm:text-5xl lg:text-6xl xl:text-[76px] font-black uppercase tracking-tight sm:leading-[1.08] text-center">
+                    {/* Primary White Line */}
+                    <TextEffect
+                      as="span"
+                      per="word"
+                      preset="blur"
+                      delay={0.2}
+                      className="block text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.95)] text-center w-full"
+                    >
+                      {content.hero.headline1.toLowerCase().includes('para sua empresa') 
+                        ? (content.hero.headline1.replace(/para sua empresa.*$/i, '').trim() || "ESTRUTURA COMPLETA")
+                        : (content.hero.headline1 || "ESTRUTURA COMPLETA")}
+                    </TextEffect>
+
+                    {/* Secondary Accent Emerald Gradient Line */}
+                    <TextEffect
+                      as="span"
+                      per="word"
+                      preset="blur"
+                      delay={0.35}
+                      className="block text-transparent bg-clip-text bg-gradient-to-r from-[#4ade80] via-[#22c55e] to-[#a3e635] drop-shadow-[0_0_35px_rgba(74,222,128,0.5)] mt-1 sm:mt-2 text-center w-full"
+                    >
+                      {content.hero.headline1.toLowerCase().includes('para sua empresa')
+                        ? (content.hero.headline1.match(/para sua empresa.*$/i)?.[0] || content.hero.headline2 || "PARA SUA EMPRESA CRESCER")
+                        : (content.hero.headline2 && content.hero.headline2.trim() !== content.hero.headline1.trim() 
+                            ? `${content.hero.headline2} ${content.hero.headline3 && content.hero.headline3.trim() !== content.hero.headline2.trim() ? content.hero.headline3 : ''}`.trim()
+                            : (content.hero.headline3 || "PARA SUA EMPRESA CRESCER"))}
+                    </TextEffect>
+                  </h1>
+                  {isEditMode && (
+                    <button
+                      onClick={() => setTextModal({
+                        isOpen: true,
+                        title: 'Editar Frase Principal (Linha 1)',
+                        fieldKey: 'hero',
+                        subKey: 'headline1',
+                        value: content.hero.headline1,
+                        isMultiline: false
+                      })}
+                      className="absolute top-2 -right-8 p-1.5 rounded-lg bg-[#22c55e] text-black shadow-lg hover:scale-110 transition-transform cursor-pointer"
+                      title="Editar Headline"
+                    >
+                      <Pencil className="h-3 w-3 stroke-[2.5]" />
+                    </button>
+                  )}
+                </div>
+
+                {/* Hero Subtitle */}
+                <div className="relative w-full max-w-3xl mx-auto group mt-6 sm:mt-7 text-center flex flex-col items-center justify-center">
+                  <TextEffect
+                    as="p"
+                    per="word"
+                    preset="fade"
+                    delay={0.5}
+                    className="text-xs sm:text-base lg:text-lg text-neutral-200/95 leading-relaxed font-normal drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] text-center w-full"
+                  >
+                    {content.hero.description}
+                  </TextEffect>
+                  {isEditMode && (
+                    <button
+                      onClick={() => setTextModal({
+                        isOpen: true,
+                        title: 'Editar Descrição do Hero',
+                        fieldKey: 'hero',
+                        subKey: 'description',
+                        value: content.hero.description,
+                        isMultiline: true
+                      })}
+                      className="absolute -top-2 -right-8 p-1.5 rounded-lg bg-[#22c55e] text-black shadow-lg hover:scale-110 transition-transform cursor-pointer"
+                      title="Editar Descrição"
+                    >
+                      <Pencil className="h-3 w-3 stroke-[2.5]" />
+                    </button>
+                  )}
+                </div>
+
+                {/* Hero Action Buttons */}
+                <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-4 max-w-2xl mx-auto w-full">
+                  {/* Secondary Action with Liquid Glass */}
+                  <button 
+                    id="hero-portfolio-btn"
+                    onClick={() => {
+                      if (onNavigate) {
+                        onNavigate('apps');
+                      } else {
+                        const el = document.getElementById('servicos');
+                        el?.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }}
+                    className="w-full sm:w-auto inline-flex items-center justify-center rounded-full liquid-glass hover:bg-white/10 text-white font-black text-xs uppercase tracking-wider px-7 py-4 transition-all cursor-pointer select-none active:scale-[0.98] shadow-lg"
+                  >
+                    <span>{content.hero.ctaSecondary}</span>
+                  </button>
+
+                  {/* Ver Planos Button (Transparent Liquid Glass) */}
+                  <button 
+                    id="hero-plans-btn"
+                    onClick={() => {
+                      const el = document.getElementById('planos');
+                      if (el) {
+                        el.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }}
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full liquid-glass hover:bg-white/10 text-white font-black text-xs uppercase tracking-wider px-7 py-4 transition-all cursor-pointer select-none active:scale-[0.98] shadow-lg"
+                  >
+                    <Sparkles className="h-4 w-4 text-[#22c55e]" />
+                    <span>Ver Planos</span>
+                  </button>
+
+                  {/* Primary Action */}
+                  <button 
+                    id="hero-engineer-cta"
+                    onClick={() => handleStartConsultation('Falar com Engenheiro Techify')}
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-[#a3e635] hover:bg-[#84cc16] text-black font-black text-xs uppercase tracking-wider px-7 py-4 shadow-[0_0_30px_rgba(163,230,53,0.4)] hover:shadow-[0_0_40px_rgba(163,230,53,0.6)] transition-all cursor-pointer select-none active:scale-[0.98]"
+                  >
+                    <span>{content.hero.ctaPrimary}</span>
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-black/10 font-bold">
+                      ↗
+                    </span>
+                  </button>
+                </div>
+
+                {/* Trust Badges */}
+                <div className="mt-8 sm:mt-10 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs sm:text-sm font-medium text-neutral-200">
+                  {content.hero.trustBadges.map((badge, idx) => (
+                    <div key={idx} className="flex items-center gap-1.5 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 shadow-md">
+                      <Check className="h-4 w-4 text-[#22c55e]" />
+                      <span>{badge}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            ))}
+
+              {/* Layer 4: Foreground Rocks / Mountain Peaks passing in front of text */}
+              <img 
+                src="https://cdn.prod.website-files.com/671752cd4027f01b1b8f1c7f/6717795bb5aceca85011ad83_osmo-parallax-layer-1.webp" 
+                loading="eager" 
+                data-parallax-layer="4" 
+                alt="Parallax foreground layer 4" 
+                className="parallax__layer-img" 
+              />
+            </div>
+
+            {/* Bottom Smooth Dark Fade */}
+            <div className="parallax__fade" />
+
+            {/* Quick Hero Background Edit Button for Admin */}
+            {isAdmin && (
+              <div className="absolute top-4 right-4 z-30">
+                <button
+                  type="button"
+                  onClick={() => setIsBgModalOpen(true)}
+                  className="flex items-center gap-2 rounded-2xl bg-black/85 hover:bg-black text-[#4ade80] border border-[#22c55e]/50 hover:border-[#22c55e] px-3.5 py-2 text-xs font-black shadow-[0_0_25px_rgba(0,0,0,0.9)] backdrop-blur-xl transition-all hover:scale-105 cursor-pointer group"
+                >
+                  <ImageIcon className="h-4 w-4 text-[#22c55e] group-hover:rotate-12 transition-transform" />
+                  <span>Trocar Imagem de Fundo</span>
+                </button>
+              </div>
+            )}
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
 
 
       {/* ========================================================================= */}

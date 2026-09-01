@@ -17,70 +17,29 @@ import {
   ArrowRight,
   Send,
   Zap,
-  Lock
+  Lock,
+  Edit3,
+  Settings
 } from 'lucide-react';
 import { Consultation } from '../types';
 import { collection, addDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { toast } from './Toast';
+import { 
+  ServiceCatalogItem, 
+  DEFAULT_SERVICES_CATALOG, 
+  getCachedServicesCatalog, 
+  initServicesCatalogListener 
+} from '../lib/servicesCatalog';
+import ServicesCatalogManagerModal from './ServicesCatalogManagerModal';
+
+export const SERVICES_CATALOG = DEFAULT_SERVICES_CATALOG;
 
 interface ConsultationModalProps {
   isOpen: boolean;
   onClose: () => void;
   defaultService?: string;
 }
-
-export const SERVICES_CATALOG = [
-  { 
-    id: 'pacote_completo', 
-    label: '⭐ Pacote Full Growth 360° (Site + Design + Mkt + Redes)', 
-    badge: 'Mais Escolhido • 75% OFF', 
-    price: 'De R$ 2.300 por R$ 580',
-    popular: true 
-  },
-  { 
-    id: 'pacote_tracao', 
-    label: '🚀 Pacote Tração & Vendas (Site de Alta Conversão + Marketing)', 
-    badge: 'Alta Conversão', 
-    price: 'R$ 350' 
-  },
-  { 
-    id: 'teste_gratis', 
-    label: '🎁 Teste de Design & Amostra de Site Grátis', 
-    badge: '100% Sem Compromisso', 
-    price: 'GRÁTIS' 
-  },
-  { 
-    id: 'sites', 
-    label: '🌐 Criação de Sites & Landing Pages de Alta Performance', 
-    badge: 'Engenharia Sob Medida', 
-    price: 'Sob Medida' 
-  },
-  { 
-    id: 'design', 
-    label: '🎨 Design Gráfico, Identidade Visual & UI/UX', 
-    badge: 'Padrão Internacional', 
-    price: 'Sob Medida' 
-  },
-  { 
-    id: 'sistemas', 
-    label: '⚡ Desenvolvimento de Sistemas, Aplicativos & Automações', 
-    badge: 'Tecnologia Escalável', 
-    price: 'Sob Medida' 
-  },
-  { 
-    id: 'marketing', 
-    label: '📈 Tráfego Pago, Gestão de Anúncios & Performance', 
-    badge: 'Foco em Vendas', 
-    price: 'Sob Medida' 
-  },
-  { 
-    id: 'outro', 
-    label: '🎯 Outro Projeto Personalizado', 
-    badge: 'Briefing Exclusivo', 
-    price: 'Consultoria' 
-  },
-];
 
 const QUICK_TAGS = [
   '🚀 Quero Vender Mais Online',
@@ -120,11 +79,14 @@ export default function ConsultationModal({ isOpen, onClose, defaultService }: C
   const tomorrowStr = getFormattedDate(1);
   const next2DaysStr = getFormattedDate(2);
 
+  const [servicesCatalog, setServicesCatalog] = useState<ServiceCatalogItem[]>(() => getCachedServicesCatalog());
+  const [isManagerOpen, setIsManagerOpen] = useState(false);
+
   const [formData, setFormData] = useState<Consultation>({
     name: '',
     email: '',
     whatsapp: '',
-    service: defaultService || 'pacote_completo',
+    service: defaultService || (servicesCatalog[0]?.id || 'pacote_completo'),
     date: todayStr,
     time: '14:00',
     details: '',
@@ -135,17 +97,29 @@ export default function ConsultationModal({ isOpen, onClose, defaultService }: C
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
+  // Subscribe to real-time services catalog updates
+  useEffect(() => {
+    const unsub = initServicesCatalogListener((items) => {
+      setServicesCatalog(items);
+      // If current selected service was removed, fallback to the first available
+      if (items.length > 0 && !items.some(it => it.id === formData.service)) {
+        setFormData(prev => ({ ...prev, service: items[0].id }));
+      }
+    });
+    return () => unsub();
+  }, [formData.service]);
+
   // Sync default service when passed
   useEffect(() => {
-    if (defaultService) {
-      const match = SERVICES_CATALOG.find(
+    if (defaultService && servicesCatalog.length > 0) {
+      const match = servicesCatalog.find(
         s => s.id === defaultService || s.label.toLowerCase().includes(defaultService.toLowerCase())
       );
       if (match) {
         setFormData(prev => ({ ...prev, service: match.id }));
       }
     }
-  }, [defaultService, isOpen]);
+  }, [defaultService, isOpen, servicesCatalog]);
 
   // Handle WhatsApp direct link generation
   const buildWhatsAppRedirectUrl = (protocol: string, name: string, serviceLabel: string, date: string, time: string, details: string) => {
@@ -198,7 +172,7 @@ export default function ConsultationModal({ isOpen, onClose, defaultService }: C
     const genProtocol = `#TCK-${Math.floor(100000 + Math.random() * 900000)}`;
     setProtocolNumber(genProtocol);
 
-    const selectedServiceObj = SERVICES_CATALOG.find(s => s.id === formData.service);
+    const selectedServiceObj = servicesCatalog.find(s => s.id === formData.service);
     const selectedServiceLabel = selectedServiceObj ? `${selectedServiceObj.label} (${selectedServiceObj.price})` : 'Criação de Sites';
     const formattedDate = formData.date ? new Date(formData.date + 'T00:00:00').toLocaleDateString('pt-BR') : new Date().toLocaleDateString('pt-BR');
 
@@ -246,7 +220,7 @@ export default function ConsultationModal({ isOpen, onClose, defaultService }: C
     }
   };
 
-  const selectedServiceObj = SERVICES_CATALOG.find(s => s.id === formData.service);
+  const selectedServiceObj = servicesCatalog.find(s => s.id === formData.service);
 
   return (
     <AnimatePresence>

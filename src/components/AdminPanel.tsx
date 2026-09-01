@@ -5,7 +5,7 @@ import {
   Plus, Trash2, Check, RefreshCw, ExternalLink, KeyRound, LogOut,
   Linkedin, Globe, FileText, Download, Edit, X, MapPin, UserCheck, UserPlus, Award,
   Copy, CheckCheck, FileSpreadsheet, Inbox, AtSign, Search, Sparkles,
-  Image as ImageIcon, Layers, CreditCard
+  Image as ImageIcon, Layers, CreditCard, AlertCircle
 } from 'lucide-react';
 import { collection, onSnapshot, doc, updateDoc, deleteDoc, addDoc, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebase';
@@ -183,144 +183,52 @@ export default function AdminPanel() {
     interesses: 'Site',
   });
 
-  // Seed sample data if collections are empty
+  // Purge/Cleanup Modal state
+  const [isPurgeModalOpen, setIsPurgeModalOpen] = useState(false);
+  const [isPurging, setIsPurging] = useState(false);
+
+  // Automatic clean up of mock/test records from previous seedings
   useEffect(() => {
-    const seedInitialData = async () => {
+    const cleanupMockRecords = async () => {
       try {
+        // Clean mock consultas
         const consultasSnap = await getDocs(collection(db, "consultas"));
-        if (consultasSnap.empty) {
-          const initialConsultas = [
-            {
-              nome: "Lucas Mendes",
-              email: "lucas.mendes@gmail.com",
-              whatsapp: "81995498590",
-              servico: "Design Gráfico",
-              status: "pendente",
-              data: "12/08/2026",
-              horario: "14:00",
-              resumo: "Criação de nova identidade visual.",
-              createdAt: "2026-08-12T14:00:00Z"
-            },
-            {
-              nome: "Gabriel Santos",
-              email: "gabriel.santos@gmail.com",
-              whatsapp: "453456345345",
-              servico: "Branding",
-              status: "pendente",
-              data: "15/08/2026",
-              horario: "10:30",
-              resumo: "Estratégia de branding e logotipo.",
-              createdAt: "2026-08-15T10:30:00Z"
-            },
-            {
-              nome: "Letícia Carla Araújo da Silva",
-              email: "leticiacarla0826@gmail.com",
-              whatsapp: "+55 81 8545-1557",
-              servico: "Outro",
-              status: "pendente",
-              data: "18/08/2026",
-              horario: "16:00",
-              resumo: "Mentoria e consultoria de design.",
-              createdAt: "2026-08-18T16:00:00Z"
-            },
-            {
-              nome: "Cliente Corporativo Techify",
-              email: "oficialtechify@gmail.com",
-              whatsapp: "81998352152",
-              servico: "Criação de Sites",
-              status: "concluido",
-              data: "02/04/2026",
-              horario: "09:00",
-              resumo: "Desenvolvimento do site institucional.",
-              createdAt: "2026-04-02T09:00:00Z"
-            },
-            {
-              nome: "Techify Parcerias",
-              email: "oficialtechify@gmail.com",
-              whatsapp: "81995498590",
-              servico: "Criação de Sites",
-              status: "concluido",
-              data: "15/11/2025",
-              horario: "15:00",
-              resumo: "Portal e-commerce.",
-              createdAt: "2025-11-15T15:00:00Z"
-            }
-          ];
-          for (const item of initialConsultas) {
-            await addDoc(collection(db, "consultas"), item);
+        consultasSnap.forEach(async (docSnap) => {
+          const data = docSnap.data();
+          if (
+            data.nome === "Lucas Mendes" ||
+            data.nome === "Gabriel Santos" ||
+            data.nome === "Letícia Carla Araújo da Silva" ||
+            data.nome === "Cliente Corporativo Techify" ||
+            data.nome === "Techify Parcerias" ||
+            data.email === "lucas.mendes@gmail.com" ||
+            data.email === "gabriel.santos@gmail.com" ||
+            data.email === "leticiacarla0826@gmail.com"
+          ) {
+            await deleteDoc(doc(db, "consultas", docSnap.id));
           }
-        }
+        });
 
+        // Clean mock leads
         const leadsSnap = await getDocs(collection(db, "leads"));
-        if (leadsSnap.empty) {
-          const initialLeads = [
-            {
-              nome: "Rickzinxx",
-              segmento: "Roupas",
-              email: "aigerakabane81983521523@gmail.com",
-              telefone: "5581983521523",
-              instagram: "Xr_rickk",
-              interesses: "Logo",
-              status: "Completo",
-              emailsEnviados: 0,
-              dataEnvio: "20/05/2026",
-              createdAt: "2026-05-20T10:00:00Z"
-            },
-            {
-              nome: "BRENDA EVELYN",
-              segmento: "Não",
-              email: "brendaevelyn2023@gmail.com",
-              telefone: "8199272391",
-              instagram: "eve.lyn._4",
-              interesses: "Inglês",
-              status: "Completo",
-              emailsEnviados: 10,
-              dataEnvio: "02/04/2026",
-              createdAt: "2026-04-02T10:00:00Z"
-            },
-            {
-              nome: "Marcos paulo De souza",
-              segmento: "Vendo roupa",
-              email: "dmarcospaulo893@gmail.com",
-              telefone: "81999130885",
-              instagram: "Piquetehh",
-              interesses: "Site",
-              status: "Completo",
-              emailsEnviados: 17,
-              dataEnvio: "03/01/2026",
-              createdAt: "2026-01-03T10:00:00Z"
-            },
-            {
-              nome: "Lucas Mendes",
-              segmento: "Moda Masculina",
-              email: "lucas.mendes@gmail.com",
-              telefone: "81988887777",
-              instagram: "lucas_mendes",
-              interesses: "E-commerce & App",
-              status: "Completo",
-              emailsEnviados: 2,
-              dataEnvio: "10/06/2026",
-              createdAt: "2026-06-10T10:00:00Z"
-            },
-            {
-              nome: "Mariana Costa",
-              segmento: "Estética & Beleza",
-              email: "mariana.costa@beleza.com",
-              telefone: "81977776666",
-              instagram: "mari_estetica",
-              interesses: "Identidade Visual",
-              status: "Completo",
-              emailsEnviados: 5,
-              dataEnvio: "18/07/2026",
-              createdAt: "2026-07-18T10:00:00Z"
-            }
-          ];
-          for (const item of initialLeads) {
-            await addDoc(collection(db, "leads"), item);
+        leadsSnap.forEach(async (docSnap) => {
+          const data = docSnap.data();
+          if (
+            data.nome === "Rickzinxx" ||
+            data.nome === "BRENDA EVELYN" ||
+            data.nome === "Marcos paulo De souza" ||
+            data.nome === "Lucas Mendes" ||
+            data.nome === "Mariana Costa" ||
+            data.email === "aigerakabane81983521523@gmail.com" ||
+            data.email === "brendaevelyn2023@gmail.com" ||
+            data.email === "dmarcospaulo893@gmail.com" ||
+            data.email === "mariana.costa@beleza.com"
+          ) {
+            await deleteDoc(doc(db, "leads", docSnap.id));
           }
-        }
+        });
 
-        // Clean up any fake mock candidaturas previously seeded in Firestore
+        // Clean mock candidaturas
         const candidaturasSnap = await getDocs(collection(db, "candidaturas"));
         candidaturasSnap.forEach(async (docSnap) => {
           const data = docSnap.data();
@@ -334,38 +242,38 @@ export default function AdminPanel() {
           }
         });
 
+        // Clean mock parceiros
         const parceirosSnap = await getDocs(collection(db, "parceiros"));
-        if (parceirosSnap.empty) {
-          const initialParceiros = [
-            {
-              nome: "Rodrigo Mendes",
-              empresa: "Apex Cloud Soluções",
-              email: "rodrigo@apexcloud.com.br",
-              telefone: "11966665555",
-              categoria: "Infraestrutura Cloud",
-              status: "Ativo",
-              createdAt: new Date().toISOString()
-            },
-            {
-              nome: "Juliana Costa",
-              empresa: "Vortex Marketing Digital",
-              email: "juliana@vortex.com.br",
-              telefone: "21955554444",
-              categoria: "Mídia & Performance",
-              status: "Ativo",
-              createdAt: new Date().toISOString()
-            }
-          ];
-          for (const item of initialParceiros) {
-            await addDoc(collection(db, "parceiros"), item);
+        parceirosSnap.forEach(async (docSnap) => {
+          const data = docSnap.data();
+          if (
+            data.nome === "Rodrigo Mendes" ||
+            data.nome === "Juliana Costa" ||
+            data.email === "rodrigo@apexcloud.com.br" ||
+            data.email === "juliana@vortex.com.br"
+          ) {
+            await deleteDoc(doc(db, "parceiros", docSnap.id));
           }
-        }
+        });
+
+        // Clean mock vagas (test vacancies)
+        const vagasSnap = await getDocs(collection(db, "vagas"));
+        vagasSnap.forEach(async (docSnap) => {
+          const data = docSnap.data();
+          if (
+            data.title === "VENHA FAZER PARTE DA FAMÍLIA TECHIFY" ||
+            data.title === "DESIGNER" ||
+            data.title === "API DESIGNER"
+          ) {
+            await deleteDoc(doc(db, "vagas", docSnap.id));
+          }
+        });
       } catch (err) {
-        console.error("Error seeding initial Firestore data:", err);
+        console.warn("Cleaned test data check:", err);
       }
     };
 
-    seedInitialData();
+    cleanupMockRecords();
   }, []);
 
   // Real-time Firestore Listeners
@@ -929,6 +837,52 @@ export default function AdminPanel() {
     toast.success('Exportação Concluída', 'Arquivo CSV gerado e descarregado com sucesso.');
   };
 
+  const handlePurgeAllMockData = async () => {
+    setIsPurging(true);
+    try {
+      // 1. Delete all consultas
+      const consultasSnap = await getDocs(collection(db, "consultas"));
+      const cDeletions = consultasSnap.docs.map(d => deleteDoc(doc(db, "consultas", d.id)));
+
+      // 2. Delete all leads
+      const leadsSnap = await getDocs(collection(db, "leads"));
+      const lDeletions = leadsSnap.docs.map(d => deleteDoc(doc(db, "leads", d.id)));
+
+      // 3. Delete all candidaturas
+      const candSnap = await getDocs(collection(db, "candidaturas"));
+      const candDeletions = candSnap.docs.map(d => deleteDoc(doc(db, "candidaturas", d.id)));
+
+      // 4. Delete all parceiros
+      const parcSnap = await getDocs(collection(db, "parceiros"));
+      const parcDeletions = parcSnap.docs.map(d => deleteDoc(doc(db, "parceiros", d.id)));
+
+      // 5. Delete all vagas
+      const vagasSnap = await getDocs(collection(db, "vagas"));
+      const vDeletions = vagasSnap.docs.map(d => deleteDoc(doc(db, "vagas", d.id)));
+
+      // 6. Delete all diagnosticos
+      const diagSnap = await getDocs(collection(db, "diagnosticos"));
+      const dDeletions = diagSnap.docs.map(d => deleteDoc(doc(db, "diagnosticos", d.id)));
+
+      await Promise.all([
+        ...cDeletions,
+        ...lDeletions,
+        ...candDeletions,
+        ...parcDeletions,
+        ...vDeletions,
+        ...dDeletions
+      ]);
+
+      toast.success('Banco de Dados Limpo!', 'Todos os registros de teste e demonstração foram excluídos. O sistema está 100% pronto para clientes e candidatos reais.');
+      setIsPurgeModalOpen(false);
+    } catch (err) {
+      console.error('Error purging database:', err);
+      toast.error('Erro ao Limpar Banco', 'Ocorreu um erro ao excluir alguns registros de teste.');
+    } finally {
+      setIsPurging(false);
+    }
+  };
+
   const handleCreateLead = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newLeadForm.nome || !newLeadForm.email) {
@@ -1057,6 +1011,15 @@ export default function AdminPanel() {
                 <span>Cadastrar Lead</span>
               </button>
             )}
+
+            <button
+              onClick={() => setIsPurgeModalOpen(true)}
+              className="flex items-center gap-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 font-bold text-xs px-3.5 py-2.5 transition-all cursor-pointer shadow-[0_0_10px_rgba(245,158,11,0.15)]"
+              title="Limpar todos os dados de teste e deixar o banco zerado para receber usuários de verdade"
+            >
+              <Trash2 className="h-4 w-4 text-amber-400" />
+              <span>Limpar Dados de Teste</span>
+            </button>
 
             <button
               onClick={() => {
@@ -3145,6 +3108,93 @@ export default function AdminPanel() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* PURGE / RESET CONFIRMATION MODAL */}
+      {isPurgeModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+          <div className="w-full max-w-md rounded-2xl border border-red-500/30 bg-[#121312] p-6 shadow-2xl">
+            <div className="flex items-center justify-between pb-4 border-b border-neutral-800">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500/10 text-red-400 border border-red-500/30">
+                  <AlertCircle className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="font-display text-base font-bold text-white">Limpar Dados de Demonstração</h3>
+                  <p className="text-[11px] text-neutral-400">Preparar o sistema para usuários reais</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsPurgeModalOpen(false)}
+                className="text-neutral-400 hover:text-white p-1 rounded-lg transition-colors cursor-pointer"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="py-4 space-y-3 text-xs text-neutral-300">
+              <p className="leading-relaxed">
+                Esta ação irá <strong className="text-white">excluir todos os registros de teste e demonstração</strong> salvos no banco de dados, incluindo:
+              </p>
+              
+              <ul className="space-y-1.5 pl-3 border-l-2 border-amber-500/50 text-neutral-400">
+                <li className="flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+                  <span>Consultas e Agendamentos de teste</span>
+                </li>
+                <li className="flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+                  <span>Leads e Diagnósticos simulados</span>
+                </li>
+                <li className="flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+                  <span>Candidaturas de teste</span>
+                </li>
+                <li className="flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+                  <span>Parceiros de demonstração</span>
+                </li>
+                <li className="flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+                  <span>Vagas de teste antigas</span>
+                </li>
+              </ul>
+
+              <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 text-[11px] text-amber-300">
+                ✨ Após a limpeza, o sistema ficará 100% pronto para receber clientes, agendamentos e candidaturas de verdade através do site.
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-neutral-800 flex gap-2.5">
+              <button
+                type="button"
+                disabled={isPurging}
+                onClick={() => setIsPurgeModalOpen(false)}
+                className="flex-1 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-white font-bold py-2.5 text-xs transition-colors cursor-pointer disabled:opacity-50"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                disabled={isPurging}
+                onClick={handlePurgeAllMockData}
+                className="flex-1 rounded-xl bg-red-600 hover:bg-red-500 text-white font-extrabold py-2.5 text-xs transition-colors shadow-[0_0_15px_rgba(239,68,68,0.3)] cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                {isPurging ? (
+                  <>
+                    <RefreshCw className="h-4 w-4 animate-spin" />
+                    <span>Limpando...</span>
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="h-4 w-4" />
+                    <span>Limpar Tudo</span>
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       )}

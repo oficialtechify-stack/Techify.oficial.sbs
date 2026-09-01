@@ -15,42 +15,6 @@ import { useAdminAuth } from '../lib/adminAuth';
 import { ShaderBackground } from './ShaderBackground';
 import GlassButton, { GlassEffect } from './GlassButton';
 
-const INITIAL_JOBS = [
-  {
-    title: "VENHA FAZER PARTE DA FAMÍLIA TECHIFY",
-    category: "Outro",
-    type: "Tempo Integral",
-    location: "Recife, SP, RJ, BA, e outros lugares",
-    description: "Vem fazer parte da família Techify, design, DEV, Programador, e outros.",
-    requirements: ["Paixão por tecnologia", "Trabalho em equipe", "Vontade de aprender"],
-    benefits: ["Ambiente dinâmico", "Projetos inovadores", "Horário flexível"],
-    salary: "A combinar",
-    createdAt: new Date().toISOString()
-  },
-  {
-    title: "DESIGNER",
-    category: "Design",
-    type: "Estágio",
-    location: "RECIFE",
-    description: "PRECISAMOS DE DESIGNER PRA NOSSA EQUIPE.",
-    requirements: ["Figma / Photoshop", "Criatividade", "Noção de UI/UX"],
-    benefits: ["Bolsa auxílio", "Mentoria", "Oportunidade de efetivação"],
-    salary: "R$ 1.500 / mês",
-    createdAt: new Date().toISOString()
-  },
-  {
-    title: "API DESIGNER",
-    category: "Desenvolvimento",
-    type: "Tempo Integral",
-    location: "Remoto",
-    description: "Arquitetura e design de APIs intuitivas e escaláveis — REST, GraphQL e especificações OpenAPI 3.1.",
-    requirements: ["REST & GraphQL", "OAuth 2.0 / JWT", "OpenAPI 3.1", "Node.js / TypeScript"],
-    benefits: ["100% Remoto", "Plano de Saúde", "Budget para Cursos"],
-    salary: "R$ 14.000 - R$ 18.000 / mês",
-    createdAt: new Date().toISOString()
-  }
-];
-
 export default function CareersSection() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -169,23 +133,8 @@ export default function CareersSection() {
     reader.readAsDataURL(file);
   };
 
-  // Real-time Firestore Listeners & Initial Seed
+  // Real-time Firestore Listeners (no mock seeding)
   useEffect(() => {
-    const seedAndListen = async () => {
-      try {
-        const snap = await getDocs(collection(db, "vagas"));
-        if (snap.empty) {
-          for (const item of INITIAL_JOBS) {
-            await addDoc(collection(db, "vagas"), item);
-          }
-        }
-      } catch (err) {
-        console.error("Error seeding initial jobs:", err);
-      }
-    };
-
-    seedAndListen();
-
     const unsub = onSnapshot(collection(db, "vagas"), (snapshot) => {
       const fetched: Job[] = [];
       snapshot.forEach((docSnap) => {

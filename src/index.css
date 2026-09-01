@@ -728,5 +728,126 @@ body {
   background: #22c55e;
 }
 
+/* ========================================================================= */
+/* OSMO LAYERED PARALLAX STYLES                                              */
+/* ========================================================================= */
+.parallax {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background-color: #050905;
+}
+
+.parallax__header {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.parallax__visuals {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.parallax__black-line-overflow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #000;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.parallax__layers {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.parallax__layer-img {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  min-width: 100%;
+  max-width: 1920px;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  user-select: none;
+}
+
+.parallax__layer-title {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  text-align: center;
+  padding: 0 1.25rem;
+  pointer-events: none;
+}
+
+.parallax__layer-title * {
+  pointer-events: auto;
+}
+
+.parallax__title {
+  font-size: clamp(2.5rem, 7vw, 5.5rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  color: #fff;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+.parallax__fade {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 240px;
+  background: linear-gradient(to bottom, transparent, #050805 90%, #050805);
+  pointer-events: none;
+  z-index: 5;
+}
+
+.parallax__content {
+  position: relative;
+  width: 100%;
+  padding: 4rem 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #050805;
+  z-index: 6;
+}
+
+.osmo-icon-svg {
+  width: 5rem;
+  height: 5rem;
+  color: #22c55e;
+  opacity: 0.85;
+}
+
+
 
 
