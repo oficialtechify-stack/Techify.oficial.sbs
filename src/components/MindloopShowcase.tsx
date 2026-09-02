@@ -148,25 +148,10 @@ export default function MindloopShowcase({ onBack }: MindloopShowcaseProps) {
             href="https://www.instagram.com/techify.oficial"
             target="_blank"
             rel="noreferrer"
+            aria-label="Instagram"
             className="liquid-glass w-10 h-10 rounded-full flex items-center justify-center hover:scale-110 active:scale-95 transition-all text-neutral-300 hover:text-white"
           >
             <Instagram className="h-4.5 w-4.5" />
-          </a>
-          <a
-            href="https://linkedin.com"
-            target="_blank"
-            rel="noreferrer"
-            className="liquid-glass w-10 h-10 rounded-full flex items-center justify-center hover:scale-110 active:scale-95 transition-all text-neutral-300 hover:text-white"
-          >
-            <Linkedin className="h-4.5 w-4.5" />
-          </a>
-          <a
-            href="https://twitter.com"
-            target="_blank"
-            rel="noreferrer"
-            className="liquid-glass w-10 h-10 rounded-full flex items-center justify-center hover:scale-110 active:scale-95 transition-all text-neutral-300 hover:text-white"
-          >
-            <Twitter className="h-4.5 w-4.5" />
           </a>
         </div>
       </nav>

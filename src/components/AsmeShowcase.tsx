@@ -233,24 +233,6 @@ export default function AsmeShowcase({ onBack }: AsmeShowcaseProps) {
         >
           <Instagram className="h-5 w-5" />
         </a>
-        <a
-          href="https://twitter.com"
-          target="_blank"
-          rel="noreferrer"
-          aria-label="Twitter"
-          className="liquid-glass rounded-full p-4 text-white/80 hover:text-white hover:bg-white/5 transition-all"
-        >
-          <Twitter className="h-5 w-5" />
-        </a>
-        <a
-          href="https://google.com"
-          target="_blank"
-          rel="noreferrer"
-          aria-label="Website"
-          className="liquid-glass rounded-full p-4 text-white/80 hover:text-white hover:bg-white/5 transition-all"
-        >
-          <Globe className="h-5 w-5" />
-        </a>
       </footer>
 
     </div>
