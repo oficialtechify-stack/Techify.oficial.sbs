@@ -53,6 +53,8 @@ export interface SiteGeneralContent {
 
 export interface LogoSettings {
   imageUrl: string;
+  logoSize: number; // px size for Header/Footer logo (e.g. 40, range 20-120)
+  emblemDividerSize: number; // px size for center emblem divider (e.g. 52, range 30-200)
   zoom: number; // percentage (e.g. 100)
   offsetX: number; // percentage (e.g. 0)
   offsetY: number; // percentage (e.g. 0)
@@ -186,6 +188,8 @@ export function getCachedTeamMembers(): TeamMember[] {
 
 export const DEFAULT_LOGO_SETTINGS: LogoSettings = {
   imageUrl: '', // empty means use original techify logo
+  logoSize: 42,
+  emblemDividerSize: 52,
   zoom: 100,
   offsetX: 0,
   offsetY: 0,

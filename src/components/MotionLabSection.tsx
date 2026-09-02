@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { ArrowLeft } from 'lucide-react';
 import { soundFX } from '../lib/soundFx';
 import { getCachedCardSettings, subscribeToCardSettings } from '../lib/cardStyles';
+import { getCachedLogoSettings, initLogoSettingsListener, LogoSettings } from '../lib/siteContent';
 
 interface MotionLabSectionProps {
   onNavigate?: (tab: string) => void;
@@ -17,8 +18,8 @@ export const MotionLabSection: React.FC<MotionLabSectionProps> = ({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  // Send current settings to iframe
-  const sendSettingsToIframe = (settings = getCachedCardSettings()) => {
+  // Send current card settings to iframe
+  const sendCardSettingsToIframe = (settings = getCachedCardSettings()) => {
     if (iframeRef.current?.contentWindow) {
       try {
         iframeRef.current.contentWindow.postMessage({
@@ -26,7 +27,21 @@ export const MotionLabSection: React.FC<MotionLabSectionProps> = ({
           settings
         }, '*');
       } catch (e) {
-        console.warn('Could not postMessage to iframe:', e);
+        console.warn('Could not postMessage card settings to iframe:', e);
+      }
+    }
+  };
+
+  // Send current logo settings to iframe
+  const sendLogoSettingsToIframe = (logoSettings: LogoSettings = getCachedLogoSettings()) => {
+    if (iframeRef.current?.contentWindow) {
+      try {
+        iframeRef.current.contentWindow.postMessage({
+          type: 'TECHIFY_UPDATE_LOGO_SETTINGS',
+          settings: logoSettings
+        }, '*');
+      } catch (e) {
+        console.warn('Could not postMessage logo settings to iframe:', e);
       }
     }
   };
@@ -34,7 +49,15 @@ export const MotionLabSection: React.FC<MotionLabSectionProps> = ({
   // Subscribe to real-time card customizer settings from Firebase & local state
   useEffect(() => {
     const unsub = subscribeToCardSettings((newSettings) => {
-      sendSettingsToIframe(newSettings);
+      sendCardSettingsToIframe(newSettings);
+    });
+    return () => unsub();
+  }, []);
+
+  // Subscribe to real-time logo customizer settings from Firebase & local state
+  useEffect(() => {
+    const unsub = initLogoSettingsListener((newLogoSettings) => {
+      sendLogoSettingsToIframe(newLogoSettings);
     });
     return () => unsub();
   }, []);
@@ -50,7 +73,8 @@ export const MotionLabSection: React.FC<MotionLabSectionProps> = ({
         soundFX.playClick();
         onNavigate?.(event.data.tab || 'inicio');
       } else if (event.data.type === 'TECHIFY_IFRAME_READY') {
-        sendSettingsToIframe();
+        sendCardSettingsToIframe();
+        sendLogoSettingsToIframe();
       }
     };
 
@@ -115,7 +139,10 @@ export const MotionLabSection: React.FC<MotionLabSectionProps> = ({
           key={iframeKey}
           ref={iframeRef}
           src="/motion-lab.html"
-          onLoad={() => sendSettingsToIframe()}
+          onLoad={() => {
+            sendCardSettingsToIframe();
+            sendLogoSettingsToIframe();
+          }}
           title="Techify Motion Lab - Interactive Experience"
           className="w-full h-full border-0 opacity-100 block"
           style={{

@@ -34,13 +34,13 @@ export default function LoadingScreen({
         {/* Inner rotating gradient ring */}
         <div className="absolute h-20 w-20 rounded-full border-2 border-transparent border-t-[#22c55e] border-r-[#4ade80] animate-spin" />
         
-        {/* Techify Icon Box */}
+        {/* Techify Circular Icon */}
         <motion.div
           animate={{ scale: [1, 1.06, 1] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          className="relative flex h-14 w-14 items-center justify-center rounded-2xl border border-neutral-800 bg-[#060606] p-2.5 shadow-[0_0_30px_rgba(34,197,94,0.25)]"
+          className="relative flex items-center justify-center rounded-full"
         >
-          <TechifyIcon className="h-8 w-8" />
+          <TechifyIcon size={56} />
         </motion.div>
       </div>
 

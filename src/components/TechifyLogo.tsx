@@ -4,13 +4,15 @@ import { LogoSettings, getCachedLogoSettings, initLogoSettingsListener } from '.
 
 interface TechifyIconProps {
   className?: string;
+  size?: number;
   color?: string;
   onClick?: () => void;
   showCustomSettings?: boolean;
 }
 
 export function TechifyIcon({ 
-  className = "h-8 w-8",
+  className = "",
+  size,
   onClick,
   showCustomSettings = true 
 }: TechifyIconProps) {
@@ -25,18 +27,21 @@ export function TechifyIcon({
   }, [showCustomSettings]);
 
   const displayImageSrc = settings.imageUrl || defaultLogoImage;
+  const actualSize = size || settings.logoSize || 42;
 
   return (
     <div 
       onClick={onClick}
-      className={`relative overflow-hidden flex items-center justify-center ${className} ${onClick ? 'cursor-pointer' : ''}`}
+      className={`relative overflow-hidden shrink-0 flex items-center justify-center rounded-full transition-all ${className} ${onClick ? 'cursor-pointer hover:scale-105' : ''}`}
       style={{
+        width: `${actualSize}px`,
+        height: `${actualSize}px`,
         borderRadius: `${settings.borderRadius}%`,
-        backgroundColor: settings.backgroundColor || 'transparent',
+        backgroundColor: settings.backgroundColor || '#000000',
         border: settings.showOuterRing 
           ? `${settings.outerRingBorderWidth}px solid ${settings.outerRingColor}`
           : 'none',
-        boxShadow: settings.glowEffect ? `0 0 15px ${settings.glowColor}60` : 'none'
+        boxShadow: settings.glowEffect ? `0 0 20px ${settings.glowColor}70` : '0 2px 10px rgba(0,0,0,0.5)'
       }}
     >
       <img
@@ -53,8 +58,8 @@ export function TechifyIcon({
         <div
           className="absolute pointer-events-none rounded-full"
           style={{
-            width: `${Math.max(2, Math.round(settings.centerDotSize * 0.7))}px`,
-            height: `${Math.max(2, Math.round(settings.centerDotSize * 0.7))}px`,
+            width: `${Math.max(2, Math.round(settings.centerDotSize * (actualSize / 50)))}px`,
+            height: `${Math.max(2, Math.round(settings.centerDotSize * (actualSize / 50)))}px`,
             backgroundColor: settings.centerDotColor,
             boxShadow: settings.glowEffect ? `0 0 6px ${settings.glowColor}` : '0 0 2px rgba(0,0,0,0.8)'
           }}
@@ -72,7 +77,7 @@ interface CircleEmblemDividerProps {
 
 export function CircleEmblemDivider({
   className = "w-full my-6",
-  size = 44,
+  size,
   onOpenCustomizer
 }: CircleEmblemDividerProps) {
   const [settings, setSettings] = useState<LogoSettings>(getCachedLogoSettings);
@@ -85,6 +90,7 @@ export function CircleEmblemDivider({
   }, []);
 
   const displayImageSrc = settings.imageUrl || defaultLogoImage;
+  const actualSize = size || settings.emblemDividerSize || 52;
 
   return (
     <div className={`relative flex items-center justify-center ${className}`}>
@@ -107,8 +113,8 @@ export function CircleEmblemDivider({
           onOpenCustomizer ? 'cursor-pointer hover:scale-105 group' : ''
         }`}
         style={{
-          width: `${size}px`,
-          height: `${size}px`,
+          width: `${actualSize}px`,
+          height: `${actualSize}px`,
           borderRadius: `${settings.borderRadius}%`,
           backgroundColor: settings.backgroundColor || '#000000',
           border: settings.showOuterRing 

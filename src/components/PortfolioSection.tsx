@@ -33,6 +33,8 @@ import { db } from '../lib/firebase';
 import { useAdminAuth } from '../lib/adminAuth';
 import { INITIAL_PORTFOLIO_SITES, PORTFOLIO_PRESET_IMAGES } from '../data/portfolioData';
 import { compressImageFile } from '../lib/imageUtils';
+import { CircleEmblemDivider } from './TechifyLogo';
+import LogoCustomizerModal from './LogoCustomizerModal';
 
 const CATEGORIES = [
   'Todos',
@@ -102,6 +104,7 @@ export default function PortfolioSection({ onLaunchDemo }: PortfolioSectionProps
   // Admin Auth State
   const { isAdmin } = useAdminAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [isLogoModalOpen, setIsLogoModalOpen] = useState(false);
 
   // Add/Edit Site Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -448,6 +451,14 @@ export default function PortfolioSection({ onLaunchDemo }: PortfolioSectionProps
           )}
         </motion.div>
 
+        {/* Techify Circle Emblem Divider with Logo */}
+        <div className="py-4 max-w-4xl mx-auto px-4">
+          <CircleEmblemDivider 
+            size={48} 
+            onOpenCustomizer={isAdmin ? () => setIsLogoModalOpen(true) : undefined} 
+          />
+        </div>
+
         {/* Filter Controls & Category Selector with Entrance Motion */}
         <motion.div 
           initial={{ opacity: 0, y: 15 }}
@@ -600,6 +611,14 @@ export default function PortfolioSection({ onLaunchDemo }: PortfolioSectionProps
               </motion.div>
             ))
           )}
+        </div>
+
+        {/* Bottom Techify Circle Emblem Divider with Logo */}
+        <div className="pt-16 pb-6 max-w-4xl mx-auto px-4">
+          <CircleEmblemDivider 
+            size={48} 
+            onOpenCustomizer={isAdmin ? () => setIsLogoModalOpen(true) : undefined} 
+          />
         </div>
 
       </div>
@@ -890,6 +909,14 @@ export default function PortfolioSection({ onLaunchDemo }: PortfolioSectionProps
           </div>
         )}
       </AnimatePresence>
+
+      {/* Admin Logo Customizer Modal */}
+      {isAdmin && (
+        <LogoCustomizerModal 
+          isOpen={isLogoModalOpen} 
+          onClose={() => setIsLogoModalOpen(false)} 
+        />
+      )}
 
     </div>
   );

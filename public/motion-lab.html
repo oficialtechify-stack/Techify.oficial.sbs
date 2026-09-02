@@ -69,6 +69,36 @@ twq('config','ocd0n');
     max-width: 850px !important;
   }
 
+  /* Center Emblem Logo inside Motion Lab divider */
+  .anim-ball-border {
+    position: absolute !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+    background-color: var(--techify-logo-bg, #000000) !important;
+    border: var(--techify-outer-ring-width, 1.5px) solid var(--techify-outer-ring-color, rgba(255, 255, 255, 0.4)) !important;
+    border-radius: var(--techify-logo-radius, 50%) !important;
+    box-shadow: var(--techify-logo-glow, none) !important;
+    z-index: 2 !important;
+  }
+  .techify-injected-logo {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    pointer-events: none !important;
+    user-select: none !important;
+    border-radius: inherit !important;
+    transition: transform 0.15s ease, opacity 0.2s ease !important;
+  }
+  .ball-divider {
+    background-color: var(--techify-divider-color, rgba(255, 255, 255, 0.2)) !important;
+    height: var(--techify-divider-width, 1px) !important;
+  }
+
   /* Cards interaction */
   .card-link {
     transition: transform 0.3s ease, border-color 0.3s ease;
@@ -979,7 +1009,7 @@ twq('config','ocd0n');
 <rect width="24" height="24" fill="white"/>
 </clipPath>
 </defs>
-</svg></div></a></div></div></div></div></div></div><div class="loader"><div style="display:flex" class="loader-wrap"><div class="loader-lottie"><div data-w-id="f79bcaeb-7490-de89-3371-7a9243d44c48" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/641c7e09ca6cf6ccccdc7960_preloader_2.json" data-loop="1" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-default-duration="0.5416666666666666" data-duration="0" data-loading="eager"></div></div><div class="loader-counter">1</div></div><div class="preloader_wrap"><div class="relative is-preloader-2"><div data-preserve-aspect-ratio="xMidYMid slice" class="preloader_lottie is-desktop" data-w-id="f79bcaeb-7490-de89-3371-7a9243d44c4e" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/64382316f72b70030c313fd3_Preloader_lottie_circles_desktop.json" data-loop="0" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-default-duration="3.2" data-duration="3.2333333333333334" data-loading="eager"></div><div data-preserve-aspect-ratio="xMidYMid slice" class="preloader_lottie is-tablet" data-w-id="f79bcaeb-7490-de89-3371-7a9243d44c4f" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/6437fc52706ae77e99e8bd29_Preloader_lottie_circles_tablet.json" data-loop="0" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-default-duration="3.683333333333333" data-duration="3.716666666666667" data-loading="eager"></div><div data-preserve-aspect-ratio="xMidYMid slice" class="preloader_lottie is-mobile" data-w-id="f79bcaeb-7490-de89-3371-7a9243d44c50" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/64468b8597034fc7063e49d3_Preloader_lottie_circles_mobile.json" data-loop="0" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-default-duration="3.85" data-duration="3.8833333333333333" data-loading="eager"></div><div style="display:none" class="anim-ball-wrap is-preloader"><div class="flex-display is-preloader"><div style="opacity:0;-webkit-transform:translate3d(0, 0, 0) scale3d(0, 0, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 0, 0) scale3d(0, 0, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 0, 0) scale3d(0, 0, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 0, 0) scale3d(0, 0, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="anim-ball-border is-preloader"><div class="anim-ball is-preloader"></div></div><div style="width:0%;height:1px" class="ball-divider is-preloader-left"></div><div class="ball-bg is-left is-preloader-left"></div></div><div style="-webkit-transform:translate3d(0, 50vh, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50vh, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50vh, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50vh, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="text-wrap is-preloader"><div class="p1 white">A animação de UI/UX enfatiza os detalhes aos quais os usuários devem prestar atenção, guiando a navegação com precisão.</div></div></div></div></div></div><div class="main"><div class="nav nav-dark"><section id="hero" class="section is-hero"><div class="anim-ball-sticky"><div class="anim-ball-wrap"><div class="ball-divider is-left"></div><div class="anim-ball-border"></div><div id="anim-ball" class="anim-ball is-intro"></div><div class="ball-divider is-right"></div><div class="ball-bg is-left"></div></div></div><div class="div-block-4"><div class="text-wrap is-hero"><div class="p1 white">A animação de UI/UX enfatiza os detalhes aos quais os usuários devem prestar atenção, guiando a navegação com precisão.</div></div></div><div class="content-wrap is-hero"><div class="h3 white">Uma boa animação torna toda a experiência do usuário mais memorável, fluida e marcante.</div></div></section></div><div class="nav nav-dark"><section id="introduction" class="section is-introduction"><div class="intro-wrap"><div data-w-id="7a61b557-4dcd-92ad-1f18-47267d8315ba" class="div-2"><div class="bg-visual"></div><div class="bg-wrap is-bottom"><div class="bg-list is-bottom"><div class="bg-list-item is-first"></div><div class="bg-list-item is-second"></div><div class="bg-list-item is-third"></div></div></div><div class="anim-smoke"></div><div class="anim-shape is-also"><div class="anim-text-wrap"><div class="anim-text">Ela também</div></div></div><div class="anim-shape is-your"><div class="anim-text-wrap"><div class="anim-text">sua</div></div></div><div class="anim-shape is-controls"><div class="anim-text-wrap"><div class="anim-text">controla</div></div></div><div class="anim-shape is-attention"><div class="anim-text-wrap"><div class="anim-text">atenção</div></div></div></div><div class="embed-path w-embed"><svg style="opacity:0; display: block;" viewBox="0 0 503 3498" fill="none" xmlns="http://www.w3.org/2000/svg">
+</svg></div></a></div></div></div></div></div></div><div class="loader"><div style="display:flex" class="loader-wrap"><div class="loader-lottie"><div data-w-id="f79bcaeb-7490-de89-3371-7a9243d44c48" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/641c7e09ca6cf6ccccdc7960_preloader_2.json" data-loop="1" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-default-duration="0.5416666666666666" data-duration="0" data-loading="eager"></div></div><div class="loader-counter">1</div></div><div class="preloader_wrap"><div class="relative is-preloader-2"><div data-preserve-aspect-ratio="xMidYMid slice" class="preloader_lottie is-desktop" data-w-id="f79bcaeb-7490-de89-3371-7a9243d44c4e" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/64382316f72b70030c313fd3_Preloader_lottie_circles_desktop.json" data-loop="0" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-default-duration="3.2" data-duration="3.2333333333333334" data-loading="eager"></div><div data-preserve-aspect-ratio="xMidYMid slice" class="preloader_lottie is-tablet" data-w-id="f79bcaeb-7490-de89-3371-7a9243d44c4f" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/6437fc52706ae77e99e8bd29_Preloader_lottie_circles_tablet.json" data-loop="0" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-default-duration="3.683333333333333" data-duration="3.716666666666667" data-loading="eager"></div><div data-preserve-aspect-ratio="xMidYMid slice" class="preloader_lottie is-mobile" data-w-id="f79bcaeb-7490-de89-3371-7a9243d44c50" data-animation-type="lottie" data-src="https://cdn.prod.website-files.com/6384fe1e68c38ac8097a7e47/64468b8597034fc7063e49d3_Preloader_lottie_circles_mobile.json" data-loop="0" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-default-duration="3.85" data-duration="3.8833333333333333" data-loading="eager"></div><div style="display:none" class="anim-ball-wrap is-preloader"><div class="flex-display is-preloader"><div style="opacity:0;-webkit-transform:translate3d(0, 0, 0) scale3d(0, 0, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 0, 0) scale3d(0, 0, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 0, 0) scale3d(0, 0, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 0, 0) scale3d(0, 0, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="anim-ball-border is-preloader"><img id="techify-preloader-logo" class="techify-injected-logo" alt="Techify Logo" src="/assets/techify_logo_original_1786362412096.jpg" /><div class="anim-ball is-preloader"></div></div><div style="width:0%;height:1px" class="ball-divider is-preloader-left"></div><div class="ball-bg is-left is-preloader-left"></div></div><div style="-webkit-transform:translate3d(0, 50vh, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50vh, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50vh, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50vh, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="text-wrap is-preloader"><div class="p1 white">A animação de UI/UX enfatiza os detalhes aos quais os usuários devem prestar atenção, guiando a navegação com precisão.</div></div></div></div></div></div><div class="main"><div class="nav nav-dark"><section id="hero" class="section is-hero"><div class="anim-ball-sticky"><div class="anim-ball-wrap"><div class="ball-divider is-left"></div><div class="anim-ball-border"><img id="techify-motion-lab-logo" class="techify-injected-logo" alt="Techify Logo" src="/assets/techify_logo_original_1786362412096.jpg" /></div><div id="anim-ball" class="anim-ball is-intro"></div><div class="ball-divider is-right"></div><div class="ball-bg is-left"></div></div></div><div class="div-block-4"><div class="text-wrap is-hero"><div class="p1 white">A animação de UI/UX enfatiza os detalhes aos quais os usuários devem prestar atenção, guiando a navegação com precisão.</div></div></div><div class="content-wrap is-hero"><div class="h3 white">Uma boa animação torna toda a experiência do usuário mais memorável, fluida e marcante.</div></div></section></div><div class="nav nav-dark"><section id="introduction" class="section is-introduction"><div class="intro-wrap"><div data-w-id="7a61b557-4dcd-92ad-1f18-47267d8315ba" class="div-2"><div class="bg-visual"></div><div class="bg-wrap is-bottom"><div class="bg-list is-bottom"><div class="bg-list-item is-first"></div><div class="bg-list-item is-second"></div><div class="bg-list-item is-third"></div></div></div><div class="anim-smoke"></div><div class="anim-shape is-also"><div class="anim-text-wrap"><div class="anim-text">Ela também</div></div></div><div class="anim-shape is-your"><div class="anim-text-wrap"><div class="anim-text">sua</div></div></div><div class="anim-shape is-controls"><div class="anim-text-wrap"><div class="anim-text">controla</div></div></div><div class="anim-shape is-attention"><div class="anim-text-wrap"><div class="anim-text">atenção</div></div></div></div><div class="embed-path w-embed"><svg style="opacity:0; display: block;" viewBox="0 0 503 3498" fill="none" xmlns="http://www.w3.org/2000/svg">
    <path id="vrtx" d="M178.874 47.5C178.874 47.5 213.85 1 281.802 1C514.138 1 501.646 515 501.646 515C501.646 515 435.693 443.5 309.282 443.5C159.888 443.5 73.4488 595.5 73.4488 803C73.4488 1010.5 73.4488 1192.3 73.4488 1519.5C95.933 1480 132.907 1450 196.862 1450C339.761 1450 467.67 1685 467.67 2074C435.693 2030.5 353.251 1978 239.831 1978C65.9541 1978 4.49753 2145 4.49753 2304C4.49753 2585 1 3090.04 1 3498" stroke="white" />
 </svg></div><div class="embed-path_tablet w-embed"><svg style="opacity:0; display: block;" viewBox="0 0 289 2266" fill="none" xmlns="http://www.w3.org/2000/svg">
 	<path id="vrtx-tablet" d="M102.517 1C102.517 1 154.697 1 170.928 1C296.38 1 287.879 307.544 287.879 307.544C287.879 307.544 261.165 217.031 170.928 217.031C91.4618 217.031 44.4679 302.868 44.4679 417.17C44.4679 531.472 44.4679 681.884 44.4679 862.124C67.9717 813.117 106.199 783.613 144.439 783.613C226.905 783.613 262.889 926.882 262.889 1141.16C251.61 1124.91 218.408 1058.15 136.443 1058.15C54.4774 1058.15 6.50226 1118.96 6.50226 1206.54C6.50226 1361.33 1 2040.28 1 2265C10.9958 2215.32 57.4762 2213.32 66.4724 2265C73.9692 2235.82 103.457 2243.82 103.457 2265" stroke="white" stroke-width="0.550848"/>
@@ -1631,11 +1661,66 @@ startCounting(initialValue, targetValue, loaderCounterElement, durationInSeconds
     if (settings.excerptColor || settings.textColor) root.style.setProperty('--techify-text-color', settings.excerptColor || settings.textColor);
   }
 
+  function applyTechifyLogoSettings(settings) {
+    if (!settings) return;
+    const root = document.documentElement;
+    const defaultLogo = '/assets/techify_logo_original_1786362412096.jpg';
+    const imgSrc = settings.imageUrl || defaultLogo;
+
+    if (settings.outerRingColor) root.style.setProperty('--techify-outer-ring-color', settings.outerRingColor);
+    if (settings.outerRingBorderWidth !== undefined) root.style.setProperty('--techify-outer-ring-width', settings.outerRingBorderWidth + 'px');
+    if (settings.borderRadius !== undefined) root.style.setProperty('--techify-logo-radius', settings.borderRadius + '%');
+    if (settings.backgroundColor) root.style.setProperty('--techify-logo-bg', settings.backgroundColor);
+    if (settings.dividerColor) root.style.setProperty('--techify-divider-color', settings.dividerColor);
+    if (settings.dividerWidth !== undefined) root.style.setProperty('--techify-divider-width', settings.dividerWidth + 'px');
+    
+    if (settings.glowEffect) {
+      root.style.setProperty('--techify-logo-glow', '0 0 20px ' + (settings.glowColor || '#22c55e') + '60');
+    } else {
+      root.style.setProperty('--techify-logo-glow', 'none');
+    }
+
+    const logoImgs = document.querySelectorAll('.techify-injected-logo');
+    logoImgs.forEach(function(img) {
+      if (imgSrc && img.getAttribute('src') !== imgSrc) {
+        img.src = imgSrc;
+      }
+      const zoom = (settings.zoom || 100) / 100;
+      const offX = settings.offsetX || 0;
+      const offY = settings.offsetY || 0;
+      const rot = settings.rotation || 0;
+      img.style.transform = 'scale(' + zoom + ') translate(' + offX + '%, ' + offY + '%) rotate(' + rot + 'deg)';
+      img.style.objectFit = settings.objectFit || 'cover';
+    });
+
+    const dots = document.querySelectorAll('#anim-ball, .anim-ball');
+    dots.forEach(function(dot) {
+      if (settings.showCenterDot === false) {
+        dot.style.opacity = '0';
+        dot.style.pointerEvents = 'none';
+      } else {
+        dot.style.opacity = '1';
+        if (settings.centerDotColor) dot.style.backgroundColor = settings.centerDotColor;
+        if (settings.centerDotSize) {
+          dot.style.width = settings.centerDotSize + 'px';
+          dot.style.height = settings.centerDotSize + 'px';
+        }
+      }
+    });
+  }
+
   // Load immediately from localStorage if available
   try {
     const cached = localStorage.getItem('techify_card_customizer_settings');
     if (cached) {
       applyTechifyCardSettings(JSON.parse(cached));
+    }
+  } catch (e) {}
+
+  try {
+    const cachedLogo = localStorage.getItem('techify_custom_logo_settings');
+    if (cachedLogo) {
+      applyTechifyLogoSettings(JSON.parse(cachedLogo));
     }
   } catch (e) {}
 
@@ -1651,6 +1736,8 @@ startCounting(initialValue, targetValue, loaderCounterElement, durationInSeconds
       if (toggle) toggle.click();
     } else if (event.data.type === 'TECHIFY_UPDATE_CARD_STYLES' && event.data.settings) {
       applyTechifyCardSettings(event.data.settings);
+    } else if (event.data.type === 'TECHIFY_UPDATE_LOGO_SETTINGS' && event.data.settings) {
+      applyTechifyLogoSettings(event.data.settings);
     }
   });
 </script>

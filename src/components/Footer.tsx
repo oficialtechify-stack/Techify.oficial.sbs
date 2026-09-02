@@ -86,9 +86,7 @@ export default function Footer({ onNavigate, onOpenConsultation, onOpenAdminLogi
               className="flex cursor-pointer items-center gap-3"
               onClick={() => onNavigate('inicio')}
             >
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-neutral-800 bg-[#060606] p-1.5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] ring-1 ring-black">
-                <TechifyIcon className="h-full w-full" color="#22c55e" />
-              </div>
+              <TechifyIcon />
               <span className="font-display text-xl font-black tracking-wider text-white">
                 TECHIFY
               </span>
