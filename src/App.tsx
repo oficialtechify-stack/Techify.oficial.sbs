@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import Lenis from '@studio-freight/lenis';
 import Header from './components/Header';
 import HomeSection from './components/HomeSection';
 import AboutSection from './components/AboutSection';
@@ -28,9 +29,44 @@ export default function App() {
     setIsConsultationOpen(true);
   };
 
-  // Ensure scroll is reset to top when switching tabs to prevent scroll offset bugs
+  // Global Lenis Smooth Momentum Scroll Engine
+  const lenisRef = useRef<Lenis | null>(null);
+
   useEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    // Instantiate high-performance smooth momentum scrolling
+    const lenis = new Lenis({
+      duration: 1.0,
+      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
+      smoothWheel: true,
+      wheelMultiplier: 1.0,
+      touchMultiplier: 1.5,
+      infinite: false,
+    });
+    lenisRef.current = lenis;
+
+    let animationFrameId: number;
+    function raf(time: number) {
+      lenis.raf(time);
+      animationFrameId = requestAnimationFrame(raf);
+    }
+    animationFrameId = requestAnimationFrame(raf);
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      lenis.destroy();
+      lenisRef.current = null;
+    };
+  }, []);
+
+  // Ensure scroll is reset to top when switching tabs smoothly
+  useEffect(() => {
+    if (lenisRef.current) {
+      lenisRef.current.scrollTo(0, { immediate: true });
+    } else {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    }
   }, [activeTab]);
 
   // Keyboard shortcut & Custom Events

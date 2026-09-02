@@ -46,6 +46,8 @@ import {
   HomeHeroData
 } from '../lib/homeContent';
 import HeroBackgroundModal from './HeroBackgroundModal';
+import LogoCustomizerModal from './LogoCustomizerModal';
+import { CircleEmblemDivider, TechifyIcon } from './TechifyLogo';
 import heroBgOriginalLogo from '../assets/images/techify_logo_original_1786362412096.jpg';
 import { compressImageFile } from '../lib/imageUtils';
 import { doc, onSnapshot } from 'firebase/firestore';
@@ -63,12 +65,13 @@ const PRESET_AVATARS = [
 ];
 
 export default function AdminSiteEditorTab() {
-  const [subTab, setSubTab] = useState<'feedbacks' | 'team' | 'hero' | 'about' | 'contact'>('feedbacks');
+  const [subTab, setSubTab] = useState<'feedbacks' | 'team' | 'hero' | 'about' | 'contact' | 'logo'>('feedbacks');
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>(getCachedTeamMembers);
   const [generalContent, setGeneralContent] = useState<SiteGeneralContent>(getCachedGeneralContent);
   const [feedbacks, setFeedbacks] = useState<FeedbackImage[]>(getCachedFeedbacks);
   const [homeContent, setHomeContent] = useState<HomePageContent>(getCachedHomePageContent);
   const [isHeroBgModalOpen, setIsHeroBgModalOpen] = useState(false);
+  const [isLogoCustomizerOpen, setIsLogoCustomizerOpen] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -515,6 +518,18 @@ export default function AdminSiteEditorTab() {
         >
           <Phone className="h-4 w-4" />
           <span>Contatos & Redes Sociais</span>
+        </button>
+
+        <button
+          onClick={() => setSubTab('logo')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            subTab === 'logo'
+              ? 'bg-[#a3e635] text-black shadow-[0_0_12px_rgba(163,230,53,0.3)]'
+              : 'text-neutral-400 hover:text-white hover:bg-neutral-900/60'
+          }`}
+        >
+          <Camera className="h-4 w-4" />
+          <span>Logo & Emblema Circular</span>
         </button>
       </div>
 
@@ -1052,6 +1067,66 @@ export default function AdminSiteEditorTab() {
         </form>
       )}
 
+      {/* 5. LOGO & EMBLEMA CIRCULAR TAB */}
+      {subTab === 'logo' && (
+        <div className="rounded-2xl border border-neutral-800 bg-[#0d0f0d] p-6 shadow-xl flex flex-col gap-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-800 pb-5">
+            <div>
+              <h3 className="font-display text-lg font-bold text-white flex items-center gap-2">
+                <Camera className="h-5 w-5 text-[#a3e635]" /> Identidade Visual: Logo & Emblema Circular
+              </h3>
+              <p className="text-xs text-neutral-400 mt-1">
+                Insira sua imagem manualmente, ajuste zoom, posição (X/Y), rotação, ponto central e linhas de divisão em tempo real.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsLogoCustomizerOpen(true)}
+              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-[#a3e635] hover:bg-[#84cc16] text-black font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(163,230,53,0.35)] cursor-pointer"
+            >
+              <Camera className="h-4 w-4" />
+              <span>Abrir Ajustador de Imagem</span>
+            </button>
+          </div>
+
+          {/* Interactive Preview Showcase Card */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center bg-black/40 border border-neutral-800/80 rounded-2xl p-6">
+            <div className="flex flex-col items-center justify-center p-6 bg-[#070907] border border-neutral-800 rounded-xl relative overflow-hidden">
+              <span className="text-[10px] uppercase tracking-widest text-neutral-500 font-bold mb-4">
+                Visualização do Emblema Circular & Linhas
+              </span>
+              <CircleEmblemDivider size={60} onOpenCustomizer={() => setIsLogoCustomizerOpen(true)} />
+              <p className="text-[11px] text-neutral-400 mt-4 text-center">
+                Clique no botão acima ou no emblema para ajustar imagem, escala, posição ou linhas
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <h4 className="text-sm font-bold text-white">Recursos do Editor de Emblema:</h4>
+              <ul className="space-y-2 text-xs text-neutral-300">
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-[#a3e635] shrink-0 mt-0.5" />
+                  <span><strong>Upload Manual</strong>: Carregue qualquer imagem do computador ou cole um link direto.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-[#a3e635] shrink-0 mt-0.5" />
+                  <span><strong>Ajustes Precisos</strong>: Controle de Zoom (20% a 350%), Posição X/Y com arraste de mouse e Rotação.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-[#a3e635] shrink-0 mt-0.5" />
+                  <span><strong>Emblema Minimalista</strong>: Ative ou desative o anel externo, ponto central e linhas horizontais.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-[#a3e635] shrink-0 mt-0.5" />
+                  <span><strong>Sincronização Automática</strong>: As alterações são propagadas instantaneamente no Header, Footer e Loading.</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* MEMBER EDIT / CREATE MODAL */}
       {isMemberModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
@@ -1503,6 +1578,12 @@ export default function AdminSiteEditorTab() {
           setHomeContent(newContent);
           await saveHomePageContentToFirestore(newContent);
         }}
+      />
+
+      {/* LOGO & EMBLEM CUSTOMIZER MODAL */}
+      <LogoCustomizerModal
+        isOpen={isLogoCustomizerOpen}
+        onClose={() => setIsLogoCustomizerOpen(false)}
       />
     </div>
   );

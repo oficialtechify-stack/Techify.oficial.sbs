@@ -577,6 +577,7 @@ export const DEFAULT_PACKAGES: PackageOffer[] = [
     badge: 'ENTRADA RÁPIDA',
     title: 'Starter • Tração & Vendas',
     subtitle: 'Presença digital essencial e conversão direta',
+    originalPrice: '297/mês',
     currentPrice: 'R$ 197',
     monthlyPrice: 'R$ 197',
     annualPrice: 'R$ 157',
@@ -590,7 +591,10 @@ export const DEFAULT_PACKAGES: PackageOffer[] = [
       'Botão Direto para Conversão no WhatsApp & Rastreamento de Leads',
       'Otimização SEO Básica no Google Maps & Busca',
       'Hospedagem em Nuvem de Alta Disponibilidade',
-      'Suporte Técnico Dedicado via WhatsApp'
+      'Suporte Técnico Dedicado via WhatsApp',
+      'Designer profissional para redes sociais',
+      'Marketing e estrutura completa para redes sociais',
+      'Banners e carrosséis de alta conversão'
     ],
     ctaText: 'COMEÇAR NO STARTER',
     whatsappMessage: 'Olá Techify! Gostaria de começar com o plano Starter (Tração & Vendas) no plano mensal por R$ 197/mês.',
@@ -604,6 +608,7 @@ export const DEFAULT_PACKAGES: PackageOffer[] = [
     badge: 'MAIS POPULAR • RECOMENDADO',
     title: 'Pro • Full Growth 360°',
     subtitle: 'Estrutura completa com tráfego e IA',
+    originalPrice: '890/mês',
     currentPrice: 'R$ 497',
     monthlyPrice: 'R$ 497',
     annualPrice: 'R$ 397',
@@ -617,36 +622,14 @@ export const DEFAULT_PACKAGES: PackageOffer[] = [
       'Gestão e Otimização de Tráfego Pago (Meta Ads & Google Ads)',
       'Painel Administrativo Customizado para Edição de Conteúdo',
       'Integração de Agente Inteligente / Bot de Atendimento 24/7',
-      'Garantia de Teste Gratuito de Design antes da entrega final'
+      'Garantia de Teste Gratuito de Design antes da entrega final',
+      'Vídeos em Motion Design de Alto Impacto',
+      'Roteiros Estratégicos com Ganchos de Conversão',
+      'Edições Cinematográficas de Vídeo & Reels'
     ],
     ctaText: 'GARANTIR PLANO PRO',
     whatsappMessage: 'Olá Techify! Quero garantir o plano Pro (Full Growth 360°) no plano mensal por R$ 497/mês.',
     annualWhatsappMessage: 'Olá Techify! Quero garantir o plano Pro (Full Growth 360°) no plano anual por R$ 397/mês com desconto.'
-  },
-  {
-    id: 'scale-enterprise-lab',
-    popular: false,
-    badge: 'ESCALA MÁXIMA',
-    title: 'Scale • Enterprise Lab',
-    subtitle: 'Engenharia de software avançada e apps móveis',
-    currentPrice: 'R$ 997',
-    monthlyPrice: 'R$ 997',
-    annualPrice: 'R$ 797',
-    periodText: '/mês (ou projeto corporativo)',
-    annualPeriodText: '/mês no plano anual (economize 20%)',
-    description: 'Engenharia de software sob medida, web apps complexos, aplicativos mobile para iOS/Android e arquiteturas com múltiplos servidores.',
-    featuresHeader: 'TUDO DO PLANO PRO, MAIS:',
-    features: [
-      'Desenvolvimento de Web App / Plataforma SaaS ou App Mobile Nativo',
-      'Arquitetura Cloud Serverless com Banco de Dados em Tempo Real',
-      'Pipelines de Automação com Modelos de Inteligência Artificial RAG',
-      'Dashboard de Métricas Executivas e Relatórios em Tempo Real',
-      'Squad de Engenharia Dedicado com Reuniões Semanais de Sprint',
-      'SLA Prioritário 24/7 com Resposta em Menos de 1 Hora'
-    ],
-    ctaText: 'FALAR COM ESPECIALISTA',
-    whatsappMessage: 'Olá Techify! Tenho interesse no plano Scale (Enterprise Lab) no plano mensal.',
-    annualWhatsappMessage: 'Olá Techify! Tenho interesse no plano Scale (Enterprise Lab) no plano anual com condições especiais.'
   }
 ];
 
@@ -675,9 +658,16 @@ function normalizePackageWithAnnual(pkg: PackageOffer, defaultFallback?: Package
   const checkout = pkg.checkoutUrl || defaultFallback?.checkoutUrl || (isStarter ? 'https://pay.cakto.com.br/uumvcze_1077792' : undefined);
   const annualCheckout = pkg.annualCheckoutUrl || defaultFallback?.annualCheckoutUrl;
 
+  const rawTitle = (pkg.title || defaultFallback?.title || '').trim();
+  const title = (rawTitle === 'Pro •' || rawTitle === 'Pro • ' || rawTitle === 'Pro') 
+    ? 'Pro • Full Growth 360°' 
+    : rawTitle;
+
   return {
     ...defaultFallback,
     ...pkg,
+    title,
+    originalPrice: pkg.originalPrice || defaultFallback?.originalPrice,
     currentPrice: current,
     monthlyPrice: monthly,
     annualPrice: annual,

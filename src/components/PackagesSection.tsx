@@ -236,12 +236,12 @@ export default function PackagesSection({ onOpenConsultation, onOpenAdminPackage
         </ScrollReveal>
 
         {/* Pricing & Packages Cards Grid */}
-        <div className={`grid grid-cols-1 gap-6 max-w-6xl mx-auto items-stretch ${
+        <div className={`grid grid-cols-1 gap-6 sm:gap-8 max-w-5xl mx-auto items-stretch ${
           activeList.length === 1 
             ? 'max-w-md' 
             : activeList.length === 2 
-              ? 'md:grid-cols-2 max-w-4xl' 
-              : 'md:grid-cols-2 lg:grid-cols-3'
+              ? 'md:grid-cols-2' 
+              : 'md:grid-cols-2 lg:grid-cols-3 max-w-6xl'
         }`}>
           {activeList.map((pkg, idx) => {
             const isHighlighted = !!pkg.popular;
@@ -257,12 +257,17 @@ export default function PackagesSection({ onOpenConsultation, onOpenAdminPackage
               ? (pkg.annualPeriodText || '/mês no plano anual')
               : (pkg.periodText || '/mês (ou sob medida)');
 
+            const rawTitle = (pkg.title || '').trim();
+            const displayTitle = (rawTitle === 'Pro •' || rawTitle === 'Pro • ' || rawTitle === 'Pro') 
+              ? 'Pro • Full Growth 360°' 
+              : rawTitle;
+
             return (
-              <ScrollReveal key={pkg.id || idx} delay={idx * 0.1} yOffset={25}>
+              <ScrollReveal key={pkg.id || idx} delay={idx * 0.1} yOffset={25} className="h-full flex flex-col">
                 <div 
-                  className={`relative h-full flex flex-col justify-between rounded-3xl p-6 sm:p-7 transition-all duration-300 ${
+                  className={`relative h-full w-full flex flex-col justify-between rounded-3xl p-6 sm:p-7 md:p-8 transition-all duration-300 ${
                     isHighlighted
-                      ? 'border-2 border-[#22c55e] bg-gradient-to-b from-[#08180c] via-[#050e07] to-[#030604] shadow-[0_0_40px_rgba(34,197,94,0.25)]'
+                      ? 'border-2 border-[#22c55e] bg-gradient-to-b from-[#08180c] via-[#050e07] to-[#030604] shadow-[0_0_45px_rgba(34,197,94,0.28)]'
                       : 'border border-neutral-800/90 bg-[#0c0e0d] hover:border-neutral-700 shadow-xl'
                   }`}
                 >
@@ -301,15 +306,15 @@ export default function PackagesSection({ onOpenConsultation, onOpenAdminPackage
                     )}
                   </div>
 
-                  <div>
+                  <div className="flex-1 flex flex-col">
                     {/* Header Info */}
                     <div className="flex flex-col gap-1 mt-1">
                       <h3 className="font-display text-xl sm:text-2xl font-black text-white leading-tight">
-                        {pkg.title}
+                        {displayTitle}
                       </h3>
                       
                       {pkg.description && (
-                        <p className="text-xs text-neutral-400 leading-relaxed font-normal mt-2">
+                        <p className="text-xs text-neutral-400 leading-relaxed font-normal mt-2 min-h-[36px]">
                           {pkg.description}
                         </p>
                       )}
@@ -374,8 +379,8 @@ export default function PackagesSection({ onOpenConsultation, onOpenAdminPackage
                     </div>
 
                     {/* Deliverables Checklist */}
-                    <div className="space-y-2.5">
-                      <span className="text-[10px] sm:text-[11px] uppercase tracking-wider font-bold text-neutral-400 block">
+                    <div className="space-y-2.5 flex-1">
+                      <span className="text-[10px] sm:text-[11px] uppercase tracking-wider font-bold text-neutral-400 block mb-2">
                         {pkg.featuresHeader || 'INCLUSO NO PLANO:'}
                       </span>
 
@@ -404,7 +409,7 @@ export default function PackagesSection({ onOpenConsultation, onOpenAdminPackage
                           : 'bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 hover:border-neutral-500 text-white shadow-md'
                       }`}
                     >
-                      <span>{isYearly ? `CONTRATAR ANUAL • ${pkg.title}` : (pkg.ctaText || 'COMEÇAR AGORA')}</span>
+                      <span>{isYearly ? `CONTRATAR ANUAL • ${displayTitle}` : (pkg.ctaText || 'COMEÇAR AGORA')}</span>
                       <ArrowRight className="h-4 w-4" />
                     </button>
                   </div>

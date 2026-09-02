@@ -47,6 +47,30 @@ export interface SiteGeneralContent {
   linkedin: string;
   address: string;
   copyright: string;
+  // Logo & Emblem settings
+  logoSettings?: LogoSettings;
+}
+
+export interface LogoSettings {
+  imageUrl: string;
+  zoom: number; // percentage (e.g. 100)
+  offsetX: number; // percentage (e.g. 0)
+  offsetY: number; // percentage (e.g. 0)
+  rotation: number; // degrees (e.g. 0)
+  objectFit: 'cover' | 'contain' | 'fill' | 'none';
+  borderRadius: number; // percentage (e.g. 50 = full circle)
+  showCenterDot: boolean;
+  centerDotColor: string;
+  centerDotSize: number; // px (e.g. 6)
+  showDividerLines: boolean;
+  dividerColor: string;
+  dividerWidth: number; // px (e.g. 1)
+  showOuterRing: boolean;
+  outerRingColor: string;
+  outerRingBorderWidth: number; // px (e.g. 1.5)
+  backgroundColor: string; // e.g. '#000000'
+  glowEffect: boolean;
+  glowColor: string;
 }
 
 import tobyAvatar from '../assets/images/character_toby_1781368530741.jpg';
@@ -158,6 +182,97 @@ export function getCachedTeamMembers(): TeamMember[] {
     console.warn(err);
   }
   return DEFAULT_TEAM_MEMBERS;
+}
+
+export const DEFAULT_LOGO_SETTINGS: LogoSettings = {
+  imageUrl: '', // empty means use original techify logo
+  zoom: 100,
+  offsetX: 0,
+  offsetY: 0,
+  rotation: 0,
+  objectFit: 'cover',
+  borderRadius: 50,
+  showCenterDot: true,
+  centerDotColor: '#ffffff',
+  centerDotSize: 6,
+  showDividerLines: true,
+  dividerColor: '#ffffff',
+  dividerWidth: 1,
+  showOuterRing: true,
+  outerRingColor: '#ffffff',
+  outerRingBorderWidth: 1.5,
+  backgroundColor: '#000000',
+  glowEffect: false,
+  glowColor: '#22c55e'
+};
+
+const LOGO_CACHE_KEY = 'techify_cached_logo_settings';
+
+export function getCachedLogoSettings(): LogoSettings {
+  try {
+    const raw = localStorage.getItem(LOGO_CACHE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      return { ...DEFAULT_LOGO_SETTINGS, ...parsed };
+    }
+  } catch (err) {
+    console.warn(err);
+  }
+  return DEFAULT_LOGO_SETTINGS;
+}
+
+export async function saveLogoSettingsToFirestore(settings: Partial<LogoSettings>): Promise<void> {
+  const current = getCachedLogoSettings();
+  const updated = { ...current, ...settings };
+  const sanitized = JSON.parse(JSON.stringify(updated));
+  try {
+    localStorage.setItem(LOGO_CACHE_KEY, JSON.stringify(sanitized));
+  } catch (e) {
+    console.warn('LocalStorage error:', e);
+  }
+  window.dispatchEvent(new CustomEvent('techify-logo-settings-updated', { detail: sanitized }));
+
+  try {
+    await setDoc(doc(db, "site_content", "logo_settings"), {
+      ...sanitized,
+      updatedAt: new Date().toISOString()
+    }, { merge: true });
+  } catch (err) {
+    console.error("Firestore saveLogoSettings error:", err);
+  }
+}
+
+export function initLogoSettingsListener(callback: (settings: LogoSettings) => void): () => void {
+  // 1. Initial cached value
+  callback(getCachedLogoSettings());
+
+  // 2. Custom event listener (instant local update)
+  const handleCustomEvent = (e: Event) => {
+    const customEvt = e as CustomEvent<LogoSettings>;
+    if (customEvt.detail) {
+      callback(customEvt.detail);
+    }
+  };
+  window.addEventListener('techify-logo-settings-updated', handleCustomEvent);
+
+  // 3. Firestore onSnapshot (remote real-time sync)
+  const unsubscribe = onSnapshot(doc(db, "site_content", "logo_settings"), (snap) => {
+    if (snap.exists()) {
+      const data = snap.data() as Partial<LogoSettings>;
+      const merged = { ...DEFAULT_LOGO_SETTINGS, ...data };
+      try {
+        localStorage.setItem(LOGO_CACHE_KEY, JSON.stringify(merged));
+      } catch (e) {
+        console.warn('LocalStorage error:', e);
+      }
+      callback(merged);
+    }
+  }, (err) => console.warn('Firestore logo settings offline:', err.message));
+
+  return () => {
+    window.removeEventListener('techify-logo-settings-updated', handleCustomEvent);
+    unsubscribe();
+  };
 }
 
 export function getCachedGeneralContent(): SiteGeneralContent {

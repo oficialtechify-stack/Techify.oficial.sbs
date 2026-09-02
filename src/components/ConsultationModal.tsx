@@ -241,6 +241,7 @@ export default function ConsultationModal({ isOpen, onClose, defaultService }: C
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.94, opacity: 0, y: 15 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            data-lenis-prevent
             className="relative my-auto w-full max-w-xl overflow-hidden rounded-3xl border border-neutral-800 bg-[#0a0d0a] p-5 sm:p-7 text-white shadow-[0_0_60px_rgba(0,0,0,0.9)] max-h-[92vh] overflow-y-auto custom-scrollbar"
           >
             {/* Background green laser effects */}
@@ -454,9 +455,20 @@ export default function ConsultationModal({ isOpen, onClose, defaultService }: C
                 {/* 3. Service or Package Selector */}
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <label className="block text-xs font-bold text-neutral-300">
-                      Serviço ou Pacote de Interesse *
-                    </label>
+                    <div className="flex items-center gap-2">
+                      <label className="block text-xs font-bold text-neutral-300">
+                        Serviço ou Pacote de Interesse *
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => setIsManagerOpen(true)}
+                        className="inline-flex items-center gap-1 text-[10px] font-bold text-[#22c55e] hover:text-[#4ade80] bg-[#22c55e]/10 hover:bg-[#22c55e]/20 border border-[#22c55e]/30 px-2 py-0.5 rounded-md transition-all cursor-pointer"
+                        title="Editar, adicionar ou excluir as opções desta lista"
+                      >
+                        <Edit3 className="h-3 w-3" />
+                        <span>Editar / Deletar Opções</span>
+                      </button>
+                    </div>
                     <span className="text-[10px] text-[#4ade80] font-black uppercase tracking-wider">
                       ✨ Amostra Grátis Disponível
                     </span>
@@ -468,7 +480,7 @@ export default function ConsultationModal({ isOpen, onClose, defaultService }: C
                       onChange={(e) => setFormData({ ...formData, service: e.target.value })}
                       className="w-full rounded-xl border border-neutral-700 bg-neutral-950 py-3.5 px-3.5 text-xs sm:text-sm text-white font-semibold transition-all focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] focus:outline-none shadow-sm cursor-pointer"
                     >
-                      {SERVICES_CATALOG.map((service) => (
+                      {servicesCatalog.map((service) => (
                         <option 
                           key={service.id} 
                           value={service.id} 
@@ -652,6 +664,13 @@ export default function ConsultationModal({ isOpen, onClose, defaultService }: C
           </motion.div>
         </div>
       )}
+
+      {/* Services and Packages Catalog Manager Modal */}
+      <ServicesCatalogManagerModal
+        isOpen={isManagerOpen}
+        onClose={() => setIsManagerOpen(false)}
+        catalog={servicesCatalog}
+      />
     </AnimatePresence>
   );
 }

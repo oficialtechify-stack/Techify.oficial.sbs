@@ -49,6 +49,8 @@ import ScrollReveal from './ScrollReveal';
 import ClientsSliderSection from './ClientsSliderSection';
 import PackagesSection from './PackagesSection';
 import HeroBackgroundModal from './HeroBackgroundModal';
+import LogoCustomizerModal from './LogoCustomizerModal';
+import { CircleEmblemDivider } from './TechifyLogo';
 import { TextEffect } from './ui/text-effect';
 import { useAdminAuth } from '../lib/adminAuth';
 import { cn } from '../lib/utils';
@@ -275,6 +277,8 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
 
   // 5. Hero Background Customizer Modal
   const [isBgModalOpen, setIsBgModalOpen] = useState(false);
+  // 6. Logo & Circle Emblem Customizer Modal
+  const [isLogoModalOpen, setIsLogoModalOpen] = useState(false);
 
   // Sync with Firestore real-time
   useEffect(() => {
@@ -624,10 +628,11 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
               />
 
               {/* Layer 3: Main Content, Titles & Interactive CTAs */}
-              <div data-parallax-layer="3" className="parallax__layer-title relative z-10 max-w-5xl mx-auto flex flex-col items-center text-center px-4 py-12 sm:py-20">
+              <div data-parallax-layer="3" className="parallax__layer-title absolute inset-0 w-full h-full flex flex-col items-center justify-center text-center px-4 py-8 sm:py-16 z-10 pointer-events-none">
+                <div className="w-full max-w-5xl mx-auto flex flex-col items-center justify-center text-center pointer-events-auto">
                 
                 {/* Visual Backdrop Scrim for Maximum Contrast & Luxury Depth */}
-                <div className="absolute inset-0 max-w-4xl mx-auto -z-10 rounded-full bg-radial from-black/80 via-black/45 to-transparent blur-2xl pointer-events-none" />
+                <div className="absolute inset-0 max-w-4xl mx-auto -z-10 rounded-full bg-radial from-black/85 via-black/50 to-transparent blur-3xl pointer-events-none" />
 
                 {/* Top Eyebrow Badge: "A Solução Definitiva" */}
                 <div className="relative inline-flex items-center mb-4 sm:mb-6 group">
@@ -794,6 +799,7 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
                     </div>
                   ))}
                 </div>
+                </div>
               </div>
 
               {/* Layer 4: Foreground Rocks / Mountain Peaks passing in front of text */}
@@ -847,6 +853,13 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
       {/* ========================================================================= */}
       {/* 3. COMPETITOR / GOOGLE BANNER SECTION (Clean Typography Matching Screenshot 1) */}
       {/* ========================================================================= */}
+      <div className="max-w-4xl mx-auto px-4 pt-12">
+        <CircleEmblemDivider 
+          size={50} 
+          onOpenCustomizer={isAdmin ? () => setIsLogoModalOpen(true) : undefined} 
+        />
+      </div>
+
       <ScrollReveal threshold={0.15} yOffset={24} duration={0.6} once={true}>
         <section className="relative mx-auto max-w-4xl px-4 py-20 sm:py-28 text-center">
           
@@ -1824,6 +1837,12 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
         onClose={() => setIsBgModalOpen(false)}
         heroData={content.hero}
         onSaveBackground={handleSaveHeroBackground}
+      />
+
+      {/* Logo & Emblem Customizer Modal */}
+      <LogoCustomizerModal
+        isOpen={isLogoModalOpen}
+        onClose={() => setIsLogoModalOpen(false)}
       />
 
     </div>
