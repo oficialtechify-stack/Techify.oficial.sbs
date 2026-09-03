@@ -852,6 +852,15 @@ export default function AdminSiteEditorTab() {
                       Grade Holográfica Ativa
                     </span>
                   )}
+                  {homeContent.hero.backgroundImageUrlMobile ? (
+                    <span className="px-2.5 py-1 rounded-lg bg-[#a3e635]/20 border border-[#a3e635]/40 text-[#a3e635] font-bold">
+                      Banner Mobile Ativo
+                    </span>
+                  ) : (
+                    <span className="px-2.5 py-1 rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400">
+                      Mobile: Adaptando Desktop
+                    </span>
+                  )}
                 </div>
                 <p className="text-xs text-neutral-400">
                   Clique no botão acima para carregar uma imagem direto do seu computador ou celular, ou para colar um link da web.

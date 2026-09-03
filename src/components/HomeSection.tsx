@@ -282,6 +282,7 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
 
   // Manual Background Direct Upload Ref & Drag-and-Drop state
   const heroManualBgInputRef = useRef<HTMLInputElement>(null);
+  const heroManualBgMobileInputRef = useRef<HTMLInputElement>(null);
   const [isDraggingBg, setIsDraggingBg] = useState(false);
 
   // Sync with Firestore real-time
@@ -295,7 +296,7 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
   // Parallax Layers - Static fixed backdrop without scroll movement
   const parallaxRef = useRef<HTMLDivElement>(null);
 
-  // Direct manual image upload handler for hero background
+  // Direct manual image upload handler for hero desktop background
   const handleManualBackgroundUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -322,12 +323,45 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
       };
       // Optimistic update: set state immediately so the image shows right away!
       setContent(newContent);
-      toast.success('Imagem Aplicada no Fundo!', 'Sua imagem já está visível na tela inicial.');
+      toast.success('Banner Desktop Aplicado!', 'Sua imagem de fundo para computadores já está visível.');
       setHasUnsavedChanges(true);
       await saveHomePageContentToFirestore(newContent);
     } catch (err) {
       console.warn('Error uploading hero bg:', err);
       toast.error('Erro ao Carregar', 'Não foi possível processar a imagem selecionada.');
+    }
+  };
+
+  // Direct manual image upload handler for hero mobile background
+  const handleManualBackgroundMobileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Arquivo Inválido', 'Selecione uma imagem válida para telas de celular (PNG, JPG, WEBP).');
+      return;
+    }
+
+    try {
+      const base64Url = await compressImageFile(file, 1080, 1920, 0.85);
+      const updatedHero = {
+        ...content.hero,
+        backgroundImageUrlMobile: base64Url,
+        backgroundBrightness: content.hero.backgroundBrightness ?? 100,
+        backgroundOpacity: content.hero.backgroundOpacity ?? 0,
+        backgroundBlur: content.hero.backgroundBlur ?? 0
+      };
+      const newContent = {
+        ...content,
+        hero: updatedHero
+      };
+      setContent(newContent);
+      toast.success('Banner Mobile Aplicado!', 'O banner vertical exclusivo para celulares foi atualizado.');
+      setHasUnsavedChanges(true);
+      await saveHomePageContentToFirestore(newContent);
+    } catch (err) {
+      console.warn('Error uploading mobile hero bg:', err);
+      toast.error('Erro ao Carregar', 'Não foi possível processar a imagem mobile.');
     }
   };
 
@@ -372,6 +406,7 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
     const updatedHero = {
       ...content.hero,
       backgroundImageUrl: '',
+      backgroundImageUrlMobile: '',
       backgroundType: 'image' as const,
       videoUrl: '',
       backgroundBrightness: 100,
@@ -385,7 +420,7 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
     setContent(newContent);
     setHasUnsavedChanges(true);
     await saveHomePageContentToFirestore(newContent);
-    toast.info('Fundo Removido', 'Todos os fundos foram limpos. A tela está limpa.');
+    toast.info('Fundo Removido', 'Todos os fundos (Desktop e Mobile) foram limpos. A tela está limpa.');
   };
 
   const handleStartConsultation = (serviceName: string = 'Consultoria Techify') => {
@@ -691,16 +726,27 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
         onDragLeave={() => setIsDraggingBg(false)}
         onDrop={handleManualBgDrop}
       >
-        {/* Hidden File Input for Direct Computer Upload */}
-        <input 
-          type="file" 
-          ref={heroManualBgInputRef} 
-          onChange={handleManualBackgroundUpload} 
-          accept="image/*" 
-          className="hidden" 
-        />
+        {/* Hidden File Inputs for Direct Computer & Mobile Upload (Admin Only) */}
+        {isAdmin && (
+          <>
+            <input 
+              type="file" 
+              ref={heroManualBgInputRef} 
+              onChange={handleManualBackgroundUpload} 
+              accept="image/*" 
+              className="hidden" 
+            />
+            <input 
+              type="file" 
+              ref={heroManualBgMobileInputRef} 
+              onChange={handleManualBackgroundMobileUpload} 
+              accept="image/*" 
+              className="hidden" 
+            />
+          </>
+        )}
 
-        {/* 1. Hero Active Background: Image or Video */}
+        {/* 1. Hero Active Background: Video or Responsive Image (Desktop + Mobile) */}
         {content.hero.backgroundType === 'video' && content.hero.videoUrl ? (
           <video
             key={content.hero.videoUrl}
@@ -715,18 +761,23 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
           >
             <source src={content.hero.videoUrl} type="video/mp4" />
           </video>
-        ) : content.hero.backgroundImageUrl ? (
-          <img 
-            key={content.hero.backgroundImageUrl}
-            src={content.hero.backgroundImageUrl} 
-            alt="Fundo Hero Personalizado" 
-            className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none transition-all duration-300"
-            style={{
-              filter: `brightness(${content.hero.backgroundBrightness ?? 100}%) blur(${content.hero.backgroundBlur ?? 0}px)`
-            }}
-          />
-        ) : (
-          /* Empty background state: clean canvas with quick-add prompt */
+        ) : (content.hero.backgroundImageUrl || content.hero.backgroundImageUrlMobile) ? (
+          <picture className="absolute inset-0 w-full h-full pointer-events-none">
+            {content.hero.backgroundImageUrlMobile && (
+              <source media="(max-width: 767px)" srcSet={content.hero.backgroundImageUrlMobile} />
+            )}
+            <img 
+              key={`${content.hero.backgroundImageUrl}-${content.hero.backgroundImageUrlMobile}`}
+              src={content.hero.backgroundImageUrl || content.hero.backgroundImageUrlMobile} 
+              alt="Fundo Hero Techify" 
+              className="w-full h-full object-cover object-center pointer-events-none transition-all duration-300"
+              style={{
+                filter: `brightness(${content.hero.backgroundBrightness ?? 100}%) blur(${content.hero.backgroundBlur ?? 0}px)`
+              }}
+            />
+          </picture>
+        ) : isAdmin ? (
+          /* Empty background state: clean canvas with quick-add prompt (ONLY VISIBLE TO ADMIN) */
           <div 
             onClick={() => heroManualBgInputRef.current?.click()}
             className="relative z-10 flex flex-col items-center justify-center p-6 text-center cursor-pointer group max-w-md mx-auto select-none"
@@ -751,10 +802,10 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
               </div>
             </div>
           </div>
-        )}
+        ) : null}
 
         {/* Escurecimento Overlay (Darkening layer - only when image or video exists) */}
-        {(content.hero.backgroundImageUrl || (content.hero.backgroundType === 'video' && content.hero.videoUrl)) && (
+        {(content.hero.backgroundImageUrl || content.hero.backgroundImageUrlMobile || (content.hero.backgroundType === 'video' && content.hero.videoUrl)) && (
           <div 
             className="absolute inset-0 bg-black pointer-events-none transition-opacity duration-300"
             style={{ opacity: (content.hero.backgroundOpacity ?? 0) / 100 }}
@@ -772,8 +823,8 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
           />
         )}
 
-        {/* Dragging Active Overlay Feedback */}
-        {isDraggingBg && (
+        {/* Dragging Active Overlay Feedback (Admin Only) */}
+        {isAdmin && isDraggingBg && (
           <div className="absolute inset-0 z-40 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center border-4 border-dashed border-[#22c55e]">
             <Upload className="h-16 w-16 text-[#4ade80] animate-bounce mb-3" />
             <p className="text-xl font-black text-white">Solte sua imagem de fundo aqui!</p>
@@ -783,40 +834,59 @@ export default function HomeSection({ onNavigate, onOpenConsultation }: HomeSect
         {/* Bottom Smooth Dark Fade to section below */}
         <div className="parallax__fade pointer-events-none" />
 
-        {/* Floating Controls for Background Management */}
-        <div className="absolute top-4 right-4 z-30 flex items-center gap-2">
-          {(content.hero.backgroundImageUrl || (content.hero.backgroundType === 'video' && content.hero.videoUrl)) && (
+        {/* Floating Controls for Background Management - ONLY VISIBLE WITH ADMIN PANEL ACTIVE */}
+        {isAdmin && (
+          <div className="absolute top-4 right-4 z-30 flex items-center gap-2">
+            {(content.hero.backgroundImageUrl || content.hero.backgroundImageUrlMobile || (content.hero.backgroundType === 'video' && content.hero.videoUrl)) && (
+              <button
+                type="button"
+                onClick={handleClearHeroBackground}
+                className="flex items-center gap-1.5 rounded-2xl bg-black/85 hover:bg-red-950/80 text-neutral-300 hover:text-red-400 border border-neutral-700/80 hover:border-red-500/50 px-3 py-2 text-xs font-bold shadow-lg backdrop-blur-xl transition-all cursor-pointer"
+                title="Remover fundo atual (Desktop e Mobile) e deixar a tela limpa"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Limpar</span>
+              </button>
+            )}
+
+            {/* Desktop Banner Upload Button */}
             <button
               type="button"
-              onClick={handleClearHeroBackground}
-              className="flex items-center gap-1.5 rounded-2xl bg-black/85 hover:bg-red-950/80 text-neutral-300 hover:text-red-400 border border-neutral-700/80 hover:border-red-500/50 px-3 py-2 text-xs font-bold shadow-lg backdrop-blur-xl transition-all cursor-pointer"
-              title="Remover fundo atual e deixar a tela limpa"
+              onClick={() => heroManualBgInputRef.current?.click()}
+              className="flex items-center gap-2 rounded-2xl bg-black/85 hover:bg-black text-white border border-neutral-700 hover:border-[#22c55e] px-3.5 py-2 text-xs font-bold shadow-[0_0_25px_rgba(0,0,0,0.9)] backdrop-blur-xl transition-all hover:scale-105 cursor-pointer"
+              title="Upload de imagem para Desktop (1920x1080)"
             >
-              <Trash2 className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Limpar Fundo</span>
+              <Monitor className="h-4 w-4 text-[#22c55e]" />
+              <span>{content.hero.backgroundImageUrl ? 'Trocar Desktop' : 'Banner Desktop'}</span>
             </button>
-          )}
 
-          <button
-            type="button"
-            onClick={() => heroManualBgInputRef.current?.click()}
-            className="flex items-center gap-2 rounded-2xl bg-black/85 hover:bg-black text-white border border-neutral-700 hover:border-[#22c55e] px-3.5 py-2 text-xs font-bold shadow-[0_0_25px_rgba(0,0,0,0.9)] backdrop-blur-xl transition-all hover:scale-105 cursor-pointer"
-            title="Upload direto do computador ou celular"
-          >
-            <Upload className="h-4 w-4 text-[#22c55e]" />
-            <span>{content.hero.backgroundImageUrl ? 'Trocar Imagem' : 'Adicionar Imagem'}</span>
-          </button>
+            {/* Mobile Banner Upload Button */}
+            <button
+              type="button"
+              onClick={() => heroManualBgMobileInputRef.current?.click()}
+              className={`flex items-center gap-2 rounded-2xl bg-black/85 hover:bg-black border px-3.5 py-2 text-xs font-bold shadow-[0_0_25px_rgba(0,0,0,0.9)] backdrop-blur-xl transition-all hover:scale-105 cursor-pointer ${
+                content.hero.backgroundImageUrlMobile
+                  ? 'text-[#a3e635] border-[#a3e635]/60 hover:border-[#a3e635]'
+                  : 'text-neutral-300 border-neutral-700 hover:border-[#a3e635]'
+              }`}
+              title="Upload de imagem vertical exclusiva para Celular / Mobile (1080x1920)"
+            >
+              <Smartphone className="h-4 w-4 text-[#a3e635]" />
+              <span>{content.hero.backgroundImageUrlMobile ? 'Trocar Mobile' : 'Banner Mobile'}</span>
+            </button>
 
-          <button
-            type="button"
-            onClick={() => setIsBgModalOpen(true)}
-            className="flex items-center gap-2 rounded-2xl bg-black/85 hover:bg-black text-[#4ade80] border border-[#22c55e]/50 hover:border-[#22c55e] px-3.5 py-2 text-xs font-black shadow-[0_0_25px_rgba(0,0,0,0.9)] backdrop-blur-xl transition-all hover:scale-105 cursor-pointer group"
-            title="Ajustar brilho, opacidade ou trocar fundo"
-          >
-            <ImageIcon className="h-4 w-4 text-[#22c55e] group-hover:rotate-12 transition-transform" />
-            <span className="hidden sm:inline">Ajustes</span>
-          </button>
-        </div>
+            {/* Settings Modal Button */}
+            <button
+              type="button"
+              onClick={() => setIsBgModalOpen(true)}
+              className="flex items-center gap-2 rounded-2xl bg-black/85 hover:bg-black text-[#4ade80] border border-[#22c55e]/50 hover:border-[#22c55e] px-3.5 py-2 text-xs font-black shadow-[0_0_25px_rgba(0,0,0,0.9)] backdrop-blur-xl transition-all hover:scale-105 cursor-pointer group"
+              title="Ajustar brilho, opacidade, testar prévias ou trocar fundos"
+            >
+              <ImageIcon className="h-4 w-4 text-[#22c55e] group-hover:rotate-12 transition-transform" />
+              <span className="hidden sm:inline">Ajustes</span>
+            </button>
+          </div>
+        )}
       </div>
 
 

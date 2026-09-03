@@ -12,6 +12,7 @@ export interface HomeHeroData {
   trustBadges: string[];
   videoUrl?: string;
   backgroundImageUrl?: string;
+  backgroundImageUrlMobile?: string;
   backgroundType?: 'image' | 'video' | 'default';
   backgroundBrightness?: number; // 0 to 150
   backgroundOpacity?: number; // 0 to 100 overlay darkness
@@ -130,6 +131,7 @@ export const DEFAULT_HOME_PAGE_CONTENT: HomePageContent = {
     ],
     videoUrl: "",
     backgroundImageUrl: "",
+    backgroundImageUrlMobile: "",
     backgroundType: 'image',
     backgroundBrightness: 100,
     backgroundOpacity: 0,
@@ -586,6 +588,7 @@ export async function saveHomePageContentToFirestore(content: HomePageContent): 
   if (content.hero) {
     const heroBgPayload = {
       backgroundImageUrl: content.hero.backgroundImageUrl || '',
+      backgroundImageUrlMobile: content.hero.backgroundImageUrlMobile || '',
       backgroundType: content.hero.backgroundType || 'image',
       videoUrl: content.hero.videoUrl || '',
       backgroundBrightness: content.hero.backgroundBrightness ?? 100,
