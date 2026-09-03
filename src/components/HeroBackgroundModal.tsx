@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   X,
@@ -17,7 +17,7 @@ import {
   Maximize2
 } from 'lucide-react';
 import { HomeHeroData } from '../lib/homeContent';
-import heroBgOriginalLogo from '../assets/images/techify_logo_original_1786362412096.jpg';
+import { compressImageFile } from '../lib/imageUtils';
 import { toast } from './Toast';
 
 interface HeroBackgroundModalProps {
@@ -27,19 +27,8 @@ interface HeroBackgroundModalProps {
   onSaveBackground: (updatedBgSettings: Partial<HomeHeroData>) => Promise<void>;
 }
 
-// Preset backgrounds
+// Preset backgrounds (sem presets padrão forçados)
 const PRESET_BACKGROUNDS = [
-  {
-    id: 'original-logo-3d',
-    title: 'Logo 3D Techify Metálico (Oficial)',
-    type: 'image' as const,
-    url: '', // empty means original asset heroBgOriginalLogo
-    thumbnail: heroBgOriginalLogo,
-    badge: 'Oficial Techify',
-    brightness: 75,
-    opacity: 65,
-    blur: 0
-  },
   {
     id: 'cyber-video-cinematic',
     title: 'Vídeo Cyber Cinematográfico',
@@ -48,7 +37,7 @@ const PRESET_BACKGROUNDS = [
     thumbnail: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80',
     badge: 'Vídeo Dinâmico',
     brightness: 80,
-    opacity: 70,
+    opacity: 40,
     blur: 0
   },
   {
@@ -58,8 +47,8 @@ const PRESET_BACKGROUNDS = [
     url: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80',
     thumbnail: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=400&q=80',
     badge: 'Matrix Tech',
-    brightness: 60,
-    opacity: 80,
+    brightness: 90,
+    opacity: 20,
     blur: 0
   },
   {
@@ -69,8 +58,8 @@ const PRESET_BACKGROUNDS = [
     url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
     thumbnail: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=400&q=80',
     badge: 'Minimalista',
-    brightness: 70,
-    opacity: 75,
+    brightness: 90,
+    opacity: 20,
     blur: 0
   }
 ];
@@ -86,107 +75,121 @@ export default function HeroBackgroundModal({
   const [activeTab, setActiveTab] = useState<'upload' | 'url' | 'presets'>('upload');
   const [bgType, setBgType] = useState<'image' | 'video' | 'default'>(heroData.backgroundType || 'image');
   const [imageUrl, setImageUrl] = useState<string>(heroData.backgroundImageUrl || '');
-  const [videoUrl, setVideoUrl] = useState<string>(heroData.videoUrl || 'https://zxdefgavgwfxastwmmjm.supabase.co/storage/v1/object/public/assets/cinematic.mp4');
+  const [videoUrl, setVideoUrl] = useState<string>(heroData.videoUrl || '');
   
-  const [brightness, setBrightness] = useState<number>(heroData.backgroundBrightness ?? 75);
-  const [darkOpacity, setDarkOpacity] = useState<number>(heroData.backgroundOpacity ?? 65);
+  const [brightness, setBrightness] = useState<number>(heroData.backgroundBrightness ?? 100);
+  const [darkOpacity, setDarkOpacity] = useState<number>(heroData.backgroundOpacity ?? 0);
   const [blurAmount, setBlurAmount] = useState<number>(heroData.backgroundBlur ?? 0);
   const [showGrid, setShowGrid] = useState<boolean>(heroData.showGridEffect ?? false);
 
   const [isProcessingFile, setIsProcessingFile] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isDraggingOver, setIsDraggingOver] = useState(false);
 
-  // Compress & read image file
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  // Sync state whenever modal opens or heroData changes
+  useEffect(() => {
+    if (isOpen) {
+      setBgType(heroData.backgroundType || 'image');
+      setImageUrl(heroData.backgroundImageUrl || '');
+      setVideoUrl(heroData.videoUrl || '');
+      setBrightness(heroData.backgroundBrightness ?? 100);
+      setDarkOpacity(heroData.backgroundOpacity ?? 0);
+      setBlurAmount(heroData.backgroundBlur ?? 0);
+      setShowGrid(heroData.showGridEffect ?? false);
+    }
+  }, [isOpen, heroData]);
 
+  // Compress & read image file and apply immediately
+  const processImageFile = async (file: File) => {
     if (!file.type.startsWith('image/')) {
       toast.error('Formato Inválido', 'Por favor envie uma imagem (JPG, PNG, WebP).');
       return;
     }
 
     setIsProcessingFile(true);
-    const reader = new FileReader();
+    try {
+      const compressedDataUrl = await compressImageFile(file, 1920, 1080, 0.85);
+      setImageUrl(compressedDataUrl);
+      setBgType('image');
+      setBrightness(100);
+      setDarkOpacity(0);
+      setBlurAmount(0);
 
-    reader.onload = (event) => {
-      const src = event.target?.result as string;
-      if (!src) {
-        setIsProcessingFile(false);
-        return;
-      }
-
-      // Create image in memory to downscale if larger than 1920px for optimal performance
-      const img = new Image();
-      img.onload = () => {
-        const maxWidth = 1920;
-        const maxHeight = 1080;
-        let width = img.width;
-        let height = img.height;
-
-        if (width > maxWidth || height > maxHeight) {
-          if (width / height > maxWidth / maxHeight) {
-            height = Math.round((height * maxWidth) / width);
-            width = maxWidth;
-          } else {
-            width = Math.round((width * maxHeight) / height);
-            height = maxHeight;
-          }
-        }
-
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-          ctx.drawImage(img, 0, 0, width, height);
-          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.88);
-          setImageUrl(compressedDataUrl);
-          setBgType('image');
-          toast.success('Imagem Carregada!', 'A imagem foi importada com sucesso.');
-        } else {
-          setImageUrl(src);
-          setBgType('image');
-        }
-        setIsProcessingFile(false);
-      };
-      img.onerror = () => {
-        setImageUrl(src);
-        setBgType('image');
-        setIsProcessingFile(false);
-      };
-      img.src = src;
-    };
-
-    reader.onerror = () => {
+      // Auto-apply immediately to the page!
+      await onSaveBackground({
+        backgroundImageUrl: compressedDataUrl,
+        backgroundType: 'image',
+        backgroundBrightness: 100,
+        backgroundOpacity: 0,
+        backgroundBlur: 0
+      });
+      toast.success('Imagem Aplicada no Fundo!', 'Sua imagem foi definida e já está visível na tela inicial.');
+    } catch (err) {
+      console.error(err);
       toast.error('Erro de Leitura', 'Não foi possível ler a imagem selecionada.');
+    } finally {
       setIsProcessingFile(false);
-    };
-
-    reader.readAsDataURL(file);
+    }
   };
 
-  const handleSelectPreset = (preset: typeof PRESET_BACKGROUNDS[0]) => {
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      processImageFile(file);
+    }
+  };
+
+  const handleSelectPreset = async (preset: typeof PRESET_BACKGROUNDS[0]) => {
     setBgType(preset.type);
+    let newImg = imageUrl;
+    let newVid = videoUrl;
     if (preset.type === 'image') {
+      newImg = preset.url;
       setImageUrl(preset.url);
     } else {
+      newVid = preset.url;
       setVideoUrl(preset.url);
     }
     setBrightness(preset.brightness);
     setDarkOpacity(preset.opacity);
     setBlurAmount(preset.blur);
-    toast.info('Preset Selecionado', preset.title);
+
+    await onSaveBackground({
+      backgroundImageUrl: newImg,
+      videoUrl: newVid,
+      backgroundType: preset.type,
+      backgroundBrightness: preset.brightness,
+      backgroundOpacity: preset.opacity,
+      backgroundBlur: preset.blur
+    });
+    toast.info('Preset Aplicado', preset.title);
   };
 
-  const handleResetToDefault = () => {
-    setImageUrl('');
-    setBgType('image');
-    setBrightness(75);
-    setDarkOpacity(65);
+  const handleResetSliders = () => {
+    setBrightness(100);
+    setDarkOpacity(0);
     setBlurAmount(0);
     setShowGrid(false);
-    toast.info('Fundo Restaurado', 'Restaurado para o Logo 3D Oficial Techify.');
+  };
+
+  const handleClearBackground = async () => {
+    setImageUrl('');
+    setVideoUrl('');
+    setBgType('image');
+    setBrightness(100);
+    setDarkOpacity(0);
+    setBlurAmount(0);
+    setShowGrid(false);
+    await onSaveBackground({
+      backgroundImageUrl: '',
+      backgroundType: 'image',
+      videoUrl: '',
+      backgroundBrightness: 100,
+      backgroundOpacity: 0,
+      backgroundBlur: 0,
+      showGridEffect: false
+    });
+    toast.info('Fundo Removido', 'Todos os fundos foram limpos. A tela está com fundo neutro.');
   };
 
   const handleSave = async () => {
@@ -210,9 +213,6 @@ export default function HeroBackgroundModal({
       setIsSaving(false);
     }
   };
-
-  // Preview URL to render
-  const currentPreviewImage = imageUrl || heroBgOriginalLogo;
 
   return (
     <AnimatePresence>
@@ -271,11 +271,11 @@ export default function HeroBackgroundModal({
                   <Eye className="h-3.5 w-3.5 text-[#22c55e]" /> Pré-visualização em Tempo Real
                 </span>
                 <span className="text-[11px] text-neutral-400">
-                  {bgType === 'video' ? 'Vídeo em reprodução' : imageUrl ? 'Imagem Personalizada' : 'Logo 3D Oficial'}
+                  {bgType === 'video' && videoUrl ? 'Vídeo em reprodução' : imageUrl ? 'Imagem Ativa' : 'Fundo Limpo (Sem Imagem)'}
                 </span>
               </div>
 
-              <div className="relative h-44 sm:h-52 w-full rounded-xl overflow-hidden border border-neutral-800 bg-black flex items-center justify-center text-center">
+              <div className="relative h-44 sm:h-52 w-full rounded-xl overflow-hidden border border-neutral-800 bg-[#070b07] flex items-center justify-center text-center">
                 {/* Background visual */}
                 {bgType === 'video' && videoUrl ? (
                   <video
@@ -290,23 +290,35 @@ export default function HeroBackgroundModal({
                   >
                     <source src={videoUrl} type="video/mp4" />
                   </video>
-                ) : (
+                ) : imageUrl ? (
                   <img
-                    src={currentPreviewImage}
+                    src={imageUrl}
                     alt="Hero Preview"
                     className="w-full h-full object-cover object-center transition-all duration-200"
                     style={{
                       filter: `brightness(${brightness}%) blur(${blurAmount}px)`,
                     }}
                   />
+                ) : (
+                  <div className="flex flex-col items-center justify-center p-6 text-center text-neutral-500">
+                    <div className="h-12 w-12 rounded-2xl bg-neutral-900 border border-neutral-800 flex items-center justify-center mb-2 text-neutral-600">
+                      <ImageIcon className="h-6 w-6" />
+                    </div>
+                    <p className="text-xs font-bold text-neutral-300">Nenhum fundo definido</p>
+                    <p className="text-[11px] text-neutral-500 mt-0.5">Faça upload de uma imagem abaixo para aplicar imediatamente</p>
+                  </div>
                 )}
 
-                {/* Overlays */}
-                <div 
-                  className="absolute inset-0 bg-black transition-opacity duration-200 pointer-events-none"
-                  style={{ opacity: darkOpacity / 100 }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black pointer-events-none" />
+                {/* Overlays (only if image/video exists) */}
+                {(imageUrl || (bgType === 'video' && videoUrl)) && (
+                  <>
+                    <div 
+                      className="absolute inset-0 bg-black transition-opacity duration-200 pointer-events-none"
+                      style={{ opacity: darkOpacity / 100 }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black pointer-events-none" />
+                  </>
+                )}
 
                 {/* Optional Grid */}
                 {showGrid && (
@@ -319,18 +331,15 @@ export default function HeroBackgroundModal({
                   />
                 )}
 
-                {/* Simulated text on top */}
-                <div className="relative z-10 p-4 max-w-sm mx-auto">
-                  <span className="text-[10px] font-bold text-neutral-300 uppercase tracking-widest block mb-1">
-                    {heroData.eyebrow || 'A Solução Definitiva'}
-                  </span>
-                  <h4 className="font-display text-sm sm:text-base font-black text-[#4ade80] uppercase tracking-tight">
-                    {heroData.headline1 || 'ESTRUTURA COMPLETA'}
-                  </h4>
-                  <p className="text-[10px] text-neutral-300 line-clamp-2 mt-1">
-                    {heroData.description || 'Unimos sites, sistemas e design de alto impacto.'}
-                  </p>
-                </div>
+                {/* Clean preview indicator */}
+                {imageUrl && (
+                  <div className="relative z-10 p-6 max-w-sm mx-auto flex items-center justify-center pointer-events-none">
+                    <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-black/75 border border-white/10 text-xs font-bold text-neutral-200 backdrop-blur-md shadow-lg">
+                      <Eye className="h-3.5 w-3.5 text-[#22c55e]" /> 
+                      <span>Imagem Carregada</span>
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -389,7 +398,24 @@ export default function HeroBackgroundModal({
 
                 <div
                   onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-neutral-700 hover:border-[#22c55e] bg-neutral-900/50 hover:bg-neutral-900/90 rounded-2xl p-6 text-center cursor-pointer transition-all group"
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    setIsDraggingOver(true);
+                  }}
+                  onDragLeave={() => setIsDraggingOver(false)}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    setIsDraggingOver(false);
+                    const file = e.dataTransfer.files?.[0];
+                    if (file) {
+                      processImageFile(file);
+                    }
+                  }}
+                  className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-all group ${
+                    isDraggingOver
+                      ? 'border-[#22c55e] bg-[#22c55e]/15 scale-[1.02]'
+                      : 'border-neutral-700 hover:border-[#22c55e] bg-neutral-900/50 hover:bg-neutral-900/90'
+                  }`}
                 >
                   <div className="mx-auto mb-3 h-12 w-12 rounded-2xl bg-[#22c55e]/10 border border-[#22c55e]/30 flex items-center justify-center text-[#22c55e] group-hover:scale-110 transition-transform">
                     {isProcessingFile ? (
@@ -399,10 +425,10 @@ export default function HeroBackgroundModal({
                     )}
                   </div>
                   <h4 className="font-bold text-sm text-white mb-1">
-                    Clique aqui para carregar sua imagem do computador ou celular
+                    {isDraggingOver ? 'Solte a imagem aqui para aplicar' : 'Clique ou arraste sua imagem do computador ou celular'}
                   </h4>
                   <p className="text-xs text-neutral-400 mb-2">
-                    Suporta PNG, JPG, WebP de alta qualidade
+                    Suporta PNG, JPG, WebP de alta qualidade (otimização automática)
                   </p>
                   <span className="inline-block px-3 py-1 rounded-full bg-neutral-800 text-[10px] font-semibold text-neutral-300 border border-neutral-700">
                     Resolução recomendada: 1920x1080
@@ -420,9 +446,9 @@ export default function HeroBackgroundModal({
                     </div>
                     <button
                       type="button"
-                      onClick={() => setImageUrl('')}
+                      onClick={handleClearBackground}
                       className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 text-xs font-bold transition-colors cursor-pointer"
-                      title="Remover e voltar para a oficial"
+                      title="Remover fundo atual"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
@@ -547,10 +573,10 @@ export default function HeroBackgroundModal({
                 </span>
                 <button
                   type="button"
-                  onClick={handleResetToDefault}
+                  onClick={handleResetSliders}
                   className="text-[11px] font-bold text-neutral-400 hover:text-white flex items-center gap-1 transition-colors cursor-pointer"
                 >
-                  <RotateCcw className="h-3 w-3" /> Restaurar Padrão
+                  <RotateCcw className="h-3 w-3" /> Restaurar Ajustes
                 </button>
               </div>
 
@@ -625,33 +651,45 @@ export default function HeroBackgroundModal({
             </div>
 
             {/* ACTION BUTTONS */}
-            <div className="flex items-center justify-end gap-2.5">
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-neutral-800/80">
               <button
                 type="button"
-                onClick={onClose}
-                className="px-4 py-2.5 rounded-xl border border-neutral-800 bg-neutral-900/80 hover:bg-neutral-800 text-xs font-bold text-neutral-300 transition-colors cursor-pointer"
+                onClick={handleClearBackground}
+                className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-red-500/30 hover:border-red-500/60 bg-red-500/10 hover:bg-red-500/20 text-xs font-bold text-red-400 hover:text-red-300 transition-all cursor-pointer"
+                title="Limpar todos os fundos e deixar a tela limpa"
               >
-                Cancelar
+                <Trash2 className="h-3.5 w-3.5" />
+                <span>Limpar / Remover Fundo</span>
               </button>
 
-              <button
-                type="button"
-                onClick={handleSave}
-                disabled={isSaving}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#84cc16] via-[#22c55e] to-[#10b981] hover:brightness-110 text-black font-black text-xs transition-all shadow-[0_0_20px_rgba(34,197,94,0.35)] cursor-pointer disabled:opacity-50"
-              >
-                {isSaving ? (
-                  <>
-                    <div className="h-3.5 w-3.5 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                    <span>Salvando...</span>
-                  </>
-                ) : (
-                  <>
-                    <Check className="h-4 w-4 stroke-[3]" />
-                    <span>Salvar & Publicar Fundo no Site</span>
-                  </>
-                )}
-              </button>
+              <div className="flex items-center gap-2.5">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="px-4 py-2.5 rounded-xl border border-neutral-800 bg-neutral-900/80 hover:bg-neutral-800 text-xs font-bold text-neutral-300 transition-colors cursor-pointer"
+                >
+                  Fechar
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleSave}
+                  disabled={isSaving}
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#84cc16] via-[#22c55e] to-[#10b981] hover:brightness-110 text-black font-black text-xs transition-all shadow-[0_0_20px_rgba(34,197,94,0.35)] cursor-pointer disabled:opacity-50"
+                >
+                  {isSaving ? (
+                    <>
+                      <div className="h-3.5 w-3.5 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                      <span>Salvando...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Check className="h-4 w-4 stroke-[3]" />
+                      <span>Confirmar & Salvar</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </motion.div>
         </div>

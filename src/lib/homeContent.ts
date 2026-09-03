@@ -128,11 +128,11 @@ export const DEFAULT_HOME_PAGE_CONTENT: HomePageContent = {
       "Marketing & Performance",
       "Inteligência Artificial"
     ],
-    videoUrl: "https://zxdefgavgwfxastwmmjm.supabase.co/storage/v1/object/public/assets/cinematic.mp4",
+    videoUrl: "",
     backgroundImageUrl: "",
     backgroundType: 'image',
-    backgroundBrightness: 75,
-    backgroundOpacity: 65,
+    backgroundBrightness: 100,
+    backgroundOpacity: 0,
     backgroundBlur: 0,
     showGridEffect: false
   },
@@ -451,13 +451,15 @@ export const DEFAULT_HOME_PAGE_CONTENT: HomePageContent = {
 };
 
 const HOME_CACHE_KEY = 'techify_home_page_content_cache';
+const HERO_BG_CACHE_KEY = 'techify_hero_bg_payload';
 
 export function getCachedHomePageContent(): HomePageContent {
   try {
+    let result: HomePageContent = DEFAULT_HOME_PAGE_CONTENT;
     const raw = localStorage.getItem(HOME_CACHE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      return {
+      result = {
         ...DEFAULT_HOME_PAGE_CONTENT,
         ...parsed,
         hero: { ...DEFAULT_HOME_PAGE_CONTENT.hero, ...(parsed.hero || {}) },
@@ -471,6 +473,16 @@ export function getCachedHomePageContent(): HomePageContent {
         faqs: Array.isArray(parsed.faqs) && parsed.faqs.length > 0 ? parsed.faqs : DEFAULT_HOME_PAGE_CONTENT.faqs
       };
     }
+    const rawBg = localStorage.getItem(HERO_BG_CACHE_KEY);
+    if (rawBg) {
+      const parsedBg = JSON.parse(rawBg);
+      result.hero = { ...result.hero, ...parsedBg };
+    }
+    // Clean any legacy fallback logo so backgrounds remain 100% clean until user uploads an image
+    if (result.hero.backgroundImageUrl && result.hero.backgroundImageUrl.includes('techify_logo_original')) {
+      result.hero.backgroundImageUrl = '';
+    }
+    return result;
   } catch (err) {
     console.warn('Error reading home page cached content:', err);
   }
@@ -478,34 +490,73 @@ export function getCachedHomePageContent(): HomePageContent {
 }
 
 export function initHomePageListener(callback: (content: HomePageContent) => void): () => void {
-  const unsub = onSnapshot(doc(db, "site_content", "home_page"), (snap) => {
+  let currentContent = getCachedHomePageContent();
+
+  const emitMerged = () => {
+    try {
+      localStorage.setItem(HOME_CACHE_KEY, JSON.stringify(currentContent));
+    } catch {
+      // ignore storage quota limit
+    }
+    callback(currentContent);
+  };
+
+  const unsubHomePage = onSnapshot(doc(db, "site_content", "home_page"), (snap) => {
     if (snap.exists()) {
       const data = snap.data() as Partial<HomePageContent>;
-      const merged: HomePageContent = {
-        ...DEFAULT_HOME_PAGE_CONTENT,
+      currentContent = {
+        ...currentContent,
         ...data,
-        hero: { ...DEFAULT_HOME_PAGE_CONTENT.hero, ...(data.hero || {}) },
-        competitor: { ...DEFAULT_HOME_PAGE_CONTENT.competitor, ...(data.competitor || {}) },
-        comparison: { ...DEFAULT_HOME_PAGE_CONTENT.comparison, ...(data.comparison || {}) },
-        bottomCta: { ...DEFAULT_HOME_PAGE_CONTENT.bottomCta, ...(data.bottomCta || {}) },
-        clientTicker: Array.isArray(data.clientTicker) && data.clientTicker.length > 0 ? data.clientTicker : DEFAULT_HOME_PAGE_CONTENT.clientTicker,
-        services: Array.isArray(data.services) && data.services.length > 0 ? data.services : DEFAULT_HOME_PAGE_CONTENT.services,
-        pillars: Array.isArray(data.pillars) && data.pillars.length > 0 ? data.pillars : DEFAULT_HOME_PAGE_CONTENT.pillars,
-        plans: Array.isArray(data.plans) && data.plans.length > 0 ? data.plans : DEFAULT_HOME_PAGE_CONTENT.plans,
-        faqs: Array.isArray(data.faqs) && data.faqs.length > 0 ? data.faqs : DEFAULT_HOME_PAGE_CONTENT.faqs
+        hero: { ...currentContent.hero, ...(data.hero || {}) },
+        competitor: { ...currentContent.competitor, ...(data.competitor || {}) },
+        comparison: { ...currentContent.comparison, ...(data.comparison || {}) },
+        bottomCta: { ...currentContent.bottomCta, ...(data.bottomCta || {}) },
+        clientTicker: Array.isArray(data.clientTicker) && data.clientTicker.length > 0 ? data.clientTicker : currentContent.clientTicker,
+        services: Array.isArray(data.services) && data.services.length > 0 ? data.services : currentContent.services,
+        pillars: Array.isArray(data.pillars) && data.pillars.length > 0 ? data.pillars : currentContent.pillars,
+        plans: Array.isArray(data.plans) && data.plans.length > 0 ? data.plans : currentContent.plans,
+        faqs: Array.isArray(data.faqs) && data.faqs.length > 0 ? data.faqs : currentContent.faqs
       };
-      localStorage.setItem(HOME_CACHE_KEY, JSON.stringify(merged));
-      callback(merged);
+      if (currentContent.hero?.backgroundImageUrl && currentContent.hero.backgroundImageUrl.includes('techify_logo_original')) {
+        currentContent.hero.backgroundImageUrl = '';
+      }
+      emitMerged();
     }
   }, (err) => {
     console.warn('Home page content listener offline:', err.message);
+  });
+
+  // Dedicated background snapshot listener for 100% instant sync
+  const unsubHeroBg = onSnapshot(doc(db, "site_content", "hero_background"), (snap) => {
+    if (snap.exists()) {
+      const bgData = snap.data();
+      currentContent = {
+        ...currentContent,
+        hero: {
+          ...currentContent.hero,
+          ...bgData
+        }
+      };
+      if (currentContent.hero?.backgroundImageUrl && currentContent.hero.backgroundImageUrl.includes('techify_logo_original')) {
+        currentContent.hero.backgroundImageUrl = '';
+      }
+      try {
+        localStorage.setItem(HERO_BG_CACHE_KEY, JSON.stringify(bgData));
+      } catch {
+        // ignore
+      }
+      emitMerged();
+    }
+  }, (err) => {
+    console.warn('Hero background listener offline:', err.message);
   });
 
   const handleCustomUpdate = (e: Event) => {
     try {
       const customEvt = e as CustomEvent<HomePageContent>;
       if (customEvt.detail) {
-        callback(customEvt.detail);
+        currentContent = { ...currentContent, ...customEvt.detail };
+        emitMerged();
       }
     } catch (err) {
       console.warn(err);
@@ -515,20 +566,59 @@ export function initHomePageListener(callback: (content: HomePageContent) => voi
   window.addEventListener('techify-home-content-updated', handleCustomUpdate);
 
   return () => {
-    unsub();
+    unsubHomePage();
+    unsubHeroBg();
     window.removeEventListener('techify-home-content-updated', handleCustomUpdate);
   };
 }
 
 export async function saveHomePageContentToFirestore(content: HomePageContent): Promise<void> {
   const sanitizedContent = JSON.parse(JSON.stringify(content));
-  localStorage.setItem(HOME_CACHE_KEY, JSON.stringify(sanitizedContent));
+  
+  // Save to local storage safely
+  try {
+    localStorage.setItem(HOME_CACHE_KEY, JSON.stringify(sanitizedContent));
+  } catch (e) {
+    console.warn('Could not save full home content to localStorage:', e);
+  }
+
+  // Extract and save hero background to dedicated payload
+  if (content.hero) {
+    const heroBgPayload = {
+      backgroundImageUrl: content.hero.backgroundImageUrl || '',
+      backgroundType: content.hero.backgroundType || 'image',
+      videoUrl: content.hero.videoUrl || '',
+      backgroundBrightness: content.hero.backgroundBrightness ?? 100,
+      backgroundOpacity: content.hero.backgroundOpacity ?? 0,
+      backgroundBlur: content.hero.backgroundBlur ?? 0,
+      showGridEffect: !!content.hero.showGridEffect,
+      updatedAt: new Date().toISOString()
+    };
+    try {
+      localStorage.setItem(HERO_BG_CACHE_KEY, JSON.stringify(heroBgPayload));
+    } catch {
+      // ignore
+    }
+
+    try {
+      await setDoc(doc(db, "site_content", "hero_background"), heroBgPayload, { merge: true });
+    } catch (bgErr) {
+      console.warn('Failed saving to site_content/hero_background:', bgErr);
+    }
+  }
+
+  // Broadcast immediate event to all open tabs and components
   window.dispatchEvent(new CustomEvent('techify-home-content-updated', { detail: sanitizedContent }));
 
-  await setDoc(doc(db, "site_content", "home_page"), {
-    ...sanitizedContent,
-    updatedAt: new Date().toISOString()
-  }, { merge: true });
+  // Save to site_content/home_page
+  try {
+    await setDoc(doc(db, "site_content", "home_page"), {
+      ...sanitizedContent,
+      updatedAt: new Date().toISOString()
+    }, { merge: true });
+  } catch (docErr) {
+    console.warn('Failed writing full home_page document:', docErr);
+  }
 
   // Also sync hero to general
   try {

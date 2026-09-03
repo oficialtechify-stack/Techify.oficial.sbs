@@ -17,6 +17,7 @@ import { Consultation } from '../types';
 import { collection, addDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { toast } from './Toast';
+import { useAdminAuth } from '../lib/adminAuth';
 import { 
   ServiceCatalogItem, 
   DEFAULT_SERVICES_CATALOG, 
@@ -67,6 +68,7 @@ function formatReadableDate(dateStr: string): string {
 }
 
 export default function ConsultationModal({ isOpen, onClose, defaultService }: ConsultationModalProps) {
+  const { isAdmin } = useAdminAuth();
   const todayStr = getFormattedDate(0);
   const tomorrowStr = getFormattedDate(1);
   const next2DaysStr = getFormattedDate(2);
@@ -373,15 +375,17 @@ export default function ConsultationModal({ isOpen, onClose, defaultService }: C
                     <label className="block text-xs font-semibold text-neutral-300">
                       Serviço de Interesse *
                     </label>
-                    <button
-                      type="button"
-                      onClick={() => setIsManagerOpen(true)}
-                      className="inline-flex items-center gap-1 text-[11px] font-medium text-neutral-400 hover:text-[#22c55e] transition-colors cursor-pointer"
-                      title="Gerenciar opções de serviços"
-                    >
-                      <Edit3 className="h-3 w-3" />
-                      <span>Gerenciar lista</span>
-                    </button>
+                    {isAdmin && (
+                      <button
+                        type="button"
+                        onClick={() => setIsManagerOpen(true)}
+                        className="inline-flex items-center gap-1 text-[11px] font-medium text-neutral-400 hover:text-[#22c55e] transition-colors cursor-pointer"
+                        title="Gerenciar opções de serviços (Admin)"
+                      >
+                        <Edit3 className="h-3 w-3" />
+                        <span>Gerenciar lista</span>
+                      </button>
+                    )}
                   </div>
 
                   <select

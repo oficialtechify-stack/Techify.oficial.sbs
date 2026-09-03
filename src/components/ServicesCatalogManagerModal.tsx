@@ -18,6 +18,7 @@ import {
   resetServicesCatalogToDefault 
 } from '../lib/servicesCatalog';
 import { toast } from './Toast';
+import { useAdminAuth } from '../lib/adminAuth';
 
 interface ServicesCatalogManagerModalProps {
   isOpen: boolean;
@@ -30,6 +31,7 @@ export default function ServicesCatalogManagerModal({
   onClose,
   catalog
 }: ServicesCatalogManagerModalProps) {
+  const { isAdmin } = useAdminAuth();
   const [editingItem, setEditingItem] = useState<ServiceCatalogItem | null>(null);
   const [isEditingModalOpen, setIsEditingModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -44,7 +46,7 @@ export default function ServicesCatalogManagerModal({
   const [formPrice, setFormPrice] = useState('');
   const [formPopular, setFormPopular] = useState(false);
 
-  if (!isOpen) return null;
+  if (!isOpen || !isAdmin) return null;
 
   const handleOpenAdd = () => {
     setEditingItem(null);

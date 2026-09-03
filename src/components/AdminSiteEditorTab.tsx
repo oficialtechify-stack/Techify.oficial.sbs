@@ -48,7 +48,6 @@ import {
 import HeroBackgroundModal from './HeroBackgroundModal';
 import LogoCustomizerModal from './LogoCustomizerModal';
 import { CircleEmblemDivider, TechifyIcon } from './TechifyLogo';
-import heroBgOriginalLogo from '../assets/images/techify_logo_original_1786362412096.jpg';
 import { compressImageFile } from '../lib/imageUtils';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../lib/firebase';
@@ -812,22 +811,28 @@ export default function AdminSiteEditorTab() {
                   >
                     <source src={homeContent.hero.videoUrl} type="video/mp4" />
                   </video>
-                ) : (
+                ) : homeContent.hero.backgroundImageUrl ? (
                   <img
-                    src={homeContent.hero.backgroundImageUrl || heroBgOriginalLogo}
+                    src={homeContent.hero.backgroundImageUrl}
                     alt="Fundo Atual"
                     className="w-full h-full object-cover object-center"
                     style={{
-                      filter: `brightness(${homeContent.hero.backgroundBrightness ?? 75}%) blur(${homeContent.hero.backgroundBlur ?? 0}px)`
+                      filter: `brightness(${homeContent.hero.backgroundBrightness ?? 100}%) blur(${homeContent.hero.backgroundBlur ?? 0}px)`
                     }}
                   />
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center text-center p-3 text-neutral-500 bg-[#070b07]">
+                    <ImageIcon className="h-6 w-6 mb-1 text-neutral-600" />
+                    <span className="text-[11px] font-bold text-neutral-400">Nenhum fundo</span>
+                    <span className="text-[9px] text-neutral-600">Tela limpa</span>
+                  </div>
                 )}
                 <div 
                   className="absolute inset-0 bg-black pointer-events-none"
-                  style={{ opacity: (homeContent.hero.backgroundOpacity ?? 65) / 100 }}
+                  style={{ opacity: (homeContent.hero.backgroundOpacity ?? 0) / 100 }}
                 />
                 <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-black/80 text-[10px] font-bold text-white border border-white/10 backdrop-blur-sm">
-                  {homeContent.hero.backgroundType === 'video' ? 'Vídeo Ativo' : homeContent.hero.backgroundImageUrl ? 'Imagem Personalizada' : 'Logo 3D Oficial'}
+                  {homeContent.hero.backgroundType === 'video' ? 'Vídeo Ativo' : homeContent.hero.backgroundImageUrl ? 'Imagem Personalizada' : 'Fundo Limpo'}
                 </span>
               </div>
 
